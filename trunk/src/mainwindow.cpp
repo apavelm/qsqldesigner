@@ -1,4 +1,7 @@
 #include "mainwindow.h"
+#include "tabledialog.h"
+#include "widgets/tablewidget.h"
+
 #include "ui_mainwindow.h"
 
 #include <cmath>
@@ -9,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     m_printer = new QPrinter(QPrinter::HighResolution);
 
     createSceneAndView();
+    createMenus();
     createActions();
     createToolBars();
     createStatusBar();
@@ -26,8 +30,14 @@ void MainWindow::createSceneAndView()
     setCentralWidget(m_mainView);
 }
 
+void MainWindow::createMenus()
+{
+
+}
+
 MainWindow::~MainWindow()
 {
+    delete m_printer;
     delete m_mainView;
     delete ui;
 }
@@ -83,11 +93,13 @@ void MainWindow::createActions()
     connect(ui->actionPaste, SIGNAL(triggered()), this, SLOT(slotEditPaste()));
 
     connect(ui->actionShow_Grid, SIGNAL(toggled(bool)), this, SLOT(slotViewShowGrid(bool)));
-    //connect(ui->actionZoom_In, SIGNAL(triggered()), mainView, SLOT(zoomIn()));
-    //connect(ui->actionZoom_Out, SIGNAL(triggered()), mainView, SLOT(zoomOut()));
+    connect(ui->actionZoom_In, SIGNAL(triggered()), m_mainView, SLOT(zoomIn()));
+    connect(ui->actionZoom_Out, SIGNAL(triggered()), m_mainView, SLOT(zoomOut()));
+
+    connect(ui->actionAdd_Table, SIGNAL(triggered()), this, SLOT(slotProjectAddTable()));
 
 
-    //connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(about()));
+    connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(slotAboutAbout()));
     connect(ui->actionAbout_Qt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 
     /*cutAct->setEnabled(false);
@@ -100,15 +112,7 @@ void MainWindow::createActions()
 
 void MainWindow::createToolBars()
 {
-    /*fileToolBar = addToolBar(tr("File"));
-    fileToolBar->addAction(newAct);
-    fileToolBar->addAction(openAct);
-    fileToolBar->addAction(saveAct);
-
-    editToolBar = addToolBar(tr("Edit"));
-    editToolBar->addAction(cutAct);
-    editToolBar->addAction(copyAct);
-    editToolBar->addAction(pasteAct);*/
+    ui->mainToolBar->addAction(ui->actionAdd_Table);
 }
 
 void MainWindow::createStatusBar()
@@ -118,7 +122,9 @@ void MainWindow::createStatusBar()
 
 void MainWindow::slotNewProject()
 {
-
+    clear();
+    setWindowFilePath(tr("Untitled"));
+    setDirty(false);
 }
 
 void MainWindow::slotOpenProject()
@@ -161,15 +167,10 @@ void MainWindow::slotEditCut()
         return;
     copyItems(items);
     QListIterator<QGraphicsItem*> i(items);
-    while (i.hasNext()) {
-#if QT_VERSION >= 0x040600
+    while (i.hasNext())
+    {
         QScopedPointer<QGraphicsItem> item(i.next());
         scene->removeItem(item.data());
-#else
-        QGraphicsItem *item = i.next();
-        scene->removeItem(item);
-        delete item;
-#endif
     }*/
     setDirty(true);
 }
@@ -230,7 +231,31 @@ void MainWindow::slotViewShowGrid(bool on)
     m_gridGroup->setVisible(on);
 }
 
+void MainWindow::slotProjectAddTable()
+{
+    TableDialog dlg;
+    if (dlg.exec() == QDialog::Accepted)
+    {
+        // add Table
+        TableWidget * w = new TableWidget(0, new TableModel("test_table"));
+        m_scene->addItem(w);
+    }
+}
+
+bool MainWindow::sceneHasItems() const
+{
+    foreach (QGraphicsItem *item, m_scene->items())
+        if (item != m_gridGroup && item->group() != m_gridGroup)
+            return true;
+    return false;
+}
+
 void MainWindow::clear()
 {
     slotViewShowGrid(ui->actionShow_Grid->isChecked());
+}
+
+void MainWindow::slotAboutAbout()
+{
+
 }
