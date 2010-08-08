@@ -11,6 +11,9 @@ class TableModel
 public:
     TableModel(const QString& name);
 
+    inline const QString& name() const {return m_name;}
+    void setName(const QString& name);
+
 private:
     QList<ColumnModel> m_columns;
     QString m_name;

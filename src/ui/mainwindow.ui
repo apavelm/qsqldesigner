@@ -25,11 +25,6 @@
      <height>21</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuProject">
-    <property name="title">
-     <string>&amp;Project</string>
-    </property>
-   </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
      <string>&amp;Tools</string>
@@ -73,6 +68,12 @@
     <addaction name="actionZoom_In"/>
     <addaction name="actionZoom_Out"/>
    </widget>
+   <widget class="QMenu" name="menuProject">
+    <property name="title">
+     <string>&amp;Project</string>
+    </property>
+    <addaction name="actionAdd_Table"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
    <addaction name="menuView"/>
@@ -93,6 +94,9 @@
    </attribute>
   </widget>
   <widget class="QDockWidget" name="propertyDockWidget">
+   <property name="features">
+    <set>QDockWidget::DockWidgetMovable</set>
+   </property>
    <property name="allowedAreas">
     <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
    </property>
@@ -224,6 +228,14 @@
   <action name="actionZoom_Out">
    <property name="text">
     <string>Zoom Out</string>
+   </property>
+  </action>
+  <action name="actionAdd_Table">
+   <property name="text">
+    <string>Add &amp;Table</string>
+   </property>
+   <property name="statusTip">
+    <string>Add table to project</string>
    </property>
   </action>
  </widget>

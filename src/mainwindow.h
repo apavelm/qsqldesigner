@@ -31,10 +31,13 @@ public slots:
 
 private:
     void createSceneAndView();
+    void createMenus();
     void createActions();
     void createToolBars();
     void createStatusBar();
     void copyItems(const QList<QGraphicsItem*> &items);
+
+    bool sceneHasItems() const;
 
     Ui::MainWindow *ui;
     MainView * m_mainView;
@@ -52,6 +55,10 @@ private slots:
     void slotEditPaste();
 
     void slotViewShowGrid(bool on);
+
+    void slotProjectAddTable();
+
+    void slotAboutAbout();
 };
 
 #endif // MAINWINDOW_H

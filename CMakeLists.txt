@@ -8,6 +8,7 @@ set ( SOURCES
      ./src/mainwindow.cpp
      ./src/tabledialog.cpp
      ./src/widgets/mainview.cpp
+     ./src/widgets/tablewidget.cpp
      ./src/models/modelmanager.cpp
      ./src/models/table.cpp
      ./src/models/column.cpp
@@ -19,6 +20,7 @@ set ( MOC_HEADERS
      ./src/mainwindow.h
      ./src/tabledialog.h
      ./src/widgets/mainview.h
+     ./src/widgets/tablewidget.h
      ./src/models/modelmanager.h
      ./src/models/table.h
      ./src/models/column.h
