@@ -14,6 +14,7 @@ int main(int argc, char *argv[])
     app.processEvents();
 
     MainWindow w;
+    w.setWindowTitle(app.applicationName());
     w.showMaximized();
     splash.finish(&w);
     return app.exec();
