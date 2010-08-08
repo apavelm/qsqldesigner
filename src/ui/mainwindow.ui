@@ -13,7 +13,9 @@
   <property name="windowTitle">
    <string>SQL Designer</string>
   </property>
-  <widget class="QWidget" name="centralwidget"/>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout"/>
+  </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
@@ -23,28 +25,14 @@
      <height>21</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuFile">
-    <property name="title">
-     <string>File</string>
-    </property>
-    <addaction name="actionNew_Project"/>
-    <addaction name="actionOpen_Project"/>
-    <addaction name="separator"/>
-    <addaction name="actionExit"/>
-   </widget>
-   <widget class="QMenu" name="menuEdit">
-    <property name="title">
-     <string>Edit</string>
-    </property>
-   </widget>
    <widget class="QMenu" name="menuProject">
     <property name="title">
-     <string>Project</string>
+     <string>&amp;Project</string>
     </property>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
-     <string>Tools</string>
+     <string>&amp;Tools</string>
     </property>
     <addaction name="actionView_Log"/>
     <addaction name="separator"/>
@@ -52,15 +40,42 @@
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
-     <string>Help</string>
+     <string>&amp;Help</string>
     </property>
     <addaction name="actionHelp"/>
     <addaction name="separator"/>
     <addaction name="actionAbout"/>
     <addaction name="actionAbout_Qt"/>
    </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="actionCut"/>
+    <addaction name="actionCopy"/>
+    <addaction name="actionPaste"/>
+   </widget>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="actionNew_Project"/>
+    <addaction name="actionOpen_Project"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <addaction name="actionShow_Grid"/>
+    <addaction name="separator"/>
+    <addaction name="actionZoom_In"/>
+    <addaction name="actionZoom_Out"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
+   <addaction name="menuView"/>
    <addaction name="menuProject"/>
    <addaction name="menuTools"/>
    <addaction name="menuHelp"/>
@@ -77,14 +92,32 @@
     <bool>false</bool>
    </attribute>
   </widget>
+  <widget class="QDockWidget" name="propertyDockWidget">
+   <property name="allowedAreas">
+    <set>Qt::LeftDockWidgetArea|Qt::RightDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>Properties</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="propertyDockWidgetContents"/>
+  </widget>
   <action name="actionNew_Project">
    <property name="text">
-    <string>New Project</string>
+    <string>&amp;New Project</string>
+   </property>
+   <property name="statusTip">
+    <string>Create a new Project</string>
    </property>
   </action>
   <action name="actionOpen_Project">
    <property name="text">
-    <string>Open Project</string>
+    <string>&amp;Open Project</string>
+   </property>
+   <property name="statusTip">
+    <string>Open an existing Project</string>
    </property>
   </action>
   <action name="action">
@@ -94,7 +127,10 @@
   </action>
   <action name="actionExit">
    <property name="text">
-    <string>Exit</string>
+    <string>E&amp;xit</string>
+   </property>
+   <property name="statusTip">
+    <string>Exit the application</string>
    </property>
   </action>
   <action name="actionView_Log">
@@ -119,12 +155,75 @@
   </action>
   <action name="actionAbout">
    <property name="text">
-    <string>About</string>
+    <string>&amp;About</string>
+   </property>
+   <property name="statusTip">
+    <string>Show application about box.</string>
    </property>
   </action>
   <action name="actionAbout_Qt">
    <property name="text">
-    <string>About Qt</string>
+    <string>About &amp;Qt</string>
+   </property>
+   <property name="statusTip">
+    <string>Show the Qt library's About box</string>
+   </property>
+  </action>
+  <action name="actionCut">
+   <property name="text">
+    <string>Cu&amp;t</string>
+   </property>
+   <property name="toolTip">
+    <string>Cut</string>
+   </property>
+   <property name="statusTip">
+    <string>Cut the current selection's contents to the clipboard</string>
+   </property>
+  </action>
+  <action name="actionCopy">
+   <property name="text">
+    <string>&amp;Copy</string>
+   </property>
+   <property name="toolTip">
+    <string>Copy</string>
+   </property>
+   <property name="statusTip">
+    <string>Copy the current selection's contents to the clipboard</string>
+   </property>
+  </action>
+  <action name="actionPaste">
+   <property name="text">
+    <string>&amp;Paste</string>
+   </property>
+   <property name="toolTip">
+    <string>Paste</string>
+   </property>
+   <property name="statusTip">
+    <string>Paste the clipboard's contents into the current selection</string>
+   </property>
+  </action>
+  <action name="actionShow_Grid">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Grid</string>
+   </property>
+   <property name="statusTip">
+    <string>Shows grid</string>
+   </property>
+  </action>
+  <action name="actionZoom_In">
+   <property name="text">
+    <string>Zoom In</string>
+   </property>
+  </action>
+  <action name="actionZoom_Out">
+   <property name="text">
+    <string>Zoom Out</string>
    </property>
   </action>
  </widget>
