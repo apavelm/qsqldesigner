@@ -4,6 +4,7 @@
 #include <QtGui/QPainter>
 #include <QtGui/QPainterPath>
 #include <QtGui/QGraphicsObject>
+#include <QtGui/QGraphicsScene>
 
 #include "../models/table.h"
 
@@ -13,7 +14,7 @@ class TableWidget : public QGraphicsObject
 
     Q_PROPERTY(QString name READ name WRITE setName)
 public:
-    explicit TableWidget(QGraphicsItem  * parent = 0, TableModel * model = 0);
+    explicit TableWidget(QGraphicsScene *scene, QGraphicsItem  * parent = 0, TableModel * model = 0);
 
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
@@ -24,7 +25,9 @@ public slots:
     void setName(const QString& name);
 signals:
     void dirty();
-
+protected:
+    QVariant itemChange(GraphicsItemChange change, const QVariant &value);
+    void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 private:
     Q_DISABLE_COPY ( TableWidget )
     TableModel * m_model;

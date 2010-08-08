@@ -1,9 +1,11 @@
 #include "tablewidget.h"
 
-TableWidget::TableWidget(QGraphicsItem  *parent, TableModel * model) : QGraphicsObject(parent), m_model(model)
+TableWidget::TableWidget(QGraphicsScene *scene, QGraphicsItem  *parent, TableModel * model) : QGraphicsObject(parent), m_model(model)
 {
     setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemSendsGeometryChanges | QGraphicsItem::ItemIsMovable);
 
+    scene->clearSelection();
+    scene->addItem(this);
     setSelected(true);
 }
 
@@ -49,4 +51,22 @@ void TableWidget::paintSelectionOutline(QPainter *painter)
 void TableWidget::setName(const QString& name)
 {
     m_model->setName(name);
+}
+
+QVariant TableWidget::itemChange(GraphicsItemChange change, const QVariant &value)
+{
+    if (change == QGraphicsItem::ItemPositionChange) {
+        //foreach (Arrow *arrow, arrows) {
+            //arrow->updatePosition();
+        //}
+    }
+
+    return QGraphicsItem::itemChange(change, value);
+}
+
+void TableWidget::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
+{
+    scene()->clearSelection();
+    setSelected(true);
+    //myContextMenu->exec(event->screenPos());
 }
