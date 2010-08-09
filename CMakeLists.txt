@@ -4,9 +4,12 @@ project ( qsqldesigner )
 
 set ( SOURCES
      ./src/main.cpp
+     ./src/commands.cpp
      ./src/columndialog.cpp
      ./src/mainwindow.cpp
+     ./src/magnifydialog.cpp
      ./src/tabledialog.cpp
+     ./src/widgets/cornerzoomwidget.cpp
      ./src/widgets/mainview.cpp
      ./src/widgets/tablewidget.cpp
      ./src/models/modelmanager.cpp
@@ -17,8 +20,11 @@ set ( SOURCES
 
 set ( MOC_HEADERS
      ./src/columndialog.h
+     ./src/commands.h
      ./src/mainwindow.h
+     ./src/magnifydialog.h
      ./src/tabledialog.h
+     ./src/widgets/cornerzoomwidget.h
      ./src/widgets/mainview.h
      ./src/widgets/tablewidget.h
      ./src/models/modelmanager.h
@@ -30,6 +36,7 @@ set ( MOC_HEADERS
 set ( UIS
      ./src/ui/columndialog.ui
      ./src/ui/mainwindow.ui
+     ./src/ui/magnifydialog.ui
      ./src/ui/tabledialog.ui
 )
   

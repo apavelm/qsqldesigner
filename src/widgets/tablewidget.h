@@ -14,6 +14,9 @@ class TableWidget : public QGraphicsObject
 
     Q_PROPERTY(QString name READ name WRITE setName)
 public:
+    enum { Type = UserType + 1 };
+    inline int type() const {return Type;}
+
     explicit TableWidget(QGraphicsScene *scene, QGraphicsItem  * parent = 0, TableModel * model = 0);
 
     QRectF boundingRect() const;
@@ -34,5 +37,8 @@ private:
 
     void paintSelectionOutline(QPainter *painter);
 };
+
+QDataStream &operator<<(QDataStream &out, const TableWidget &item);
+QDataStream &operator>>(QDataStream &in, TableWidget &item);
 
 #endif // TABLEWIDGET_H

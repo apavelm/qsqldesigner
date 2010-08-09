@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 {
     ui->setupUi(this);
     m_printer = new QPrinter(QPrinter::HighResolution);
+    m_undoStack = new QUndoStack();
 
     createSceneAndView();
     createMenus();
@@ -37,7 +38,9 @@ void MainWindow::createMenus()
 
 MainWindow::~MainWindow()
 {
+    delete m_undoStack;
     delete m_printer;
+    delete m_gridGroup;
     delete m_mainView;
     delete ui;
 }
@@ -67,11 +70,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 void MainWindow::createActions()
 {
-    // New Project
+    // File
     ui->actionNew_Project->setShortcuts(QKeySequence::New);
     connect (ui->actionNew_Project, SIGNAL(triggered()), this, SLOT(slotNewProject()));
-
-    // Open Project
     ui->actionOpen_Project->setShortcuts(QKeySequence::Open);
     connect(ui->actionOpen_Project, SIGNAL(triggered()), this, SLOT(slotOpenProject()));
 
@@ -85,6 +86,12 @@ void MainWindow::createActions()
     saveAsAct->setStatusTip(tr("Save the document under a new name"));
     connect(saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
 */
+
+    // Edit
+    ui->actionUndo->setShortcuts(QKeySequence::Undo);
+    connect(ui->actionUndo, SIGNAL(triggered()), this, SLOT(slotEditUndo()));
+    ui->actionRedo->setShortcuts(QKeySequence::Redo);
+    connect(ui->actionRedo, SIGNAL(triggered()), this, SLOT(slotEditRedo()));
     ui->actionCut->setShortcuts(QKeySequence::Cut);
     connect(ui->actionCut, SIGNAL(triggered()), this, SLOT(slotEditCut()));
     ui->actionCopy->setShortcuts(QKeySequence::Copy);
@@ -92,13 +99,19 @@ void MainWindow::createActions()
     ui->actionPaste->setShortcuts(QKeySequence::Paste);
     connect(ui->actionPaste, SIGNAL(triggered()), this, SLOT(slotEditPaste()));
 
+    // View
     connect(ui->actionShow_Grid, SIGNAL(toggled(bool)), this, SLOT(slotViewShowGrid(bool)));
+    ui->actionZoom_In->setShortcuts(QKeySequence::ZoomIn);
     connect(ui->actionZoom_In, SIGNAL(triggered()), m_mainView, SLOT(zoomIn()));
+    ui->actionZoom_Out->setShortcuts(QKeySequence::ZoomOut);
     connect(ui->actionZoom_Out, SIGNAL(triggered()), m_mainView, SLOT(zoomOut()));
+    connect(ui->action_Custom_Zoom, SIGNAL(triggered()), this, SLOT(slotViewCustomZoom()));
+    connect(m_mainView, SIGNAL(cornerWidgetClicked()), this, SLOT(slotViewCustomZoom()));
 
+    // Project
     connect(ui->actionAdd_Table, SIGNAL(triggered()), this, SLOT(slotProjectAddTable()));
 
-
+    // About
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(slotAboutAbout()));
     connect(ui->actionAbout_Qt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 
@@ -133,6 +146,22 @@ void MainWindow::slotOpenProject()
 }
 
 void MainWindow::slotCloseProject()
+{
+
+}
+
+void MainWindow::slotEditUndo()
+{
+    /*QUndoCommand *deleteCommand = new DeleteCommand(diagramScene);
+         undoStack->push(deleteCommand);
+
+    QUndoCommand *addCommand = new AddCommand(DiagramItem::Box, diagramScene);
+         undoStack->push(addCommand);
+
+     undoStack->push(new MoveCommand(movedItem, oldPosition));*/
+}
+
+void MainWindow::slotEditRedo()
 {
 
 }
@@ -203,6 +232,17 @@ void MainWindow::slotEditPaste()
     setDirty(true);
 }
 
+void MainWindow::slotViewCustomZoom()
+{
+    MagnifyDialog dlg;
+    qreal fScale = 1.0; // REWRTIE
+    dlg.setValue( fScale * 100 );
+    if (dlg.exec() == QDialog::Accepted)
+    {
+        qreal zoomValue = (qreal)dlg.value() / 100.0;
+    }
+}
+
 void MainWindow::slotViewShowGrid(bool on)
 {
     if (!m_gridGroup)
@@ -215,6 +255,7 @@ void MainWindow::slotViewShowGrid(bool on)
         for (int x = 0; x <= MaxX; x += GridSize)
         {
             QGraphicsLineItem *item = new QGraphicsLineItem(x, 0, x, MaxY);
+            item->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
             item->setPen(pen);
             item->setZValue(-1000);
             m_gridGroup->addToGroup(item);
@@ -222,10 +263,12 @@ void MainWindow::slotViewShowGrid(bool on)
         for (int y = 0; y <= MaxY; y += GridSize)
         {
             QGraphicsLineItem *item = new QGraphicsLineItem(0, y, MaxX, y);
+            item->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
             item->setPen(pen);
             item->setZValue(-1000);
             m_gridGroup->addToGroup(item);
         }
+        m_gridGroup->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
         m_scene->addItem(m_gridGroup);
     }
     m_gridGroup->setVisible(on);
@@ -258,3 +301,4 @@ void MainWindow::slotAboutAbout()
 {
 
 }
+

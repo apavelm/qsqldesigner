@@ -2,13 +2,17 @@
 #define MAINWINDOW_H
 
 #include <QtCore/QMimeData>
+#include <QtGui/QUndoStack>
+#include <QtGui/QUndoView>
 #include <QtGui/QClipboard>
 #include <QtGui/QCloseEvent>
 #include <QtGui/QGraphicsItemGroup>
 #include <QtGui/QGraphicsScene>
 #include <QtGui/QMainWindow>
 #include <QtGui/QPrinter>
+#include <QtGui/QUndoCommand>
 
+#include "magnifydialog.h"
 #include "widgets/mainview.h"
 
 namespace Ui {
@@ -39,21 +43,25 @@ private:
 
     bool sceneHasItems() const;
 
-    Ui::MainWindow *ui;
+    Ui::MainWindow * ui;
     MainView * m_mainView;
     QPrinter * m_printer;
     QGraphicsScene * m_scene;
     QGraphicsItemGroup * m_gridGroup;
+    QUndoStack * m_undoStack;
 
 private slots:
     void slotNewProject();
     void slotOpenProject();
     void slotCloseProject();
 
-    void slotEditCopy();
+    void slotEditUndo();
+    void slotEditRedo();
     void slotEditCut();
+    void slotEditCopy();
     void slotEditPaste();
 
+    void slotViewCustomZoom();
     void slotViewShowGrid(bool on);
 
     void slotProjectAddTable();

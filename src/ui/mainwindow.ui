@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
+ <author>Pavel Andreev</author>
  <class>MainWindow</class>
  <widget class="QMainWindow" name="MainWindow">
   <property name="geometry">
@@ -42,14 +43,6 @@
     <addaction name="actionAbout"/>
     <addaction name="actionAbout_Qt"/>
    </widget>
-   <widget class="QMenu" name="menuEdit">
-    <property name="title">
-     <string>&amp;Edit</string>
-    </property>
-    <addaction name="actionCut"/>
-    <addaction name="actionCopy"/>
-    <addaction name="actionPaste"/>
-   </widget>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>&amp;File</string>
@@ -59,20 +52,46 @@
     <addaction name="separator"/>
     <addaction name="actionExit"/>
    </widget>
-   <widget class="QMenu" name="menuView">
-    <property name="title">
-     <string>&amp;View</string>
-    </property>
-    <addaction name="actionShow_Grid"/>
-    <addaction name="separator"/>
-    <addaction name="actionZoom_In"/>
-    <addaction name="actionZoom_Out"/>
-   </widget>
    <widget class="QMenu" name="menuProject">
     <property name="title">
      <string>&amp;Project</string>
     </property>
     <addaction name="actionAdd_Table"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="actionUndo"/>
+    <addaction name="actionRedo"/>
+    <addaction name="separator"/>
+    <addaction name="actionCut"/>
+    <addaction name="actionCopy"/>
+    <addaction name="actionPaste"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <widget class="QMenu" name="menuZoom_2">
+     <property name="title">
+      <string>Zoom</string>
+     </property>
+     <addaction name="actionZoom_10"/>
+     <addaction name="actionZoom_20"/>
+     <addaction name="actionZoom_33"/>
+     <addaction name="actionZoom_50"/>
+     <addaction name="actionZoom_75"/>
+     <addaction name="actionZoom_100"/>
+     <addaction name="actionZoom_200"/>
+     <addaction name="separator"/>
+     <addaction name="action_Custom_Zoom"/>
+    </widget>
+    <addaction name="actionZoom_In"/>
+    <addaction name="actionZoom_Out"/>
+    <addaction name="menuZoom_2"/>
+    <addaction name="separator"/>
+    <addaction name="actionShow_Grid"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -221,13 +240,27 @@
    </property>
   </action>
   <action name="actionZoom_In">
+   <property name="icon">
+    <iconset resource="../../resources/main.qrc">
+     <normaloff>:/zoomin</normaloff>:/zoomin</iconset>
+   </property>
    <property name="text">
     <string>Zoom In</string>
    </property>
+   <property name="statusTip">
+    <string>Zoom In working area</string>
+   </property>
   </action>
   <action name="actionZoom_Out">
+   <property name="icon">
+    <iconset resource="../../resources/main.qrc">
+     <normaloff>:/zoomout</normaloff>:/zoomout</iconset>
+   </property>
    <property name="text">
     <string>Zoom Out</string>
+   </property>
+   <property name="statusTip">
+    <string>Zoom Out working area</string>
    </property>
   </action>
   <action name="actionAdd_Table">
@@ -238,8 +271,124 @@
     <string>Add table to project</string>
    </property>
   </action>
+  <action name="actionUndo">
+   <property name="text">
+    <string>Undo</string>
+   </property>
+  </action>
+  <action name="actionRedo">
+   <property name="text">
+    <string>Redo</string>
+   </property>
+  </action>
+  <action name="action10">
+   <property name="text">
+    <string>10%</string>
+   </property>
+  </action>
+  <action name="action25">
+   <property name="text">
+    <string>25%</string>
+   </property>
+  </action>
+  <action name="action33">
+   <property name="text">
+    <string>33%</string>
+   </property>
+  </action>
+  <action name="action50">
+   <property name="text">
+    <string>50%</string>
+   </property>
+  </action>
+  <action name="action75">
+   <property name="text">
+    <string>75%</string>
+   </property>
+  </action>
+  <action name="action100">
+   <property name="text">
+    <string>100%</string>
+   </property>
+  </action>
+  <action name="action200">
+   <property name="text">
+    <string>200%</string>
+   </property>
+  </action>
+  <action name="actionCustom_Zoom">
+   <property name="text">
+    <string>Custom Zoom</string>
+   </property>
+  </action>
+  <action name="actionZoom_10">
+   <property name="text">
+    <string>Zoom 10%</string>
+   </property>
+   <property name="statusTip">
+    <string>Set 10% zoom</string>
+   </property>
+  </action>
+  <action name="actionZoom_20">
+   <property name="text">
+    <string>Zoom 20%</string>
+   </property>
+   <property name="statusTip">
+    <string>Set 20% zoom</string>
+   </property>
+  </action>
+  <action name="actionZoom_33">
+   <property name="text">
+    <string>Zoom 33%</string>
+   </property>
+   <property name="statusTip">
+    <string>Set 33% zoom</string>
+   </property>
+  </action>
+  <action name="actionZoom_50">
+   <property name="text">
+    <string>Zoom 50%</string>
+   </property>
+   <property name="statusTip">
+    <string>Set 50% zoom</string>
+   </property>
+  </action>
+  <action name="actionZoom_75">
+   <property name="text">
+    <string>Zoom 75%</string>
+   </property>
+   <property name="statusTip">
+    <string>Set 75% zoom</string>
+   </property>
+  </action>
+  <action name="actionZoom_100">
+   <property name="text">
+    <string>Zoom 100%</string>
+   </property>
+   <property name="statusTip">
+    <string>Set original zoom</string>
+   </property>
+  </action>
+  <action name="actionZoom_200">
+   <property name="text">
+    <string>Zoom 200%</string>
+   </property>
+   <property name="statusTip">
+    <string>Set 200% zoom</string>
+   </property>
+  </action>
+  <action name="action_Custom_Zoom">
+   <property name="text">
+    <string>Custom Zoom</string>
+   </property>
+   <property name="statusTip">
+    <string>Choose Zoom...</string>
+   </property>
+  </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="../../resources/main.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>actionExit</sender>

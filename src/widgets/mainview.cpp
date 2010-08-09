@@ -7,10 +7,19 @@ MainView::MainView(QWidget * parent) : QGraphicsView(parent)
     setDragMode(QGraphicsView::RubberBandDrag);
     setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
     setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
+    setCacheMode(QGraphicsView::CacheBackground);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+
+    m_cornerButton = new CornerZoomWidget(this);
+    m_cornerButton->setPixmap(QPixmap(":/zoom"));
+    m_cornerButton->setPixmapSize(verticalScrollBar()->sizeHint().width());
+    connect(m_cornerButton, SIGNAL(clicked()), this, SIGNAL(cornerWidgetClicked()));
+    setCornerWidget(m_cornerButton);
 }
 
 MainView::~MainView()
 {
+    delete m_cornerButton;
 }
 
 void MainView::scaleBy(double factor)
