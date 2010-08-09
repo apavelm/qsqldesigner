@@ -56,12 +56,16 @@ private slots:
     void slotNewProject();
     void slotOpenProject();
     void slotCloseProject();
+    void slotSave();
+    void slotSaveAs();
+    void slotPrint();
 
     void slotEditUndo();
     void slotEditRedo();
     void slotEditCut();
     void slotEditCopy();
     void slotEditPaste();
+    void slotEditSelectAll();
 
     void slotViewCustomZoom();
     void slotViewShowGrid(bool on);
