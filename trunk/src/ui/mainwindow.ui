@@ -281,46 +281,6 @@
     <string>Redo</string>
    </property>
   </action>
-  <action name="action10">
-   <property name="text">
-    <string>10%</string>
-   </property>
-  </action>
-  <action name="action25">
-   <property name="text">
-    <string>25%</string>
-   </property>
-  </action>
-  <action name="action33">
-   <property name="text">
-    <string>33%</string>
-   </property>
-  </action>
-  <action name="action50">
-   <property name="text">
-    <string>50%</string>
-   </property>
-  </action>
-  <action name="action75">
-   <property name="text">
-    <string>75%</string>
-   </property>
-  </action>
-  <action name="action100">
-   <property name="text">
-    <string>100%</string>
-   </property>
-  </action>
-  <action name="action200">
-   <property name="text">
-    <string>200%</string>
-   </property>
-  </action>
-  <action name="actionCustom_Zoom">
-   <property name="text">
-    <string>Custom Zoom</string>
-   </property>
-  </action>
   <action name="actionZoom_10">
    <property name="text">
     <string>Zoom 10%</string>

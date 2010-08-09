@@ -22,9 +22,31 @@ MainView::~MainView()
     delete m_cornerButton;
 }
 
-void MainView::scaleBy(double factor)
+void MainView::scaleBy(qreal scaleFactor)
 {
-    scale(factor, factor);
+    qreal curScaleFactor = transform().m11();
+    if (((curScaleFactor == minScale) && (scaleFactor < 1.0)) ||
+        ((curScaleFactor == maxScale) && (scaleFactor > 1.0))) return;
+
+    qreal sc = scaleFactor;
+
+    if ((curScaleFactor * sc < minScale)&&(sc < 1.0))
+    {
+        sc = minScale / curScaleFactor;
+    }
+    else
+        if ((curScaleFactor * sc > maxScale)&&(sc > 1.0))
+        {
+        sc = maxScale / curScaleFactor;
+    }
+    scale(sc, sc);
+}
+
+void MainView::setZoom(int percentZoom)
+{
+    qreal targetScale = (qreal)percentZoom / 100.0;
+    qreal scaleFactor = targetScale / transform().m11();
+    scaleBy(scaleFactor);
 }
 
 void MainView::wheelEvent(QWheelEvent *event)

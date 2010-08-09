@@ -11,6 +11,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->setupUi(this);
     m_printer = new QPrinter(QPrinter::HighResolution);
     m_undoStack = new QUndoStack();
+    m_zoomSignalMapper = new QSignalMapper(this);
 
     createSceneAndView();
     createMenus();
@@ -42,6 +43,7 @@ MainWindow::~MainWindow()
     delete m_printer;
     delete m_gridGroup;
     delete m_mainView;
+    delete m_zoomSignalMapper;
     delete ui;
 }
 
@@ -107,6 +109,21 @@ void MainWindow::createActions()
     connect(ui->actionZoom_Out, SIGNAL(triggered()), m_mainView, SLOT(zoomOut()));
     connect(ui->action_Custom_Zoom, SIGNAL(triggered()), this, SLOT(slotViewCustomZoom()));
     connect(m_mainView, SIGNAL(cornerWidgetClicked()), this, SLOT(slotViewCustomZoom()));
+    connect(ui->actionZoom_10, SIGNAL(triggered()), m_zoomSignalMapper, SLOT(map()));
+    m_zoomSignalMapper->setMapping(ui->actionZoom_10, 10);
+    connect(ui->actionZoom_20, SIGNAL(triggered()), m_zoomSignalMapper, SLOT(map()));
+    m_zoomSignalMapper->setMapping(ui->actionZoom_20, 20);
+    connect(ui->actionZoom_33, SIGNAL(triggered()), m_zoomSignalMapper, SLOT(map()));
+    m_zoomSignalMapper->setMapping(ui->actionZoom_33, 33);
+    connect(ui->actionZoom_50, SIGNAL(triggered()), m_zoomSignalMapper, SLOT(map()));
+    m_zoomSignalMapper->setMapping(ui->actionZoom_50, 50);
+    connect(ui->actionZoom_75, SIGNAL(triggered()), m_zoomSignalMapper, SLOT(map()));
+    m_zoomSignalMapper->setMapping(ui->actionZoom_75, 75);
+    connect(ui->actionZoom_100, SIGNAL(triggered()), m_zoomSignalMapper, SLOT(map()));
+    m_zoomSignalMapper->setMapping(ui->actionZoom_100, 100);
+    connect(ui->actionZoom_200, SIGNAL(triggered()), m_zoomSignalMapper, SLOT(map()));
+    m_zoomSignalMapper->setMapping(ui->actionZoom_200, 200);
+    connect(m_zoomSignalMapper, SIGNAL(mapped(int)), m_mainView, SLOT(setZoom(int)));
 
     // Project
     connect(ui->actionAdd_Table, SIGNAL(triggered()), this, SLOT(slotProjectAddTable()));
@@ -235,11 +252,10 @@ void MainWindow::slotEditPaste()
 void MainWindow::slotViewCustomZoom()
 {
     MagnifyDialog dlg;
-    qreal fScale = 1.0; // REWRTIE
-    dlg.setValue( fScale * 100 );
+    dlg.setValue( m_mainView->curScale() * 100 );
     if (dlg.exec() == QDialog::Accepted)
     {
-        qreal zoomValue = (qreal)dlg.value() / 100.0;
+        m_mainView->setZoom(dlg.value());
     }
 }
 

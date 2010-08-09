@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QtCore/QMimeData>
+#include <QtCore/QSignalMapper>
 #include <QtGui/QUndoStack>
 #include <QtGui/QUndoView>
 #include <QtGui/QClipboard>
@@ -49,6 +50,7 @@ private:
     QGraphicsScene * m_scene;
     QGraphicsItemGroup * m_gridGroup;
     QUndoStack * m_undoStack;
+    QSignalMapper * m_zoomSignalMapper;
 
 private slots:
     void slotNewProject();
