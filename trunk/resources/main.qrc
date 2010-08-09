@@ -1,5 +1,9 @@
 <RCC>
     <qresource prefix="/">
         <file alias="splash">images/splash.png</file>
+        <file alias="zoomin">images/zoom-in.png</file>
+        <file alias="zoomout">images/zoom-out.png</file>
+        <file alias="key">images/key.png</file>
+        <file alias="zoom">images/zoom.png</file>
     </qresource>
 </RCC>
