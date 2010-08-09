@@ -12,19 +12,25 @@ class MainView : public QGraphicsView
 {
     Q_OBJECT
 public:
+    static const qreal minScale = 0.1;
+    static const qreal maxScale = 5.0;
+
     MainView(QWidget * parent = 0);
     ~MainView();
 
+    inline qreal curScale() const {return transform().m11();}
 public slots:
     void zoomIn();
     void zoomOut();
+    void setZoom(int);
 
 protected:
     void wheelEvent(QWheelEvent * event);
 
 private:
     CornerZoomWidget * m_cornerButton;
-    void scaleBy(double factor);
+    void scaleBy(qreal scaleFactor);
+
 signals:
     void cornerWidgetClicked();
 };
