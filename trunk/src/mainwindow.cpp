@@ -78,16 +78,14 @@ void MainWindow::createActions()
     ui->actionOpen_Project->setShortcuts(QKeySequence::Open);
     connect(ui->actionOpen_Project, SIGNAL(triggered()), this, SLOT(slotOpenProject()));
 
-   /*saveAct = new QAction(QIcon(":/images/save.png"), tr("&Save"), this);
-    saveAct->setShortcuts(QKeySequence::Save);
-    saveAct->setStatusTip(tr("Save the document to disk"));
-    connect(saveAct, SIGNAL(triggered()), this, SLOT(save()));
+    ui->actionSave->setShortcuts(QKeySequence::Save);
+    connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(slotSave()));
+    ui->actionSave_As->setShortcuts(QKeySequence::SaveAs);
+    connect(ui->actionSave_As, SIGNAL(triggered()), this, SLOT(slotSaveAs()));
+    ui->actionPrint->setShortcuts(QKeySequence::Print);
+    connect(ui->actionPrint, SIGNAL(triggered()), this, SLOT(slotPrint()));
 
-    saveAsAct = new QAction(tr("Save &As..."), this);
-    saveAsAct->setShortcuts(QKeySequence::SaveAs);
-    saveAsAct->setStatusTip(tr("Save the document under a new name"));
-    connect(saveAsAct, SIGNAL(triggered()), this, SLOT(saveAs()));
-*/
+    ui->actionExit->setShortcut(QKeySequence::Quit);
 
     // Edit
     ui->actionUndo->setShortcuts(QKeySequence::Undo);
@@ -100,6 +98,8 @@ void MainWindow::createActions()
     connect(ui->actionCopy, SIGNAL(triggered()), this, SLOT(slotEditCopy()));
     ui->actionPaste->setShortcuts(QKeySequence::Paste);
     connect(ui->actionPaste, SIGNAL(triggered()), this, SLOT(slotEditPaste()));
+    ui->actionSelect_All->setShortcuts(QKeySequence::SelectAll);
+    connect(ui->actionSelect_All, SIGNAL(triggered()), this, SLOT(slotEditSelectAll()));
 
     // View
     connect(ui->actionShow_Grid, SIGNAL(toggled(bool)), this, SLOT(slotViewShowGrid(bool)));
@@ -163,6 +163,21 @@ void MainWindow::slotOpenProject()
 }
 
 void MainWindow::slotCloseProject()
+{
+
+}
+
+void MainWindow::slotSave()
+{
+
+}
+
+void MainWindow::slotSaveAs()
+{
+
+}
+
+void MainWindow::slotPrint()
 {
 
 }
@@ -247,6 +262,11 @@ void MainWindow::slotEditPaste()
         return;
         */
     setDirty(true);
+}
+
+void MainWindow::slotEditSelectAll()
+{
+
 }
 
 void MainWindow::slotViewCustomZoom()
