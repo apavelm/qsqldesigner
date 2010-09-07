@@ -1,0 +1,39 @@
+# -------------------------------------------------
+# Project created by QtCreator 2009-05-15T22:05:17
+# -------------------------------------------------
+QT += sql \
+	xml \
+	svg
+TARGET = bin/qsqldesigner
+DESTDIR = out
+TEMPLATE = app
+SOURCES += src/main.cpp \
+    src/mainwindow.cpp \
+	src/columndialog.cpp \
+	src/magnifydialog.cpp \
+	src/tabledialog.cpp \
+	src/commands.cpp \
+	src/widgets/mainview.cpp \
+	src/widgets/tablewidget.cpp \
+	src/widgets/cornerzoomwidget.cpp \
+	src/models/column.cpp \
+	src/models/datatypes.cpp \
+	src/models/modelmanager.cpp \
+	src/models/table.cpp
+HEADERS += src/mainwindow.h \
+	src/columndialog.h \
+	src/magnifydialog.h \
+	src/tabledialog.h \
+	src/commands.h \
+	src/widgets/mainview.h \
+	src/widgets/tablewidget.h \
+	src/widgets/cornerzoomwidget.h \
+	src/models/column.h \
+	src/models/datatypes.h \
+	src/models/modelmanager.h \
+	src/models/table.h
+FORMS += src/ui/mainwindow.ui \
+    src/ui/columndialog.ui \
+	src/ui/magnifydialog.ui \
+	src/ui/tabledialog.ui
+RESOURCES += resources/main.qrc
