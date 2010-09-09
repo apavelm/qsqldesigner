@@ -3,6 +3,8 @@
 
 #include <QDialog>
 
+#include "models/column.h"
+
 namespace Ui {
     class ColumnDialog;
 }
@@ -12,6 +14,8 @@ class ColumnDialog : public QDialog {
 public:
     ColumnDialog(QWidget *parent = 0);
     ~ColumnDialog();
+
+    ColumnModel newColumn() const;
 
 protected:
     void changeEvent(QEvent *e);

@@ -24,3 +24,16 @@ void ColumnDialog::changeEvent(QEvent *e)
         break;
     }
 }
+
+ColumnModel ColumnDialog::newColumn() const
+{
+    ColumnModel c;
+    c.columnName = ui->edtName->text();
+    c.defaultValue = ui->edtDefault->text();
+    //c.dataType
+    c.columnComment = ui->txtComment->toPlainText();
+    c.isNotNull = ui->chkNotNull->checkState() && Qt::Checked;
+    c.isPrimaryKey = ui->chkPrimaryKey->checkState() && Qt::Checked;
+    c.isUnique = ui->chkUnique->checkState() && Qt::Checked;
+    return c;
+}

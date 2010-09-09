@@ -13,6 +13,6 @@ struct DataType
 
 typedef QList<DataType> DataTypes;
 
-static DataTypes loadDataTypes();
+//static DataTypes loadDataTypes();
 
 #endif //DATATYPES_H

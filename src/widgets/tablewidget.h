@@ -1,6 +1,7 @@
 #ifndef TABLEWIDGET_H
 #define TABLEWIDGET_H
 
+#include <QtCore/QScopedPointer>
 #include <QtGui/QPainter>
 #include <QtGui/QPainterPath>
 #include <QtGui/QGraphicsObject>
@@ -33,7 +34,7 @@ protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 private:
     Q_DISABLE_COPY ( TableWidget )
-    TableModel * m_model;
+    QScopedPointer<TableModel> m_model;
 
     void paintSelectionOutline(QPainter *painter);
 };
