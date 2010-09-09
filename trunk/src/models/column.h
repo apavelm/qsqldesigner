@@ -5,14 +5,22 @@
 
 #include "datatypes.h"
 
-struct ColumnModel
+class ColumnModel
 {
+public:
+    bool isValid() const {return true;}
+    QString getUMLColumnPrefix() const;
+    QString getUMLColumnDescription() const;
+
     QString  columnName;
     QString  columnComment;
     DataType dataType;
     QString  defaultValue;
     bool     isPrimaryKey;
     bool     isNotNull;
+    bool     isUnique;
+private:
+    bool stubIsFK() const {return false;}
 };
 
 #endif //COLUMN_H

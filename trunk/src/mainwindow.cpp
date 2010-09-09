@@ -316,7 +316,7 @@ void MainWindow::slotProjectAddTable()
     if (dlg.exec() == QDialog::Accepted)
     {
         // add Table
-        TableWidget * w = new TableWidget(m_scene, 0, new TableModel("test_table"));
+        new TableWidget(m_scene, 0, dlg.table());
     }
 }
 
