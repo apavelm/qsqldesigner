@@ -14,12 +14,12 @@ public:
     inline const QString& name() const {return m_name;}
     void setName(const QString& name);
 
-    inline QList<ColumnModel> columns() const {return m_columns;}
-    void setColumns(const QList<ColumnModel>& newColumns);
-    void addColumn(const ColumnModel c);
+    inline const ColumnList& columns() const {return m_columns;}
+    void setColumns(const ColumnList& newColumns);
+    void addColumn(const ColumnModel& c);
 
 private:
-    QList<ColumnModel> m_columns;
+    ColumnList m_columns;
     QString m_name;
 };
 

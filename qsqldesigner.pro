@@ -19,7 +19,8 @@ SOURCES += src/main.cpp \
 	src/models/column.cpp \
 	src/models/datatypes.cpp \
 	src/models/modelmanager.cpp \
-	src/models/table.cpp
+	src/models/table.cpp \
+    src/settingsmanager.cpp
 HEADERS += src/mainwindow.h \
 	src/columndialog.h \
 	src/magnifydialog.h \
@@ -31,7 +32,9 @@ HEADERS += src/mainwindow.h \
 	src/models/column.h \
 	src/models/datatypes.h \
 	src/models/modelmanager.h \
-	src/models/table.h
+	src/models/table.h \
+    src/settingsmanager.h \
+    src/singleton.h
 FORMS += src/ui/mainwindow.ui \
     src/ui/columndialog.ui \
 	src/ui/magnifydialog.ui \

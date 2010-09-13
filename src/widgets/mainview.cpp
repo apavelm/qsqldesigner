@@ -1,5 +1,5 @@
 #include "mainview.h"
-
+#include "../settingsmanager.h"
 #include <cmath>
 
 MainView::MainView(QWidget * parent) : QGraphicsView(parent)
@@ -20,6 +20,18 @@ MainView::MainView(QWidget * parent) : QGraphicsView(parent)
 MainView::~MainView()
 {
     delete m_cornerButton;
+}
+
+void MainView::drawBackground(QPainter *painter, const QRectF &rect)
+{
+    painter->save();
+    QLinearGradient backgroundGradient(rect.left(),rect.top(),rect.left(),rect.bottom());
+    backgroundGradient.setColorAt(0, SM->paperColor());
+    backgroundGradient.setColorAt(1, QColor(Qt::white));
+    painter->setPen(QPen(Qt::NoPen));
+    painter->setBrush(QBrush(backgroundGradient));
+    painter->drawRect(rect);
+    painter->restore();
 }
 
 void MainView::scaleBy(qreal scaleFactor)

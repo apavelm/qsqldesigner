@@ -30,6 +30,7 @@ protected:
 private:
     CornerZoomWidget * m_cornerButton;
     void scaleBy(qreal scaleFactor);
+    void drawBackground(QPainter *painter, const QRectF &rect);
 
 signals:
     void cornerWidgetClicked();
