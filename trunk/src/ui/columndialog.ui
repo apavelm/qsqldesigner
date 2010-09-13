@@ -7,17 +7,17 @@
     <x>0</x>
     <y>0</y>
     <width>386</width>
-    <height>299</height>
+    <height>242</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Add Column</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QGridLayout" name="gridLayout_2">
    <item row="0" column="0">
-    <layout class="QVBoxLayout" name="verticalLayout">
+    <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
-      <layout class="QFormLayout" name="formLayout">
+      <layout class="QFormLayout" name="formLayout_2">
        <item row="0" column="0">
         <widget class="QLabel" name="lblName">
          <property name="text">
@@ -45,56 +45,82 @@
          </property>
         </widget>
        </item>
-       <item row="3" column="0">
+       <item row="2" column="0">
         <widget class="QLabel" name="lblComment">
          <property name="text">
           <string>Comment</string>
          </property>
         </widget>
        </item>
-       <item row="3" column="1">
-        <widget class="QPlainTextEdit" name="txtComment">
-         <property name="plainText">
-          <string notr="true"/>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="lblDefault">
-         <property name="text">
-          <string>Deafult Value</string>
-         </property>
-        </widget>
-       </item>
        <item row="2" column="1">
-        <widget class="QLineEdit" name="edtDefault"/>
+        <widget class="QLineEdit" name="edtComment"/>
        </item>
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="QCheckBox" name="chkPrimaryKey">
-         <property name="text">
-          <string>Primary Key</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="chkNotNull">
-         <property name="text">
-          <string>Not Null</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="chkUnique">
-         <property name="text">
-          <string>Unique</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      <widget class="QGroupBox" name="grpConstraints">
+       <property name="title">
+        <string>Constraints</string>
+       </property>
+       <property name="flat">
+        <bool>false</bool>
+       </property>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <layout class="QFormLayout" name="formLayout">
+            <item row="0" column="0">
+             <widget class="QLabel" name="lblDefault">
+              <property name="text">
+               <string>Deafult Value</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="edtDefault"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="lblCheck">
+              <property name="text">
+               <string>Check Constraint</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="edtCheck"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QCheckBox" name="chkPrimaryKey">
+              <property name="text">
+               <string>Primary Key</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="chkNotNull">
+              <property name="text">
+               <string>Not Null</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="chkUnique">
+              <property name="text">
+               <string>Unique</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
      </item>
      <item>
       <widget class="QDialogButtonBox" name="buttonBox">

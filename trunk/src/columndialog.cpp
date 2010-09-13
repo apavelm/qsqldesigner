@@ -1,9 +1,7 @@
 #include "columndialog.h"
 #include "ui_columndialog.h"
 
-ColumnDialog::ColumnDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::ColumnDialog)
+ColumnDialog::ColumnDialog(QWidget *parent) :  QDialog(parent),  ui(new Ui::ColumnDialog)
 {
     ui->setupUi(this);
 }
@@ -28,12 +26,31 @@ void ColumnDialog::changeEvent(QEvent *e)
 ColumnModel ColumnDialog::newColumn() const
 {
     ColumnModel c;
-    c.columnName = ui->edtName->text();
-    c.defaultValue = ui->edtDefault->text();
+
+    c.setName(ui->edtName->text().trimmed());
+    c.setComment(ui->edtComment->text().trimmed());
     //c.dataType
-    c.columnComment = ui->txtComment->toPlainText();
-    c.isNotNull = ui->chkNotNull->checkState() && Qt::Checked;
-    c.isPrimaryKey = ui->chkPrimaryKey->checkState() && Qt::Checked;
-    c.isUnique = ui->chkUnique->checkState() && Qt::Checked;
+
+    if (!ui->edtDefault->text().trimmed().isEmpty())
+    {
+        c.addConstraint(new ColumnConstraint("", ColumnConstraint::CT_Default, ui->edtDefault->text().trimmed()));
+    }
+    if (!ui->edtCheck->text().trimmed().isEmpty())
+    {
+        c.addConstraint(new ColumnConstraint("", ColumnConstraint::CT_Check, ui->edtCheck->text().trimmed()));
+    }
+    if (ui->chkPrimaryKey->checkState() && Qt::Checked)
+    {
+        c.addConstraint(new ColumnConstraint("", ColumnConstraint::CT_PrimaryKey));
+    }
+    if (ui->chkNotNull->checkState() && Qt::Checked)
+    {
+        c.addConstraint(new ColumnConstraint("", ColumnConstraint::CT_NotNull));
+    }
+    if (ui->chkUnique->checkState() && Qt::Checked)
+    {
+        c.addConstraint(new ColumnConstraint("", ColumnConstraint::CT_Unique));
+    }
+
     return c;
 }

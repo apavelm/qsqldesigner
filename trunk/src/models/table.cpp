@@ -11,13 +11,12 @@ void TableModel::setName(const QString& name)
         m_name = name;
 };
 
-void TableModel::setColumns(const QList<ColumnModel>& newColumns)
+void TableModel::setColumns(const ColumnList& newColumns)
 {
     m_columns = newColumns;
 }
 
-void TableModel::addColumn(const ColumnModel c)
+void TableModel::addColumn(const ColumnModel& c)
 {
-    if (c.isValid())
-        m_columns << c;
+    m_columns.addColumn(c);
 }
