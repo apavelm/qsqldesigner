@@ -7,10 +7,34 @@ ColumnConstraint::ColumnConstraint(const QString name, const ConstraintType type
     m_data = data;
 }
 
+ColumnConstraint::ColumnConstraint(const ColumnConstraint& old)
+{
+    m_name = old.name();
+    m_type = old.type();
+    if (m_data.isValid())
+    {
+        m_data = old.data();
+    }
+    else
+    {
+        m_data = QVariant();
+    }
+}
+
+ColumnConstraint::~ColumnConstraint()
+{
+    m_data.clear();
+}
+
 void ColumnConstraint::setName(const QString& newName)
 {
     // TODO: insert name validation check
     m_name = newName;
+}
+
+void ColumnConstraint::setType(const ConstraintType& newType)
+{
+    m_type = newType;
 }
 
 void ColumnConstraint::setData(const QVariant& newData)
@@ -62,6 +86,22 @@ void ColumnConstraints::deleteConstraint(int index)
     removeAt(index);
 }
 
+void ColumnConstraints::constraint(const ColumnConstraint::ConstraintType type, ColumnConstraint& result) const
+{
+    if (m_types.testFlag(type))
+    {
+        foreach (const ColumnConstraint& c, *this)
+        {
+            if (c.type() == type)
+            {
+                result = c;
+            }
+        }
+    }
+    else
+        result.setType(ColumnConstraint::CT_Unknown);
+}
+
 // ColumnModel
 void ColumnModel::setName(const QString& name)
 {
@@ -73,28 +113,24 @@ void ColumnModel::setComment(const QString& comment)
     m_columnComment = comment;
 }
 
-#include <QDebug>
 const QString ColumnModel::getUMLColumnPrefix() const
 {
-    qDebug() << m_columnName;
-    qDebug() << m_constraints.types();
-
     QString rslt = "";
-    if (isNotNull())
+    if (isConstraintType(ColumnConstraint::CT_NotNull))
     {
         rslt += "*";
     }
-    if (isPrimaryKey() && isForeignKey())
+    if (isConstraintType(ColumnConstraint::CT_PrimaryKey) && isConstraintType(ColumnConstraint::CT_ForeignKey))
     {
         rslt+="pfK";
     }
     else
     {
-        if (isPrimaryKey())
+        if (isConstraintType(ColumnConstraint::CT_PrimaryKey))
         {
             rslt += "PK";
         }
-        if (isForeignKey())
+        if (isConstraintType(ColumnConstraint::CT_ForeignKey))
         {
             rslt += "FK";
         }
@@ -112,21 +148,29 @@ const QString ColumnModel::getUMLColumnDescription() const
 
 ColumnList::ColumnList() : QList<ColumnModel>()
 {
-    for (int i = 0; i < ColumnConstraint::CT_Last; i++)
-        m_constraintCounters[i] = 0;
+    qFill(&m_constraintCounters[0], &m_constraintCounters[ColumnConstraint::CT_Last], 0 );
 }
 
 void ColumnList::addColumn(const ColumnModel& column)
 {
-    if (column.isPrimaryKey())
-        m_constraintCounters[ColumnConstraint::CT_PrimaryKey]++;
-    if (column.isNotNull())
-        m_constraintCounters[ColumnConstraint::CT_NotNull]++;
-    if (column.isUnique())
-        m_constraintCounters[ColumnConstraint::CT_Unique]++;
-    if (column.isCheckConstraint())
-        m_constraintCounters[ColumnConstraint::CT_Check]++;
-    if (column.isForeignKey())
-        m_constraintCounters[ColumnConstraint::CT_ForeignKey]++;
+    const ColumnConstraints& list = column.constraints();
+    foreach (const ColumnConstraint& c, list)
+    {
+        m_constraintCounters[c.type()]++;
+    }
     append(column);
+}
+
+void ColumnList::getColumnsForConstraintType(const ColumnConstraint::ConstraintType type, QList<ColumnModel>& result) const
+{
+    result.clear();
+    if (m_constraintCounters[type] > 0)
+    {
+        const ColumnList& list = *this;
+        foreach (const ColumnModel& c, list)
+        {
+            if (c.isConstraintType(type))
+                result.append(c);
+        }
+    }
 }

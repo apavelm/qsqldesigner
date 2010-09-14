@@ -61,6 +61,12 @@ void MainView::setZoom(int percentZoom)
     scaleBy(scaleFactor);
 }
 
+void MainView::scrollContentsBy(int dx, int dy)
+{
+    resetCachedContent();
+    QGraphicsView::scrollContentsBy(dx, dy);
+}
+
 void MainView::wheelEvent(QWheelEvent *event)
 {
    if (event->modifiers() == Qt::ControlModifier)
