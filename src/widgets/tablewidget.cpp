@@ -15,8 +15,8 @@ TableWidget::TableWidget(QGraphicsScene *scene, QGraphicsItem  *parent, TableMod
 
 QRectF TableWidget::boundingRect() const
 {
-    recalcMinimumSize();
-    return QRectF(-PenWidth/2, -PenWidth/2, m_minWidth + PenWidth, m_minHeight + PenWidth);
+    QSizeF minSize = recalcMinimumSize();
+    return QRectF(-PenWidth/2, -PenWidth/2, minSize.width() + PenWidth, minSize.height() + PenWidth);
 }
 
 void TableWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -191,10 +191,10 @@ void TableWidget::setName(const QString& name)
     m_model->setName(name);
 }
 
-void TableWidget::recalcMinimumSize()
+QSizeF TableWidget::recalcMinimumSize() const
 {
-    m_minWidth = 50.0;
-    m_minHeight = 20.0;
+    qreal m_minWidth = 50.0;
+    qreal m_minHeight = 20.0;
 
     // calculate table name width
     QFont font(SM->mainFont());
@@ -258,6 +258,8 @@ void TableWidget::recalcMinimumSize()
             }
         }
     }
+
+    return QSizeF(m_minWidth, m_minHeight);
 }
 
 QVariant TableWidget::itemChange(GraphicsItemChange change, const QVariant &value)
