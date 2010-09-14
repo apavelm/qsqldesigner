@@ -31,6 +31,7 @@ private:
     CornerZoomWidget * m_cornerButton;
     void scaleBy(qreal scaleFactor);
     void drawBackground(QPainter *painter, const QRectF &rect);
+    void scrollContentsBy(int dx, int dy);
 
 signals:
     void cornerWidgetClicked();

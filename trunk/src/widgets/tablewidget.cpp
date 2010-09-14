@@ -15,42 +15,8 @@ TableWidget::TableWidget(QGraphicsScene *scene, QGraphicsItem  *parent, TableMod
 
 QRectF TableWidget::boundingRect() const
 {
-    qreal minX = 50.0;
-    qreal minY = 20.0;
-
-    // calculate table name width
-    QFont font(SM->mainFont());
-    font.setBold(true);
-    QFontMetrics metrics(font);
-    const qreal fLineHeight = metrics.boundingRect("WUT").height();
-    const qreal fSmallLineHeight = fLineHeight * 0.6;
-    const qreal fLineOffset = fLineHeight / 6;
-    minX  = qMax(metrics.boundingRect(name()).width() + (1 + PenWidth) * 4, minX);
-    minY = qMax(fLineHeight + (1 + PenWidth) * 4, minY);
-
-    // calculate width depends on columns amount width and height
-    if (m_model->columns().count() > 0)
-    {
-        minY += fSmallLineHeight + fLineOffset * 2;
-        foreach (ColumnModel c, m_model->columns())
-        {
-            minX = qMax((qreal)metrics.boundingRect(c.getUMLColumnDescription()).width() + fColumnPrefixWidth, minX);
-            minY += fLineHeight + fLineOffset;
-        }
-    }
-
-    // calculate width depends on constraints amount width and height
-    if (m_model->columns().getPrimaryKeyAmount() > 0)
-    {
-        minY += fSmallLineHeight + fLineOffset * 2;
-        //foreach (ColumnModel c, m_model->columns())
-        //{
-           // minX = qMax((qreal)metrics.boundingRect(c.getUMLColumnDescription()).width() + fColumnPrefixWidth, minX);
-           // minY += fLineHeight + fLineOffset;
-        //}
-    }
-
-    return QRectF(-PenWidth/2, -PenWidth/2, minX + PenWidth, minY + PenWidth);
+    recalcMinimumSize();
+    return QRectF(-PenWidth/2, -PenWidth/2, m_minWidth + PenWidth, m_minHeight + PenWidth);
 }
 
 void TableWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -129,7 +95,7 @@ void TableWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
             painter->setFont(fontNormal);
             painter->drawText(QRect(innerBoundingRect.left() + PenWidth, fCurrentYPos, fColumnPrefixWidth, fLineHeight), Qt::AlignVCenter, c.getUMLColumnPrefix());
 
-            if (c.isUnique())
+            if (c.isConstraintType(ColumnConstraint::CT_Unique))
             {
                 painter->setFont(fontUnderline);
             }
@@ -138,13 +104,35 @@ void TableWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
             fCurrentYPos += fLineHeight + fLineOffset; // set fCurrentYPos to new value
         }
 
-        // Primary keys section
-        if (m_model->columns().getPrimaryKeyAmount() > 0)
+        int constraintTypeCounters[ColumnConstraint::CT_Last];
+        qFill(&constraintTypeCounters[0], &constraintTypeCounters[ColumnConstraint::CT_Last], 0 );
+        constraintTypeCounters[ColumnConstraint::CT_PrimaryKey] = m_model->columns().getAmountForType(ColumnConstraint::CT_PrimaryKey);
+        constraintTypeCounters[ColumnConstraint::CT_Unique] = m_model->columns().getAmountForType(ColumnConstraint::CT_Unique);
+        constraintTypeCounters[ColumnConstraint::CT_ForeignKey] = m_model->columns().getAmountForType(ColumnConstraint::CT_ForeignKey);
+        constraintTypeCounters[ColumnConstraint::CT_Default] = m_model->columns().getAmountForType(ColumnConstraint::CT_Default);
+        constraintTypeCounters[ColumnConstraint::CT_NotNull] = m_model->columns().getAmountForType(ColumnConstraint::CT_NotNull);
+        constraintTypeCounters[ColumnConstraint::CT_Check] = m_model->columns().getAmountForType(ColumnConstraint::CT_Check);
+
+        bool bHasConstraints = false;
+        for (int i = 0; i < ColumnConstraint::CT_Last; i++)
+        {
+            if (constraintTypeCounters[i] > 0)
+            {
+                bHasConstraints = true;
+                break;
+            }
+        }
+
+        if (bHasConstraints)
         {
             painter->setPen(penBlackDouble);
             painter->drawLine(innerBoundingRect.left(), fCurrentYPos, innerBoundingRect.width(), fCurrentYPos);
             fCurrentYPos += fLineOffset + penBlackDouble.widthF(); // set fCurrentYPos to new value
+        }
 
+        // Primary keys section
+        if (constraintTypeCounters[ColumnConstraint::CT_PrimaryKey] > 0)
+        {
             // draw backward gradient
             painter->setBrush(brushBackward);
             painter->setPen(penGray);
@@ -154,14 +142,22 @@ void TableWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
             painter->setFont(smallFont);
             painter->drawText(columnTitleRect, Qt::AlignVCenter | Qt::TextSingleLine | Qt::TextDontClip ,"  " + tr("«PK»"));
             fCurrentYPos += fSmallLineHeight + 2 * PenWidth + fLineOffset; // set fCurrentYPos to new value
-            //foreach constraint PK
-            //{
-            // painter->setFont(fontNormal);
-            // painter->setPen(penBlack);
-            // painter->drawText(QRect(innerBoundingRect.left() + PenWidth, fCurrentYPos, fColumnPrefixWidth, fLineHeight), Qt::AlignVCenter, "+");
-            // painter->drawText(QRect(innerBoundingRect.left() + fColumnPrefixWidth, fCurrentYPos, innerBoundingRect.width() - fColumnPrefixWidth, fLineHeight), Qt::AlignVCenter | Qt::TextSingleLine | Qt::TextDontClip, c.getUMLColumnDescription());
-            //
-            //}
+            QList<ColumnModel> lstPrimaryKeys;
+            m_model->columns().getColumnsForConstraintType(ColumnConstraint::CT_PrimaryKey, lstPrimaryKeys);
+            foreach (const ColumnModel& c, lstPrimaryKeys)
+            {
+                ColumnConstraint cn;
+                c.constraints().constraint(ColumnConstraint::CT_PrimaryKey, cn);
+                if (cn.type() != ColumnConstraint::CT_Unknown)
+                {
+                    QString sConstraintName = cn.getUMLConstraintString();
+                    painter->setFont(fontNormal);
+                    painter->setPen(penBlack);
+                    painter->drawText(QRect(innerBoundingRect.left() + PenWidth, fCurrentYPos, fColumnPrefixWidth, fLineHeight), Qt::AlignVCenter, "+");
+                    painter->drawText(QRect(innerBoundingRect.left() + fColumnPrefixWidth, fCurrentYPos, innerBoundingRect.width() - fColumnPrefixWidth, fLineHeight), Qt::AlignVCenter | Qt::TextSingleLine | Qt::TextDontClip, sConstraintName);
+                    fCurrentYPos += fLineHeight + fLineOffset; // set fCurrentYPos to new value
+                }
+            }
         }
     }
 
@@ -193,6 +189,75 @@ QPainterPath TableWidget::shape() const
 void TableWidget::setName(const QString& name)
 {
     m_model->setName(name);
+}
+
+void TableWidget::recalcMinimumSize()
+{
+    m_minWidth = 50.0;
+    m_minHeight = 20.0;
+
+    // calculate table name width
+    QFont font(SM->mainFont());
+    font.setBold(true);
+    QFontMetrics metrics(font);
+    const qreal fLineHeight = metrics.boundingRect("WUT").height();
+    const qreal fSmallLineHeight = fLineHeight * 0.6;
+    const qreal fLineOffset = fLineHeight / 6;
+    m_minWidth  = qMax(metrics.boundingRect(name()).width() + (1 + PenWidth) * 4, m_minWidth);
+    m_minHeight = qMax(fLineHeight + (1 + PenWidth) * 4, m_minHeight);
+
+    // calculate width depends on columns amount width and height
+    if (m_model->columns().count() > 0)
+    {
+        m_minHeight += fSmallLineHeight + fLineOffset * 2;
+        foreach (ColumnModel c, m_model->columns())
+        {
+            m_minWidth = qMax((qreal)metrics.boundingRect(c.getUMLColumnDescription()).width() + fColumnPrefixWidth, m_minWidth);
+            m_minHeight += fLineHeight + fLineOffset;
+        }
+    }
+
+    int constraintTypeCounters[ColumnConstraint::CT_Last];
+    qFill(&constraintTypeCounters[0], &constraintTypeCounters[ColumnConstraint::CT_Last], 0 );
+    constraintTypeCounters[ColumnConstraint::CT_PrimaryKey] = m_model->columns().getAmountForType(ColumnConstraint::CT_PrimaryKey);
+    constraintTypeCounters[ColumnConstraint::CT_Unique] = m_model->columns().getAmountForType(ColumnConstraint::CT_Unique);
+    constraintTypeCounters[ColumnConstraint::CT_ForeignKey] = m_model->columns().getAmountForType(ColumnConstraint::CT_ForeignKey);
+    constraintTypeCounters[ColumnConstraint::CT_Default] = m_model->columns().getAmountForType(ColumnConstraint::CT_Default);
+    constraintTypeCounters[ColumnConstraint::CT_NotNull] = m_model->columns().getAmountForType(ColumnConstraint::CT_NotNull);
+    constraintTypeCounters[ColumnConstraint::CT_Check] = m_model->columns().getAmountForType(ColumnConstraint::CT_Check);
+
+    bool bHasConstraints = false;
+    for (int i = 0; i < ColumnConstraint::CT_Last; i++)
+    {
+        if (constraintTypeCounters[i] > 0)
+        {
+            bHasConstraints = true;
+            break;
+        }
+    }
+
+    if (bHasConstraints)
+    {
+        m_minHeight += fSmallLineHeight + fLineOffset * 2;
+    }
+
+    // calculate width depends on constraints amount width and height
+    if (constraintTypeCounters[ColumnConstraint::CT_PrimaryKey] > 0)
+    {
+        QList<ColumnModel> lstPrimaryKeys;
+        m_model->columns().getColumnsForConstraintType(ColumnConstraint::CT_PrimaryKey, lstPrimaryKeys);
+        foreach (const ColumnModel& c, lstPrimaryKeys)
+        {
+            ColumnConstraint cn;
+            c.constraints().constraint(ColumnConstraint::CT_PrimaryKey, cn);
+            if (cn.type() != ColumnConstraint::CT_Unknown)
+            {
+                QString sConstraintName = cn.getUMLConstraintString();
+                m_minWidth = qMax((qreal)metrics.boundingRect(sConstraintName).width() + fColumnPrefixWidth, m_minWidth);
+                m_minHeight += fLineHeight + fLineOffset;
+            }
+        }
+    }
 }
 
 QVariant TableWidget::itemChange(GraphicsItemChange change, const QVariant &value)

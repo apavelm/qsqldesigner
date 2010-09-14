@@ -27,6 +27,7 @@ public:
     inline const QString& name() const {return m_model->name();}
 public slots:
     void setName(const QString& name);
+    void recalcMinimumSize();
 signals:
     void dirty();
 protected:
@@ -35,6 +36,7 @@ protected:
 private:
     Q_DISABLE_COPY ( TableWidget )
     QScopedPointer<TableModel> m_model;
+    qreal m_minWidth, m_minHeight;
 
     void paintSelectionOutline(QPainter *painter);
 };
