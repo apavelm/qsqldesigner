@@ -16,7 +16,7 @@ void TableModel::setColumns(const ColumnList& newColumns)
     m_columns = newColumns;
 }
 
-void TableModel::addColumn(const ColumnModel& c)
+void TableModel::addColumn(PColumnModel c)
 {
     m_columns.addColumn(c);
 }
@@ -24,10 +24,10 @@ void TableModel::addColumn(const ColumnModel& c)
 qreal TableModel::longestStringWidth(const QFontMetrics& metrics) const
 {
     qreal maxWidth = 0;
-    foreach (const ColumnModel& column, m_columns)
+    foreach (SharedColumnModel column, m_columns)
     {
-        maxWidth = qMax(maxWidth, (qreal)metrics.boundingRect(column.getUMLColumnDescription()).width());
-        foreach (const ColumnConstraint& cn, column.constraints())
+        maxWidth = qMax(maxWidth, (qreal)metrics.boundingRect(column->getUMLColumnDescription()).width());
+        foreach (const ColumnConstraint& cn, column->constraints())
         {
             if (cn.type() != ColumnConstraint::CT_Unknown)
             {

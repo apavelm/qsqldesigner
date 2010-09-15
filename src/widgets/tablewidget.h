@@ -1,7 +1,6 @@
 #ifndef TABLEWIDGET_H
 #define TABLEWIDGET_H
 
-#include <QtCore/QScopedPointer>
 #include <QtGui/QPainter>
 #include <QtGui/QPainterPath>
 #include <QtGui/QGraphicsObject>
@@ -18,13 +17,13 @@ public:
     enum { Type = UserType + 1 };
     inline int type() const {return Type;}
 
-    explicit TableWidget(QGraphicsScene *scene, QGraphicsItem  * parent = 0, TableModel * model = 0);
+    explicit TableWidget(QGraphicsScene *scene, QGraphicsItem  * parent = 0, PTableModel model = 0);
 
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     QPainterPath shape() const;
 
-    inline const QString& name() const {return m_model->name();}
+    inline const QString& name() const {return m_name;}
     QSizeF recalcMinimumSize() const;
 public slots:
     void setName(const QString& name);
@@ -35,7 +34,8 @@ protected:
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 private:
     Q_DISABLE_COPY ( TableWidget )
-    QScopedPointer<TableModel> m_model;
+    PTableModel m_model;
+    QString m_name;
 
     void paintSelectionOutline(QPainter *painter);
 };

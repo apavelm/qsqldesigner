@@ -82,14 +82,15 @@ typedef ColumnModel * PColumnModel;
 typedef QScopedPointer<ColumnModel> ScopedColumnModel;
 typedef QSharedPointer<ColumnModel> SharedColumnModel;
 
-class ColumnList: public QList<ColumnModel>
+class ColumnList: public QMap<QString, SharedColumnModel>
 {
 public:
     ColumnList();
-    void addColumn(const ColumnModel& column);
+    void addColumn(PColumnModel column);
 
     inline int getAmountForType(const ColumnConstraint::ConstraintType type) const {return m_constraintCounters[type];}
-    void getColumnsForConstraintType(const ColumnConstraint::ConstraintType type, QList<ColumnModel>& result) const;
+    PColumnModel getColumnByName(const QString& columnName) const;
+    void getColumnsForConstraintType(const ColumnConstraint::ConstraintType type, QList<PColumnModel>& result) const;
 private:
     int m_constraintCounters[ColumnConstraint::CT_Last];
 };

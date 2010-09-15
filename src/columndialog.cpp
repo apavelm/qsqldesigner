@@ -23,33 +23,33 @@ void ColumnDialog::changeEvent(QEvent *e)
     }
 }
 
-ColumnModel ColumnDialog::newColumn() const
+PColumnModel ColumnDialog::newColumn() const
 {
-    ColumnModel c;
+    PColumnModel c = new ColumnModel();
 
-    c.setName(ui->edtName->text().trimmed());
-    c.setComment(ui->edtComment->text().trimmed());
-    //c.dataType
+    c->setName(ui->edtName->text().trimmed());
+    c->setComment(ui->edtComment->text().trimmed());
+    //c->dataType
 
     if (!ui->edtDefault->text().trimmed().isEmpty())
     {
-        c.addConstraint(new ColumnConstraint("", ColumnConstraint::CT_Default, ui->edtDefault->text().trimmed()));
+        c->addConstraint(new ColumnConstraint("", ColumnConstraint::CT_Default, ui->edtDefault->text().trimmed()));
     }
     if (!ui->edtCheck->text().trimmed().isEmpty())
     {
-        c.addConstraint(new ColumnConstraint("", ColumnConstraint::CT_Check, ui->edtCheck->text().trimmed()));
+        c->addConstraint(new ColumnConstraint("", ColumnConstraint::CT_Check, ui->edtCheck->text().trimmed()));
     }
     if (ui->chkPrimaryKey->checkState() && Qt::Checked)
     {
-        c.addConstraint(new ColumnConstraint("", ColumnConstraint::CT_PrimaryKey));
+        c->addConstraint(new ColumnConstraint("", ColumnConstraint::CT_PrimaryKey));
     }
     if (ui->chkNotNull->checkState() && Qt::Checked)
     {
-        c.addConstraint(new ColumnConstraint("", ColumnConstraint::CT_NotNull));
+        c->addConstraint(new ColumnConstraint("", ColumnConstraint::CT_NotNull));
     }
     if (ui->chkUnique->checkState() && Qt::Checked)
     {
-        c.addConstraint(new ColumnConstraint("", ColumnConstraint::CT_Unique));
+        c->addConstraint(new ColumnConstraint("", ColumnConstraint::CT_Unique));
     }
     // is ForeignKey
 

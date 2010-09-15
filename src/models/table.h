@@ -19,7 +19,7 @@ public:
 
     inline const ColumnList& columns() const {return m_columns;}
     void setColumns(const ColumnList& newColumns);
-    void addColumn(const ColumnModel& c);
+    void addColumn(PColumnModel c);
 
     qreal longestStringWidth(const QFontMetrics& metrics) const;
 private:

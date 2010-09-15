@@ -15,7 +15,7 @@ public:
     ColumnDialog(QWidget *parent = 0);
     ~ColumnDialog();
 
-    ColumnModel newColumn() const;
+    PColumnModel newColumn() const;
 
 protected:
     void changeEvent(QEvent *e);

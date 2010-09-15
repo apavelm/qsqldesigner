@@ -139,6 +139,8 @@ void MainWindow::createActions()
             cutAct, SLOT(setEnabled(bool)));
     connect(textEdit, SIGNAL(copyAvailable(bool)),
             copyAct, SLOT(setEnabled(bool)));*/
+
+    connect(MM, SIGNAL(tableAdded(PTableModel)), this, SLOT(slotAddTable(PTableModel)) );
 }
 
 void MainWindow::createToolBars()
@@ -317,9 +319,13 @@ void MainWindow::slotProjectAddTable()
     TableDialog dlg;
     if (dlg.exec() == QDialog::Accepted)
     {
-        // add Table
-        new TableWidget(m_scene, 0, dlg.table());
+        MM->addTable(dlg.table());
     }
+}
+
+void MainWindow::slotAddTable(PTableModel table)
+{
+    new TableWidget(m_scene, 0, table);
 }
 
 bool MainWindow::sceneHasItems() const
