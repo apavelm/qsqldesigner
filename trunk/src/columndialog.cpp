@@ -51,6 +51,7 @@ ColumnModel ColumnDialog::newColumn() const
     {
         c.addConstraint(new ColumnConstraint("", ColumnConstraint::CT_Unique));
     }
+    // is ForeignKey
 
     return c;
 }

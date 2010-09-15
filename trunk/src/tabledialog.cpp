@@ -35,8 +35,9 @@ void TableDialog::on_columnAddButton_clicked()
     ColumnDialog dlg;
     if (dlg.exec() == QDialog::Accepted)
     {
-        m_model->addColumn(dlg.newColumn());
-        //ui->columnsTable
+        ColumnModel c = dlg.newColumn();
+        m_model->addColumn(c);
+        ui->columnsTable->addItem(c.name());
     }
 }
 

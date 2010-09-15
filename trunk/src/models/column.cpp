@@ -113,6 +113,11 @@ void ColumnModel::setComment(const QString& comment)
     m_columnComment = comment;
 }
 
+void ColumnModel::setDataType(const DataType& dataType)
+{
+    m_dataType = dataType;
+}
+
 const QString ColumnModel::getUMLColumnPrefix() const
 {
     QString rslt = "";

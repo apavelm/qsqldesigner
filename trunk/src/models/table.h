@@ -2,7 +2,10 @@
 #define TABLE_H
 
 #include <QtCore/QList>
+#include <QtCore/QScopedPointer>
+#include <QtCore/QSharedPointer>
 #include <QtCore/QString>
+#include <QtGui/QFontMetrics>
 
 #include "column.h"
 
@@ -18,9 +21,14 @@ public:
     void setColumns(const ColumnList& newColumns);
     void addColumn(const ColumnModel& c);
 
+    qreal longestStringWidth(const QFontMetrics& metrics) const;
 private:
     ColumnList m_columns;
     QString m_name;
 };
+
+typedef TableModel * PTableModel;
+typedef QScopedPointer<TableModel> ScopedTableModel;
+typedef QSharedPointer<TableModel> SharedTableModel;
 
 #endif //TABLE_H

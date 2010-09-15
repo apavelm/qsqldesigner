@@ -1,6 +1,6 @@
 #include "datatypes.h"
 
-static DataTypes loadDataTypes()
-{
-    return DataTypes();
-}
+//static DataTypes loadDataTypes()
+//{
+//    return DataTypes();
+//}
