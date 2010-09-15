@@ -27,13 +27,13 @@ public:
                 instance = 0;
 	}
 protected:
-	static T* instance;
+        static T* volatile instance;
 private:
 	Singleton(const Singleton&);
 	Singleton& operator=(const Singleton&);
 
 };
 
-template<class T> T* Singleton<T>::instance = 0;
+template<class T> T* volatile Singleton<T>::instance = 0;
 
 #endif // SINGLETON_H

@@ -1,7 +1,7 @@
 #include "tablewidget.h"
 #include "../settingsmanager.h"
 
-TableWidget::TableWidget(QGraphicsScene *scene, QGraphicsItem  *parent, TableModel * model) : QGraphicsObject(parent), m_model(model)
+TableWidget::TableWidget(QGraphicsScene *scene, QGraphicsItem  *parent, TableModel * model) : QGraphicsObject(parent), m_model(model), m_name(model->name())
 {
     setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemSendsGeometryChanges | QGraphicsItem::ItemIsMovable);
 
@@ -90,17 +90,17 @@ void TableWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 
         fCurrentYPos += fSmallLineHeight + 2 * PenWidth + fLineOffset; // set fCurrentYPos to new value
         painter->setPen(QPen(SM->columnFontColor()));
-        foreach (const ColumnModel& c, m_model->columns())
+        foreach (SharedColumnModel c, m_model->columns()) // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         {
             painter->setFont(fontNormal);
-            painter->drawText(QRect(innerBoundingRect.left() + PenWidth, fCurrentYPos, fColumnPrefixWidth, fLineHeight), Qt::AlignVCenter, c.getUMLColumnPrefix());
+            painter->drawText(QRect(innerBoundingRect.left() + PenWidth, fCurrentYPos, fColumnPrefixWidth, fLineHeight), Qt::AlignVCenter, c->getUMLColumnPrefix());
 
-            if (c.isConstraintType(ColumnConstraint::CT_Unique))
+            if (c->isConstraintType(ColumnConstraint::CT_Unique))
             {
                 painter->setFont(fontUnderline);
             }
 
-            painter->drawText(QRect(innerBoundingRect.left() + fColumnPrefixWidth, fCurrentYPos, innerBoundingRect.width() - fColumnPrefixWidth, fLineHeight), Qt::AlignVCenter | Qt::TextSingleLine | Qt::TextDontClip, c.getUMLColumnDescription());
+            painter->drawText(QRect(innerBoundingRect.left() + fColumnPrefixWidth, fCurrentYPos, innerBoundingRect.width() - fColumnPrefixWidth, fLineHeight), Qt::AlignVCenter | Qt::TextSingleLine | Qt::TextDontClip, c->getUMLColumnDescription());
             fCurrentYPos += fLineHeight; // set fCurrentYPos to new value
         }
 
@@ -145,12 +145,12 @@ void TableWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
             painter->drawText(columnTitleRect, Qt::AlignVCenter | Qt::TextSingleLine | Qt::TextDontClip ,"  " + tr("«FK»"));
             fCurrentYPos += fSmallLineHeight + 2 * PenWidth + fLineOffset; // set fCurrentYPos to new value
 
-            QList<ColumnModel> lstForeignKeys;
+            QList<PColumnModel> lstForeignKeys;
             m_model->columns().getColumnsForConstraintType(ColumnConstraint::CT_ForeignKey, lstForeignKeys);
-            foreach (const ColumnModel& c, lstForeignKeys)
+            foreach (PColumnModel c, lstForeignKeys)
             {
                 ColumnConstraint cn;
-                c.constraints().constraint(ColumnConstraint::CT_ForeignKey, cn);
+                c->constraints().constraint(ColumnConstraint::CT_ForeignKey, cn);
                 if (cn.type() != ColumnConstraint::CT_Unknown)
                 {
                     QString sConstraintName = cn.getUMLConstraintString();
@@ -177,12 +177,12 @@ void TableWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
             painter->drawText(columnTitleRect, Qt::AlignVCenter | Qt::TextSingleLine | Qt::TextDontClip ,"  " + tr("«PK»"));
             fCurrentYPos += fSmallLineHeight + 2 * PenWidth + fLineOffset; // set fCurrentYPos to new value
 
-            QList<ColumnModel> lstPrimaryKeys;
+            QList<PColumnModel> lstPrimaryKeys;
             m_model->columns().getColumnsForConstraintType(ColumnConstraint::CT_PrimaryKey, lstPrimaryKeys);
-            foreach (const ColumnModel& c, lstPrimaryKeys)
+            foreach (PColumnModel c, lstPrimaryKeys)
             {
                 ColumnConstraint cn;
-                c.constraints().constraint(ColumnConstraint::CT_PrimaryKey, cn);
+                c->constraints().constraint(ColumnConstraint::CT_PrimaryKey, cn);
                 if (cn.type() != ColumnConstraint::CT_Unknown)
                 {
                     QString sConstraintName = cn.getUMLConstraintString();
@@ -208,12 +208,12 @@ void TableWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
             painter->drawText(columnTitleRect, Qt::AlignVCenter | Qt::TextSingleLine | Qt::TextDontClip ,"  " + tr("«unique»"));
             fCurrentYPos += fSmallLineHeight + 2 * PenWidth + fLineOffset; // set fCurrentYPos to new value
 
-            QList<ColumnModel> lstUnique;
+            QList<PColumnModel> lstUnique;
             m_model->columns().getColumnsForConstraintType(ColumnConstraint::CT_Unique, lstUnique);
-            foreach (const ColumnModel& c, lstUnique)
+            foreach (PColumnModel c, lstUnique)
             {
                 ColumnConstraint cn;
-                c.constraints().constraint(ColumnConstraint::CT_Unique, cn);
+                c->constraints().constraint(ColumnConstraint::CT_Unique, cn);
                 if (cn.type() != ColumnConstraint::CT_Unknown)
                 {
                     QString sConstraintName = cn.getUMLConstraintString();

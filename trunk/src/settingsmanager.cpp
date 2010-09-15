@@ -1,6 +1,6 @@
 #include "settingsmanager.h"
 
-SettingsManager::SettingsManager() : m_fontPointSize(8), m_smallPointSize(8)
+SettingsManager::SettingsManager() : m_fontPointSize(8), m_smallPointSize(6)
 {
     // set default values;
     m_paperColor = QColor(170, 185, 220);

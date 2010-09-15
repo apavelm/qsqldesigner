@@ -151,31 +151,44 @@ const QString ColumnModel::getUMLColumnDescription() const
 
 // Column List
 
-ColumnList::ColumnList() : QList<ColumnModel>()
+ColumnList::ColumnList() : QMap<QString, SharedColumnModel>()
 {
     qFill(&m_constraintCounters[0], &m_constraintCounters[ColumnConstraint::CT_Last], 0 );
 }
 
-void ColumnList::addColumn(const ColumnModel& column)
+void ColumnList::addColumn(PColumnModel column)
 {
-    const ColumnConstraints& list = column.constraints();
-    foreach (const ColumnConstraint& c, list)
+    if (column)
     {
-        m_constraintCounters[c.type()]++;
+        const ColumnConstraints& list = column->constraints();
+        foreach (const ColumnConstraint& c, list)
+        {
+            m_constraintCounters[c.type()]++;
+        }
+        insert(column->name(), SharedColumnModel(column));
     }
-    append(column);
 }
 
-void ColumnList::getColumnsForConstraintType(const ColumnConstraint::ConstraintType type, QList<ColumnModel>& result) const
+PColumnModel ColumnList::getColumnByName(const QString& columnName) const
+{
+    QMap<QString, SharedColumnModel>::const_iterator i = this->constFind(columnName);
+    if (i != this->constEnd())
+    {
+        return i.value().data();
+    }
+    else
+        return 0;
+}
+
+void ColumnList::getColumnsForConstraintType(const ColumnConstraint::ConstraintType type, QList<PColumnModel>& result) const
 {
     result.clear();
     if (m_constraintCounters[type] > 0)
     {
-        const ColumnList& list = *this;
-        foreach (const ColumnModel& c, list)
+        foreach (SharedColumnModel c, *this)
         {
-            if (c.isConstraintType(type))
-                result.append(c);
+            if (c->isConstraintType(type))
+                result.append(c.data());
         }
     }
 }
