@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "settingsmanager.h"
 #include "tabledialog.h"
 #include "widgets/tablewidget.h"
 
@@ -19,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     createToolBars();
     createStatusBar();
 
-    clear();
+    //clear();
 }
 
 void MainWindow::createSceneAndView()
@@ -283,8 +284,9 @@ void MainWindow::slotViewShowGrid(bool on)
 {
     if (!m_gridGroup)
     {
-        const int GridSize = 40;
+        const int GridSize = SM->gridSize();
         QPen pen(QColor(175, 175, 175, 127));
+        pen.setStyle(Qt::DotLine);
         m_gridGroup = new QGraphicsItemGroup;
         const int MaxX = static_cast<int>(std::ceil(m_scene->width())  / GridSize) * GridSize;
         const int MaxY = static_cast<int>(std::ceil(m_scene->height()) / GridSize) * GridSize;
@@ -330,7 +332,9 @@ bool MainWindow::sceneHasItems() const
 
 void MainWindow::clear()
 {
-    slotViewShowGrid(ui->actionShow_Grid->isChecked());
+    // WARNING
+    // TODO: BUG here with small GridSize value
+    //slotViewShowGrid(ui->actionShow_Grid->isChecked());
 }
 
 void MainWindow::slotAboutAbout()

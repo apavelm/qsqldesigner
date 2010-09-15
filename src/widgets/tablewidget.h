@@ -40,7 +40,4 @@ private:
     void paintSelectionOutline(QPainter *painter);
 };
 
-QDataStream &operator<<(QDataStream &out, const TableWidget &item);
-QDataStream &operator>>(QDataStream &in, TableWidget &item);
-
 #endif // TABLEWIDGET_H

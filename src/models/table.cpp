@@ -20,3 +20,21 @@ void TableModel::addColumn(const ColumnModel& c)
 {
     m_columns.addColumn(c);
 }
+
+qreal TableModel::longestStringWidth(const QFontMetrics& metrics) const
+{
+    qreal maxWidth = 0;
+    foreach (const ColumnModel& column, m_columns)
+    {
+        maxWidth = qMax(maxWidth, (qreal)metrics.boundingRect(column.getUMLColumnDescription()).width());
+        foreach (const ColumnConstraint& cn, column.constraints())
+        {
+            if (cn.type() != ColumnConstraint::CT_Unknown)
+            {
+                maxWidth = qMax(maxWidth, (qreal)metrics.boundingRect(cn.getUMLConstraintString()).width());
+            }
+        }
+    }
+
+    return maxWidth;
+}

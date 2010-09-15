@@ -4,7 +4,7 @@ project ( qsqldesigner )
 
 set ( SOURCES
      ./src/main.cpp
-	 ./src/settingsmanager.cpp
+     ./src/settingsmanager.cpp
      ./src/commands.cpp
      ./src/columndialog.cpp
      ./src/mainwindow.cpp
@@ -20,7 +20,7 @@ set ( SOURCES
 )
 
 set ( MOC_HEADERS
-	 ./src/settingsmanager.h
+     ./src/settingsmanager.h
      ./src/columndialog.h
      ./src/commands.h
      ./src/mainwindow.h

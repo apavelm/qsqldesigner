@@ -2,6 +2,8 @@
 #define COLUMN_H
 
 #include <QtCore/QList>
+#include <QtCore/QScopedPointer>
+#include <QtCore/QSharedPointer>
 #include <QtCore/QString>
 #include <QtCore/QVariant>
 
@@ -32,6 +34,9 @@ private:
     QString m_name;
 };
 
+typedef ColumnConstraint * PColumnConstraint;
+typedef QScopedPointer<ColumnConstraint> ScopedColumnConstraint;
+typedef QSharedPointer<ColumnConstraint> SharedColumnConstraint;
 Q_DECLARE_OPERATORS_FOR_FLAGS(ColumnConstraint::ConstraintTypes)
 
 class ColumnConstraints: public QList<ColumnConstraint>
@@ -56,7 +61,8 @@ public:
     void setName(const QString& name);
     inline const QString comment() const {return m_columnComment;}
     void setComment(const QString& comment);
-    // TODO: datatype GET/SET
+    inline const DataType& dataType() const {return m_dataType;}
+    void setDataType(const DataType& dataType);
 
     inline const ColumnConstraints& constraints() const {return m_constraints;}
     inline void addConstraint(ColumnConstraint * constraint) {m_constraints.addConstraint(constraint);}
@@ -71,6 +77,10 @@ private:
     DataType m_dataType;
     ColumnConstraints m_constraints;
 };
+
+typedef ColumnModel * PColumnModel;
+typedef QScopedPointer<ColumnModel> ScopedColumnModel;
+typedef QSharedPointer<ColumnModel> SharedColumnModel;
 
 class ColumnList: public QList<ColumnModel>
 {
