@@ -62,19 +62,18 @@ const QString ColumnConstraint::getUMLConstraintString() const
 }
 
 // ColumnConstraints
-ColumnConstraints::ColumnConstraints() : QList<ColumnConstraint>(), m_types(0)
+ColumnConstraints::ColumnConstraints() : QList<SharedColumnConstraint>(), m_types(0)
 {
 }
 
-void ColumnConstraints::addConstraint(ColumnConstraint * constraint)
+void ColumnConstraints::addConstraint(PColumnConstraint constraint)
 {
     if (constraint)
     {
         if (!m_types.testFlag(constraint->type()))
         {
-            append(*constraint);
+            append(SharedColumnConstraint(constraint));
             m_types |= constraint->type();
-            delete constraint;
         }
     }
 }
@@ -82,24 +81,24 @@ void ColumnConstraints::addConstraint(ColumnConstraint * constraint)
 void ColumnConstraints::deleteConstraint(int index)
 {
     if (index >= count() || index < 0) return;
-    m_types ^= at(index).type();
+    m_types ^= at(index)->type();
     removeAt(index);
 }
 
-void ColumnConstraints::constraint(const ColumnConstraint::ConstraintType type, ColumnConstraint& result) const
+PColumnConstraint ColumnConstraints::constraint(const ColumnConstraint::ConstraintType type) const
 {
     if (m_types.testFlag(type))
     {
-        foreach (const ColumnConstraint& c, *this)
+        foreach (SharedColumnConstraint c, *this)
         {
-            if (c.type() == type)
+            if (c->type() == type)
             {
-                result = c;
+                return c.data();
             }
         }
     }
     else
-        result.setType(ColumnConstraint::CT_Unknown);
+        return 0;
 }
 
 // ColumnModel
@@ -160,10 +159,9 @@ void ColumnList::addColumn(PColumnModel column)
 {
     if (column)
     {
-        const ColumnConstraints& list = column->constraints();
-        foreach (const ColumnConstraint& c, list)
+        foreach (SharedColumnConstraint c, column->constraints())
         {
-            m_constraintCounters[c.type()]++;
+            m_constraintCounters[c->type()]++;
         }
         insert(column->name(), SharedColumnModel(column));
     }

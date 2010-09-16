@@ -1,7 +1,7 @@
 #include "cornerzoomwidget.h"
 #include "mainview.h"
 
-CornerZoomWidget::CornerZoomWidget(QWidget *parent) : QWidget(parent)
+CornerZoomWidget::CornerZoomWidget()
 {
     m_pixmap = QPixmap();
     m_size = 32;
@@ -21,8 +21,15 @@ void CornerZoomWidget::setPixmapSize(int size)
 
 void CornerZoomWidget::paintEvent(QPaintEvent *)
 {
-    QStylePainter painter(this);
-    painter.drawPixmap(QRect(0, 0, m_size, m_size), m_pixmap);
+    QStyleOptionButton option;
+    option.initFrom(this);
+    option.state = QStyle::State_Raised;
+    option.icon = QIcon(m_pixmap);
+    option.iconSize = QSize(m_size - 4, m_size - 4);
+    option.state |= QStyle::State_Enabled;
+
+    QPainter painter(this);
+    style()->drawControl(QStyle::CE_PushButton, &option, &painter, this);
 }
 
 void CornerZoomWidget::mouseMoveEvent(QMouseEvent *)

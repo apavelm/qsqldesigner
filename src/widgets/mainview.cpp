@@ -10,16 +10,15 @@ MainView::MainView(QWidget * parent) : QGraphicsView(parent)
     setCacheMode(QGraphicsView::CacheBackground);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
 
-    m_cornerButton = new CornerZoomWidget(this);
+    m_cornerButton.reset( new CornerZoomWidget() );
     m_cornerButton->setPixmap(QPixmap(":/zoom"));
     m_cornerButton->setPixmapSize(verticalScrollBar()->sizeHint().width());
-    connect(m_cornerButton, SIGNAL(clicked()), this, SIGNAL(cornerWidgetClicked()));
-    setCornerWidget(m_cornerButton);
+    connect(m_cornerButton.data(), SIGNAL(clicked()), this, SIGNAL(cornerWidgetClicked()));
+    setCornerWidget(m_cornerButton.data());
 }
 
 MainView::~MainView()
 {
-    delete m_cornerButton;
 }
 
 void MainView::drawBackground(QPainter *painter, const QRectF &rect)

@@ -1,6 +1,7 @@
 #ifndef CORNERZOOMWIDGET_H
 #define CORNERZOOMWIDGET_H
 
+#include <QtGui/QStyleOptionButton>
 #include <QtGui/QStylePainter>
 #include <QtGui/QWidget>
 
@@ -8,7 +9,7 @@ class CornerZoomWidget : public QWidget
 {
     Q_OBJECT
 public:
-    explicit CornerZoomWidget(QWidget * parent = 0);
+    CornerZoomWidget();
     void setPixmap(const QPixmap& pixmap);
     void setPixmapSize(int size);
 protected:

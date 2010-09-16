@@ -2,7 +2,6 @@
 #define COLUMN_H
 
 #include <QtCore/QList>
-#include <QtCore/QScopedPointer>
 #include <QtCore/QSharedPointer>
 #include <QtCore/QString>
 #include <QtCore/QVariant>
@@ -35,21 +34,20 @@ private:
 };
 
 typedef ColumnConstraint * PColumnConstraint;
-typedef QScopedPointer<ColumnConstraint> ScopedColumnConstraint;
 typedef QSharedPointer<ColumnConstraint> SharedColumnConstraint;
 Q_DECLARE_OPERATORS_FOR_FLAGS(ColumnConstraint::ConstraintTypes)
 
-class ColumnConstraints: public QList<ColumnConstraint>
+class ColumnConstraints: public QList<SharedColumnConstraint>
 {
 public:
     ColumnConstraints();
 
-    void addConstraint(ColumnConstraint * constraint);
+    void addConstraint(PColumnConstraint constraint);
     void deleteConstraint(int index);
 
     inline const ColumnConstraint::ConstraintTypes types() const {return m_types;}
     inline bool isConstraintType(ColumnConstraint::ConstraintType type) const {return m_types.testFlag(type);}
-    void constraint(const ColumnConstraint::ConstraintType type, ColumnConstraint& result) const;
+    PColumnConstraint constraint(const ColumnConstraint::ConstraintType type) const;
 private:
     ColumnConstraint::ConstraintTypes m_types;
 };
@@ -79,7 +77,6 @@ private:
 };
 
 typedef ColumnModel * PColumnModel;
-typedef QScopedPointer<ColumnModel> ScopedColumnModel;
 typedef QSharedPointer<ColumnModel> SharedColumnModel;
 
 class ColumnList: public QMap<QString, SharedColumnModel>

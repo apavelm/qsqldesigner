@@ -2,7 +2,6 @@
 #define TABLE_H
 
 #include <QtCore/QList>
-#include <QtCore/QScopedPointer>
 #include <QtCore/QSharedPointer>
 #include <QtCore/QString>
 #include <QtGui/QFontMetrics>
@@ -28,7 +27,6 @@ private:
 };
 
 typedef TableModel * PTableModel;
-typedef QScopedPointer<TableModel> ScopedTableModel;
 typedef QSharedPointer<TableModel> SharedTableModel;
 
 #endif //TABLE_H
