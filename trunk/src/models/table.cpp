@@ -27,11 +27,11 @@ qreal TableModel::longestStringWidth(const QFontMetrics& metrics) const
     foreach (SharedColumnModel column, m_columns)
     {
         maxWidth = qMax(maxWidth, (qreal)metrics.boundingRect(column->getUMLColumnDescription()).width());
-        foreach (const ColumnConstraint& cn, column->constraints())
+        foreach (SharedColumnConstraint cn, column->constraints())
         {
-            if (cn.type() != ColumnConstraint::CT_Unknown)
+            if (cn->type() != ColumnConstraint::CT_Unknown)
             {
-                maxWidth = qMax(maxWidth, (qreal)metrics.boundingRect(cn.getUMLConstraintString()).width());
+                maxWidth = qMax(maxWidth, (qreal)metrics.boundingRect(cn->getUMLConstraintString()).width());
             }
         }
     }

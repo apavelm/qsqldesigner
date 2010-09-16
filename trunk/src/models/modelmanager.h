@@ -15,7 +15,11 @@ class ModelManager : public QObject, public Singleton<ModelManager>
 public:
     void addTable(PTableModel table);
     void removeTable(const QString& tableName);
-    PTableModel getTableByName(const QString& tableName);
+    PTableModel getTableByName(const QString& tableName) const;
+    PColumnModel getColumnByName(const QString& tableName, const QString& columnName) const;
+    inline const QList<QString> getTableList() const {return m_tables.keys();}
+    const QList<QString> getColumnList(const QString& tableName) const;
+
     QString getNewDefaultNameForTable() const;
 private:
     friend class Singleton<ModelManager>;

@@ -1,6 +1,7 @@
 #ifndef MAINVIEW_H
 #define MAINVIEW_H
 
+#include <QtCore/QScopedPointer>
 #include <QtGui/QGraphicsView>
 #include <QtGui/QScrollBar>
 #include <QtGui/QToolButton>
@@ -28,7 +29,7 @@ protected:
     void wheelEvent(QWheelEvent * event);
 
 private:
-    CornerZoomWidget * m_cornerButton;
+    QScopedPointer<CornerZoomWidget> m_cornerButton;
     void scaleBy(qreal scaleFactor);
     void drawBackground(QPainter *painter, const QRectF &rect);
     void scrollContentsBy(int dx, int dy);
