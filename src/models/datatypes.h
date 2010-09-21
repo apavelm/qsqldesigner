@@ -4,8 +4,10 @@
 #include <QtCore/QList>
 #include <QtCore/QString>
 
-struct DataType
+class DataType
 {
+public:
+    DataType() {}
     QString typeName;
     QString sqlTypeAcronim;
     bool    canBeArray;

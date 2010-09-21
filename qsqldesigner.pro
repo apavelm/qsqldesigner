@@ -20,7 +20,11 @@ SOURCES += src/main.cpp \
 	src/models/datatypes.cpp \
 	src/models/modelmanager.cpp \
 	src/models/table.cpp \
-    src/settingsmanager.cpp
+    src/settingsmanager.cpp \
+    src/foreignkeyselectdialog.cpp \
+    src/foreignkeyselectionviewmodel.cpp \
+    src/widgets/columnpreviewwidget.cpp \
+    src/widgets/widgetmanager.cpp
 HEADERS += src/mainwindow.h \
 	src/columndialog.h \
 	src/magnifydialog.h \
@@ -34,9 +38,15 @@ HEADERS += src/mainwindow.h \
 	src/models/modelmanager.h \
 	src/models/table.h \
     src/settingsmanager.h \
-    src/singleton.h
+    src/singleton.h \
+    src/foreignkeyselectdialog.h \
+    src/foreignkeyselectionviewmodel.h \
+    src/widgets/columnpreviewwidget.h \
+    src/widgets/widgetmanager.h
 FORMS += src/ui/mainwindow.ui \
     src/ui/columndialog.ui \
-	src/ui/magnifydialog.ui \
-	src/ui/tabledialog.ui
+    src/ui/magnifydialog.ui \
+    src/ui/tabledialog.ui \
+    src/ui/foreignkeyselectdialog.ui \
+    src/ui/columnpreviewwidget.ui
 RESOURCES += resources/main.qrc

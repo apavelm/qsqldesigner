@@ -15,7 +15,6 @@
 
 #include "magnifydialog.h"
 #include "widgets/mainview.h"
-#include "models/modelmanager.h"
 #include "models/table.h"
 
 namespace Ui {
@@ -75,8 +74,6 @@ private slots:
     void slotProjectAddTable();
 
     void slotAboutAbout();
-
-    void slotAddTable(PTableModel table);
 };
 
 #endif // MAINWINDOW_H

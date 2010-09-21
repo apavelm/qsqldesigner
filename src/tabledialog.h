@@ -1,8 +1,8 @@
 #ifndef TABLEDIALOG_H
 #define TABLEDIALOG_H
 
-#include <QDialog>
-#include <QList>
+#include <QtCore/QString>
+#include <QtGui/QDialog>
 
 #include "models/table.h"
 
@@ -17,20 +17,22 @@ public:
     TableDialog(QWidget *parent = 0);
     ~TableDialog();
 
+    inline PTableModel model() const {return m_model;}
     void reject();
     void accept();
-
-    inline TableModel * table() const {return m_model;}
-
 protected:
     void changeEvent(QEvent *e);
 
 private:
     Ui::TableDialog *ui;
-    TableModel * m_model;
+    PTableModel m_model;
 
 private slots:
     void on_columnAddButton_clicked();
+signals:
+    void updateTable(QString tableName, PTableModel tablePtr);
+    void removeTable(QString tableName);
+    void addTable(PTableModel table);
 };
 
 #endif // TABLEDIALOG_H

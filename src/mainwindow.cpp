@@ -1,7 +1,8 @@
 #include "mainwindow.h"
 #include "settingsmanager.h"
 #include "tabledialog.h"
-#include "widgets/tablewidget.h"
+#include "models/modelmanager.h"
+#include "widgets/widgetmanager.h"
 
 #include "ui_mainwindow.h"
 
@@ -30,6 +31,7 @@ void MainWindow::createSceneAndView()
     QSize pageSize = m_printer->paperSize(QPrinter::Point).toSize();
     m_scene->setSceneRect(0, 0, pageSize.width(), pageSize.height());
     m_mainView->setScene(m_scene);
+    WM->setScene(m_scene);
     setCentralWidget(m_mainView);
 }
 
@@ -140,7 +142,9 @@ void MainWindow::createActions()
     connect(textEdit, SIGNAL(copyAvailable(bool)),
             copyAct, SLOT(setEnabled(bool)));*/
 
-    connect(MM, SIGNAL(tableAdded(PTableModel)), this, SLOT(slotAddTable(PTableModel)) );
+    connect(MM, SIGNAL(tableAdded(PTableModel)), WM, SLOT(addTable(PTableModel)) );
+    connect(MM, SIGNAL(tableRemoved(QString)), WM, SLOT(removeTable(QString)) );
+    connect(MM, SIGNAL(tableUpdate(QString,PTableModel)), WM, SLOT(updateTable(QString,PTableModel)) );
 }
 
 void MainWindow::createToolBars()
@@ -316,16 +320,11 @@ void MainWindow::slotViewShowGrid(bool on)
 
 void MainWindow::slotProjectAddTable()
 {
-    TableDialog dlg;
-    if (dlg.exec() == QDialog::Accepted)
-    {
-        MM->addTable(dlg.table());
-    }
-}
-
-void MainWindow::slotAddTable(PTableModel table)
-{
-    new TableWidget(m_scene, 0, table);
+    QScopedPointer<TableDialog> dlg(new TableDialog());
+    connect(dlg.data(), SIGNAL(addTable(PTableModel)), MM, SLOT(addTable(PTableModel)));
+    connect(dlg.data(), SIGNAL(removeTable(QString)), MM, SLOT(removeTable(QString)));
+    connect(dlg.data(), SIGNAL(updateTable(QString,PTableModel)), MM, SIGNAL(tableUpdate(QString,PTableModel)));
+    dlg->exec();
 }
 
 bool MainWindow::sceneHasItems() const

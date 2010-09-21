@@ -1,15 +1,33 @@
 #include "table.h"
+#include "modelmanager.h"
 
-TableModel::TableModel(const QString& name) : m_name(name)
+#include <limits>
+
+TableModel::TableModel(const QString& name)
 {
-
+    if (name.isEmpty())
+    {
+        m_name = defaultTableName();
+    }
+    else
+    {
+        setName(name);
+    }
 }
 
 void TableModel::setName(const QString& name)
 {
-    if (m_name != name)
+    if (isValidName(name))
+    {
         m_name = name;
+    }
 };
+
+bool TableModel::isValidName(const QString& name) const
+{
+    // TODO: insert validation check
+    return true;
+}
 
 void TableModel::setColumns(const ColumnList& newColumns)
 {
@@ -21,20 +39,25 @@ void TableModel::addColumn(PColumnModel c)
     m_columns.addColumn(c);
 }
 
-qreal TableModel::longestStringWidth(const QFontMetrics& metrics) const
+const QString TableModel::defaultTableName() const
 {
-    qreal maxWidth = 0;
-    foreach (SharedColumnModel column, m_columns)
+    QStringList strLst(MM->getTableList());
+    QString defaultName = tr("Table");
+    QString newName = defaultName;
+    if (!strLst.contains(newName, Qt::CaseInsensitive))
     {
-        maxWidth = qMax(maxWidth, (qreal)metrics.boundingRect(column->getUMLColumnDescription()).width());
-        foreach (SharedColumnConstraint cn, column->constraints())
+        return defaultName;
+    }
+    else
+    {
+        for (int i = 1; i < std::numeric_limits<int>::max(); i++)
         {
-            if (cn->type() != ColumnConstraint::CT_Unknown)
+            newName = defaultName + "_" + QString::number(i);
+            if (!strLst.contains(newName, Qt::CaseInsensitive))
             {
-                maxWidth = qMax(maxWidth, (qreal)metrics.boundingRect(cn->getUMLConstraintString()).width());
+                return newName;
             }
         }
     }
-
-    return maxWidth;
+    return "";
 }

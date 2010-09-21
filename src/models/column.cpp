@@ -1,4 +1,7 @@
 #include "column.h"
+#include "table.h"
+
+#include <limits>
 
 // ColumnConstraint
 ColumnConstraint::ColumnConstraint(const QString name, const ConstraintType type, const QVariant& data): m_type(type)
@@ -97,14 +100,34 @@ PColumnConstraint ColumnConstraints::constraint(const ColumnConstraint::Constrai
             }
         }
     }
-    else
-        return 0;
+
+    return 0;
 }
 
 // ColumnModel
+ColumnModel::ColumnModel(PTableModel table, const QString& name) : m_parent(table)
+{
+    if (name.isEmpty())
+    {
+        m_columnName = defaultColumnName();
+    }
+    else
+    {
+        setName(name);
+    }
+
+}
+
 void ColumnModel::setName(const QString& name)
 {
-    m_columnName = name;
+    if (isValidName(name))
+    {
+        m_columnName = name;
+    }
+    else
+    {
+        // TODO: insert exception
+    }
 }
 
 void ColumnModel::setComment(const QString& comment)
@@ -115,6 +138,44 @@ void ColumnModel::setComment(const QString& comment)
 void ColumnModel::setDataType(const DataType& dataType)
 {
     m_dataType = dataType;
+}
+
+const QString ColumnModel::defaultColumnName() const
+{
+    if (m_parent)
+    {
+        QStringList strLst(m_parent->columns().keys());
+        QString defaultName = tr("Column");
+        QString newName = defaultName;
+        if (!strLst.contains(newName, Qt::CaseInsensitive))
+        {
+            return defaultName;
+        }
+        else
+        {
+            for (int i = 1; i < std::numeric_limits<int>::max(); i++)
+            {
+                newName = defaultName + "_" + QString::number(i);
+                if (!strLst.contains(newName, Qt::CaseInsensitive))
+                {
+                    return newName;
+                }
+            }
+        }
+    }
+    else
+        return QString();
+}
+
+bool ColumnModel::isValidName(const QString& name) const
+{
+    if (m_parent)
+    {
+        // TODO: insert validation check
+            return true;
+    }
+    else
+        return false;
 }
 
 const QString ColumnModel::getUMLColumnPrefix() const

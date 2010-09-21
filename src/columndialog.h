@@ -9,19 +9,26 @@ namespace Ui {
     class ColumnDialog;
 }
 
-class ColumnDialog : public QDialog {
+class ColumnDialog : public QDialog
+{
     Q_OBJECT
 public:
-    ColumnDialog(QWidget *parent = 0);
+    ColumnDialog(PTableModel table = 0);
     ~ColumnDialog();
+    inline PColumnModel model() const {return m_model;}
 
-    PColumnModel newColumn() const;
-
+    void accept();
+    void reject();
 protected:
     void changeEvent(QEvent *e);
 
 private:
+    PTableModel m_table;
     Ui::ColumnDialog *ui;
+    PColumnModel m_model;
+
+private slots:
+    void on_btnAddFK_clicked();
 };
 
 #endif // COLUMNDIALOG_H

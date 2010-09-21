@@ -10,6 +10,7 @@ set ( SOURCES
      ./src/mainwindow.cpp
      ./src/magnifydialog.cpp
      ./src/tabledialog.cpp
+	 ./src/widgets/columnpreviewwidget.cpp
      ./src/widgets/cornerzoomwidget.cpp
      ./src/widgets/mainview.cpp
      ./src/widgets/tablewidget.cpp
@@ -17,6 +18,9 @@ set ( SOURCES
      ./src/models/table.cpp
      ./src/models/column.cpp
      ./src/models/datatypes.cpp
+	 ./src/foreignkeyselectdialog.cpp
+	 ./src/foreignkeyselectionviewmodel.cpp
+	 ./src/widgets/widgetmanager.cpp
 )
 
 set ( MOC_HEADERS
@@ -26,6 +30,7 @@ set ( MOC_HEADERS
      ./src/mainwindow.h
      ./src/magnifydialog.h
      ./src/tabledialog.h
+	 ./src/widgets/columnpreviewwidget.h
      ./src/widgets/cornerzoomwidget.h
      ./src/widgets/mainview.h
      ./src/widgets/tablewidget.h
@@ -33,6 +38,9 @@ set ( MOC_HEADERS
      ./src/models/table.h
      ./src/models/column.h
      ./src/models/datatypes.h
+	 ./src/foreignkeyselectdialog.h
+	 ./src/foreignkeyselectionviewmodel.h
+	 ./src/widgets/widgetmanager.h
 )
 
 set ( UIS
@@ -40,6 +48,8 @@ set ( UIS
      ./src/ui/mainwindow.ui
      ./src/ui/magnifydialog.ui
      ./src/ui/tabledialog.ui
+	 ./src/ui/foreignkeyselectdialog.ui
+	 ./src/ui/columnpreviewwidget.ui
 )
   
 set ( RESOURCES

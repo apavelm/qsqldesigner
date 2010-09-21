@@ -1,16 +1,17 @@
+#include <QtCore/QScopedPointer>
+
 #include "columndialog.h"
 #include "tabledialog.h"
-
 #include "models/column.h"
 
 #include "ui_tabledialog.h"
 
-TableDialog::TableDialog(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::TableDialog)
+TableDialog::TableDialog(QWidget *parent) : QDialog(parent), ui(new Ui::TableDialog)
 {
     ui->setupUi(this);
-    m_model = new TableModel(ui->edtTableName->text());
+    m_model = new TableModel();
+    ui->edtTableName->setText(m_model->name());
+//    emit addTable(m_model);
 }
 
 TableDialog::~TableDialog()
@@ -32,23 +33,22 @@ void TableDialog::changeEvent(QEvent *e)
 
 void TableDialog::on_columnAddButton_clicked()
 {
-    ColumnDialog dlg;
-    if (dlg.exec() == QDialog::Accepted)
+    QScopedPointer<ColumnDialog> dlg(new ColumnDialog(m_model));
+    if (dlg->exec() == QDialog::Accepted)
     {
-        PColumnModel c = dlg.newColumn();
-        m_model->addColumn(c);
-        ui->columnsTable->addItem(c->name());
+        ui->columnsTable->addItem(dlg->model()->name());
     }
 }
 
 void TableDialog::accept()
 {
     m_model->setName(ui->edtTableName->text());
+    emit addTable(m_model);
     QDialog::accept();
 }
 
 void TableDialog::reject()
 {
-    delete m_model;
+    emit removeTable(m_model->name());
     QDialog::reject();
 }
