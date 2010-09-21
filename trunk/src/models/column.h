@@ -1,12 +1,55 @@
 #ifndef COLUMN_H
 #define COLUMN_H
 
+#include <QtGui/QApplication>
 #include <QtCore/QList>
+#include <QtCore/QPair>
 #include <QtCore/QSharedPointer>
 #include <QtCore/QString>
+#include <QtCore/QStringList>
 #include <QtCore/QVariant>
 
 #include "datatypes.h"
+
+class TableModel;
+typedef TableModel * PTableModel;
+
+class ColumnConstraintForeignKey
+{
+public:
+    enum Type {ForeignKeyType = QVariant::UserType + 1};
+
+    ColumnConstraintForeignKey(const QString& tableSource = QString(), const QString& columnSource = QString(), const QString& tableRef = QString(), const QString& columnRef = QString())
+    {
+        m_source = qMakePair(tableSource, columnSource);
+        m_reference = qMakePair(tableRef, columnRef);
+    }
+
+    ColumnConstraintForeignKey(const ColumnConstraintForeignKey& old)
+    {
+        if (old.isValid())
+        {
+            m_source = old.source();
+            m_reference = old.reference();
+        }
+    }
+
+    inline const QPair<QString, QString> source() const {return m_source;}
+    inline const QString sourceTable() const {return m_source.first;}
+    inline const QString sourceColumn() const {return m_source.second;}
+    inline const QPair<QString, QString> reference() const {return m_reference;}
+    inline const QString referenceTable() const {return m_reference.first;}
+    inline const QString referenceColumn() const {return m_reference.second;}
+
+    bool isValid() const
+    {
+        return !m_source.first.isEmpty() && !m_source.second.isEmpty() && !m_reference.first.isEmpty() && !m_reference.second.isEmpty();
+    }
+private:
+    QPair<QString, QString> m_source, m_reference;
+};
+
+Q_DECLARE_METATYPE(ColumnConstraintForeignKey)
 
 class ColumnConstraint
 {
@@ -54,7 +97,11 @@ private:
 
 class ColumnModel
 {
+    Q_DECLARE_TR_FUNCTIONS(ColumnModel)
 public:
+    ColumnModel(PTableModel table, const QString& name = QString());
+    inline PTableModel table() const {return m_parent;}
+
     inline const QString name() const {return m_columnName;}
     void setName(const QString& name);
     inline const QString comment() const {return m_columnComment;}
@@ -63,17 +110,21 @@ public:
     void setDataType(const DataType& dataType);
 
     inline const ColumnConstraints& constraints() const {return m_constraints;}
-    inline void addConstraint(ColumnConstraint * constraint) {m_constraints.addConstraint(constraint);}
+    inline void addConstraint(PColumnConstraint constraint) {m_constraints.addConstraint(constraint);}
     inline void deleteConstraint(int index) {m_constraints.deleteConstraint(index);}
     inline bool isConstraintType(ColumnConstraint::ConstraintType type) const {return m_constraints.isConstraintType(type);}
 
     const QString getUMLColumnPrefix() const;
     const QString getUMLColumnDescription() const;
 private:
+    PTableModel m_parent;
     QString  m_columnName;
     QString  m_columnComment;
     DataType m_dataType;
     ColumnConstraints m_constraints;
+
+    const QString defaultColumnName() const;
+    bool isValidName(const QString& name) const;
 };
 
 typedef ColumnModel * PColumnModel;

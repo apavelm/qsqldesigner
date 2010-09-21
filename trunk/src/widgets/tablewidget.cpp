@@ -323,7 +323,7 @@ QSizeF TableWidget::recalcMinimumSize() const
         }
 
         // calculate width
-        m_minWidth = qMax(m_model->longestStringWidth(metrics) + 2 * fColumnPrefixWidth, m_minWidth);
+        m_minWidth = qMax(longestStringWidth(metrics) + 2 * fColumnPrefixWidth, m_minWidth);
     }
 
     return QSizeF(m_minWidth, m_minHeight);
@@ -345,4 +345,29 @@ void TableWidget::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     scene()->clearSelection();
     setSelected(true);
     //myContextMenu->exec(event->screenPos());
+}
+
+void TableWidget::setModel(PTableModel model)
+{
+    m_model = model;
+    recalcMinimumSize(); // TODO: optimisation remove this line from here or from boundingRect() function
+    update(boundingRect());
+}
+
+qreal TableWidget::longestStringWidth(const QFontMetrics& metrics) const
+{
+    qreal maxWidth = 0;
+    foreach (SharedColumnModel column, m_model->columns())
+    {
+        maxWidth = qMax(maxWidth, (qreal)metrics.boundingRect(column->getUMLColumnDescription()).width());
+        foreach (SharedColumnConstraint cn, column->constraints())
+        {
+            if (cn->type() != ColumnConstraint::CT_Unknown)
+            {
+                maxWidth = qMax(maxWidth, (qreal)metrics.boundingRect(cn->getUMLConstraintString()).width());
+            }
+        }
+    }
+
+    return maxWidth;
 }

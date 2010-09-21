@@ -1,9 +1,15 @@
+#include <QtCore/QScopedPointer>
+
 #include "columndialog.h"
+#include "foreignkeyselectdialog.h"
+#include "models/table.h"
 #include "ui_columndialog.h"
 
-ColumnDialog::ColumnDialog(QWidget *parent) :  QDialog(parent),  ui(new Ui::ColumnDialog)
+ColumnDialog::ColumnDialog(PTableModel table) :  QDialog(0),  m_table(table), ui(new Ui::ColumnDialog)
 {
     ui->setupUi(this);
+    m_model = new ColumnModel(table);
+    ui->edtName->setText(m_model->name());
 }
 
 ColumnDialog::~ColumnDialog()
@@ -23,35 +29,49 @@ void ColumnDialog::changeEvent(QEvent *e)
     }
 }
 
-PColumnModel ColumnDialog::newColumn() const
+void ColumnDialog::accept()
 {
-    PColumnModel c = new ColumnModel();
-
-    c->setName(ui->edtName->text().trimmed());
-    c->setComment(ui->edtComment->text().trimmed());
-    //c->dataType
+    m_model->setName(ui->edtName->text().trimmed());
+    m_model->setComment(ui->edtComment->text().trimmed());
+    //m_model->dataType
 
     if (!ui->edtDefault->text().trimmed().isEmpty())
     {
-        c->addConstraint(new ColumnConstraint("", ColumnConstraint::CT_Default, ui->edtDefault->text().trimmed()));
+        m_model->addConstraint(new ColumnConstraint("", ColumnConstraint::CT_Default, ui->edtDefault->text().trimmed()));
     }
     if (!ui->edtCheck->text().trimmed().isEmpty())
     {
-        c->addConstraint(new ColumnConstraint("", ColumnConstraint::CT_Check, ui->edtCheck->text().trimmed()));
+        m_model->addConstraint(new ColumnConstraint("", ColumnConstraint::CT_Check, ui->edtCheck->text().trimmed()));
     }
     if (ui->chkPrimaryKey->checkState() && Qt::Checked)
     {
-        c->addConstraint(new ColumnConstraint("", ColumnConstraint::CT_PrimaryKey));
+        m_model->addConstraint(new ColumnConstraint("", ColumnConstraint::CT_PrimaryKey));
     }
     if (ui->chkNotNull->checkState() && Qt::Checked)
     {
-        c->addConstraint(new ColumnConstraint("", ColumnConstraint::CT_NotNull));
+        m_model->addConstraint(new ColumnConstraint("", ColumnConstraint::CT_NotNull));
     }
     if (ui->chkUnique->checkState() && Qt::Checked)
     {
-        c->addConstraint(new ColumnConstraint("", ColumnConstraint::CT_Unique));
+        m_model->addConstraint(new ColumnConstraint("", ColumnConstraint::CT_Unique));
     }
     // is ForeignKey
 
-    return c;
+    m_table->addColumn(m_model);
+    QDialog::accept();
+}
+
+void ColumnDialog::reject()
+{
+    if (m_model)
+    {
+        delete m_model;
+    }
+    QDialog::reject();
+}
+
+void ColumnDialog::on_btnAddFK_clicked()
+{
+    QScopedPointer<ForeignKeySelectDialog> dlg( new ForeignKeySelectDialog(m_model));
+    dlg->exec();
 }

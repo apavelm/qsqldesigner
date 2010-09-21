@@ -15,27 +15,15 @@ void ModelManager::addTable(PTableModel table)
 {
     if (table)
     {
-        QString tableName = table->name();
-        if (tableName.trimmed().isEmpty())
-        {
-            tableName = getNewDefaultNameForTable();
-            table->setName(tableName);
-        }
-        QMap<QString, SharedTableModel>::const_iterator i = m_tables.constFind(tableName);
-        if (i == m_tables.constEnd())
-        {
-            m_tables.insert(tableName, SharedTableModel(table));
-            emit tableAdded(table);
-        }
+        m_tables.insert(table->name(), SharedTableModel(table));
+        emit tableAdded(table);
     }
 }
 
 void ModelManager::removeTable(const QString& tableName)
 {
-    QMap<QString, SharedTableModel>::iterator i = m_tables.find(tableName);
-    if (i != m_tables.end())
+    if (m_tables.contains(tableName))
     {
-        i.value().clear();
         m_tables.remove(tableName);
         emit tableRemoved(tableName);
     }
@@ -62,7 +50,24 @@ PColumnModel ModelManager::getColumnByName(const QString& tableName, const QStri
         return 0;
 }
 
-const QList<QString> ModelManager::getColumnList(const QString& tableName) const
+const QList<QString> ModelManager::getTableListExceptOne(const QString& tableName) const
+{
+    QMap<QString, SharedTableModel>::const_iterator i = m_tables.constFind(tableName);
+    if (i == m_tables.constEnd())
+    {
+        return m_tables.keys();
+    }
+    else
+    {
+        QList<QString> lst(m_tables.keys());
+        int idx = lst.indexOf(tableName);
+        lst.removeAt(idx);
+        return lst;
+    }
+}
+
+// TODO: add filtering by datatype
+const QList<QString> ModelManager::getColumnList(const QString &tableName, const DataType) const
 {
     PTableModel table = getTableByName(tableName);
     QList<QString> rslt;
@@ -71,27 +76,4 @@ const QList<QString> ModelManager::getColumnList(const QString& tableName) const
         rslt = table->columns().keys();
     }
     return rslt;
-}
-
-QString ModelManager::getNewDefaultNameForTable() const
-{
-    QStringList strLst(m_tables.keys());
-    QString defaultName = tr("Table");
-    QString newName = defaultName;
-    if (!strLst.contains(newName, Qt::CaseInsensitive))
-    {
-        return defaultName;
-    }
-    else
-    {
-        for (int i = 1; i < 32000; i++)
-        {
-            newName = defaultName + "_" + QString::number(i);
-            if (!strLst.contains(newName, Qt::CaseInsensitive))
-            {
-                return newName;
-            }
-        }
-    }
-    return "";
 }

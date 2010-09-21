@@ -5,5 +5,9 @@
         <file alias="zoomout">images/zoom-out.png</file>
         <file alias="key">images/key.png</file>
         <file alias="zoom">images/zoom.png</file>
+        <file alias="table64">images/table64.png</file>
+        <file alias="table24">images/table24.png</file>
+        <file alias="column24">images/column24.png</file>
+        <file alias="column64">images/column64.png</file>
     </qresource>
 </RCC>

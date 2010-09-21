@@ -4,6 +4,7 @@
 
 #include "mainwindow.h"
 #include "models/modelmanager.h"
+#include "widgets/widgetmanager.h"
 #include "settingsmanager.h"
 
 int main(int argc, char *argv[])
@@ -14,10 +15,14 @@ int main(int argc, char *argv[])
     app.setApplicationName("SQL Designer");
 
     QScopedPointer<QSplashScreen> splash(new QSplashScreen(QPixmap(":/splash")));
-    splash->showMessage(QSplashScreen::tr("Loading..."), Qt::AlignBottom | Qt::AlignHCenter, Qt::black);
-    splash->showMessage(QSplashScreen::tr("Starting Model Manager..."), Qt::AlignBottom | Qt::AlignHCenter, Qt::black);
-    ModelManager::newInstance();
     splash->show();
+    splash->showMessage(QSplashScreen::tr("Loading..."), Qt::AlignBottom | Qt::AlignHCenter, Qt::black);
+    app.processEvents();
+    splash->showMessage(QSplashScreen::tr("Starting Model Manager..."), Qt::AlignBottom | Qt::AlignHCenter, Qt::black);
+    app.processEvents();
+    ModelManager::newInstance();
+    splash->showMessage(QSplashScreen::tr("Starting Widget Manager..."), Qt::AlignBottom | Qt::AlignHCenter, Qt::black);
+    WidgetManager::newInstance();
     app.processEvents();
 
     MainWindow w;
@@ -25,6 +30,7 @@ int main(int argc, char *argv[])
     w.showMaximized();
     splash->finish(&w);
     int rslt = app.exec();
+    WidgetManager::deleteInstance();
     ModelManager::deleteInstance();
     SettingsManager::deleteInstance();
     return rslt;

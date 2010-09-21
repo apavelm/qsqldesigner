@@ -1,6 +1,9 @@
 #ifndef TABLEWIDGET_H
 #define TABLEWIDGET_H
 
+#include <QtCore/QtGlobal>
+#include <QtCore/QSharedPointer>
+#include <QtGui/QFontMetrics>
 #include <QtGui/QPainter>
 #include <QtGui/QPainterPath>
 #include <QtGui/QGraphicsObject>
@@ -25,10 +28,10 @@ public:
 
     inline const QString& name() const {return m_name;}
     QSizeF recalcMinimumSize() const;
+
+    void setModel(PTableModel model);
 public slots:
     void setName(const QString& name);
-signals:
-    void dirty();
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
@@ -38,6 +41,10 @@ private:
     QString m_name;
 
     void paintSelectionOutline(QPainter *painter);
+    qreal longestStringWidth(const QFontMetrics& metrics) const;
 };
+
+typedef TableWidget * PTableWidget;
+typedef QSharedPointer<TableWidget> SharedTableWidget;
 
 #endif // TABLEWIDGET_H
