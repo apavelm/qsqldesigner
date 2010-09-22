@@ -10,14 +10,17 @@ ForeignKeySelectionViewModel::ForeignKeySelectionViewModel(QObject *parent) : QS
         QStandardItem * table = new QStandardItem(QIcon(":/table24"), tableName);
 
         QList<QString> lstColumns = MM->getColumnList(tableName);
-        foreach (const QString& columnName, lstColumns)
+        if (lstColumns.count() > 0)
         {
-            QStandardItem * column = new QStandardItem(QIcon(":/column24"), columnName);
-            // the appendRow function appends the column as new row
-            table->appendRow(column);
+            foreach (const QString& columnName, lstColumns)
+            {
+                QStandardItem * column = new QStandardItem(QIcon(":/column24"), columnName);
+                // the appendRow function appends the column as new row
+                table->appendRow(column);
+            }
+            // append table as new row to the model. model takes the ownership of the item
+            appendRow(table);
         }
-        // append table as new row to the model. model takes the ownership of the item
-        appendRow(table);
     }
 }
 

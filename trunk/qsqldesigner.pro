@@ -24,7 +24,8 @@ SOURCES += src/main.cpp \
     src/foreignkeyselectdialog.cpp \
     src/foreignkeyselectionviewmodel.cpp \
     src/widgets/columnpreviewwidget.cpp \
-    src/widgets/widgetmanager.cpp
+    src/widgets/widgetmanager.cpp \
+    src/models/constraint.cpp
 HEADERS += src/mainwindow.h \
 	src/columndialog.h \
 	src/magnifydialog.h \
@@ -42,7 +43,8 @@ HEADERS += src/mainwindow.h \
     src/foreignkeyselectdialog.h \
     src/foreignkeyselectionviewmodel.h \
     src/widgets/columnpreviewwidget.h \
-    src/widgets/widgetmanager.h
+    src/widgets/widgetmanager.h \
+    src/models/constraint.h
 FORMS += src/ui/mainwindow.ui \
     src/ui/columndialog.ui \
     src/ui/magnifydialog.ui \

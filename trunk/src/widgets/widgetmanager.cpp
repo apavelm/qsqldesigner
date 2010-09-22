@@ -15,7 +15,9 @@ void WidgetManager::addTable(PTableModel table)
 {
     if (table)
     {
-        m_tablesWidgets.insert(table->name(), SharedTableWidget(new TableWidget(m_scene, 0, table)));
+        TableWidget * widget = new TableWidget(m_scene, 0, table);
+        connect(widget, SIGNAL(deleteWidget(QString)), MM, SLOT(removeTable(QString)));
+        m_tablesWidgets.insert(table->name(), SharedTableWidget(widget));
     }
 }
 
