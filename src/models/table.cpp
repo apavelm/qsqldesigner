@@ -1,7 +1,7 @@
 #include "table.h"
-#include "modelmanager.h"
 
 #include <limits>
+#include "modelmanager.h"
 
 TableModel::TableModel(const QString& name)
 {
@@ -23,12 +23,6 @@ void TableModel::setName(const QString& name)
     }
 };
 
-bool TableModel::isValidName(const QString& name) const
-{
-    // TODO: insert validation check
-    return true;
-}
-
 void TableModel::setColumns(const ColumnList& newColumns)
 {
     m_columns = newColumns;
@@ -37,6 +31,35 @@ void TableModel::setColumns(const ColumnList& newColumns)
 void TableModel::addColumn(PColumnModel c)
 {
     m_columns.addColumn(c);
+}
+
+const QStringList TableModel::constraintsNames() const
+{
+    QStringList rsltLst;
+
+    // adding column's constraints
+    foreach (const SharedColumnModel& c, m_columns)
+    {
+        const Constraints cns = c->constraints();
+        foreach (const SharedConstraint& cn, cns)
+        {
+            if (!cn->name().isEmpty())
+            {
+                rsltLst.append(cn->name());
+            }
+        }
+    }
+
+    // adding table's constraints
+    foreach (const SharedConstraint& cn, m_constraints)
+    {
+        if (!cn->name().isEmpty())
+        {
+            rsltLst.append(cn->name());
+        }
+    }
+
+    return rsltLst;
 }
 
 const QString TableModel::defaultTableName() const
@@ -59,5 +82,19 @@ const QString TableModel::defaultTableName() const
             }
         }
     }
-    return "";
+    return QString();
+}
+
+void TableModel::addConstraint(PConstraint constraint)
+{
+    // check it adding column-typed constraint
+    if ( (constraint->type()  != Constraint::CT_NotNull) && (constraint->type()  != Constraint::CT_Default) )
+    {
+        m_constraints.addConstraint(constraint);
+    }
+}
+
+bool TableModel::isValidName(const QString& name) const
+{
+    return MM->isTableNameValid(name);
 }

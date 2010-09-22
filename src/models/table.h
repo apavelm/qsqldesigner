@@ -4,8 +4,10 @@
 #include <QtGui/QApplication>
 #include <QtCore/QSharedPointer>
 #include <QtCore/QString>
+#include <QtCore/QStringList>
 
 #include "column.h"
+//#include "modelmanager.h"
 
 class TableModel
 {
@@ -19,9 +21,16 @@ public:
     inline const ColumnList& columns() const {return m_columns;}
     void setColumns(const ColumnList& newColumns);
     void addColumn(PColumnModel c);
+    // TODO: remove column function
+
+    const QStringList constraintsNames() const;
+    inline const Constraints& tableConstraints() const {return m_constraints;}
+    void addConstraint(PConstraint constraint);
+    inline void deleteConstraint(int index) {m_constraints.deleteConstraint(index);}
 private:
     ColumnList m_columns;
     QString m_name;
+    Constraints m_constraints;
 
     const QString defaultTableName() const;
     bool isValidName(const QString& name) const;

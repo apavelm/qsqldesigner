@@ -16,6 +16,7 @@ set ( SOURCES
      ./src/widgets/tablewidget.cpp
      ./src/models/modelmanager.cpp
      ./src/models/table.cpp
+	 ./src/models/constraint.cpp
      ./src/models/column.cpp
      ./src/models/datatypes.cpp
 	 ./src/foreignkeyselectdialog.cpp
@@ -36,6 +37,7 @@ set ( MOC_HEADERS
      ./src/widgets/tablewidget.h
      ./src/models/modelmanager.h
      ./src/models/table.h
+	 ./src/models/constraint.h
      ./src/models/column.h
      ./src/models/datatypes.h
 	 ./src/foreignkeyselectdialog.h

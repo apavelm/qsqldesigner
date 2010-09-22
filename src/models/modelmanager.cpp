@@ -15,7 +15,10 @@ void ModelManager::addTable(PTableModel table)
 {
     if (table)
     {
+        // add table
         m_tables.insert(table->name(), SharedTableModel(table));
+        // add table's and it's column's constraints
+        m_constraintNames << table->constraintsNames();
         emit tableAdded(table);
     }
 }
@@ -24,6 +27,14 @@ void ModelManager::removeTable(const QString& tableName)
 {
     if (m_tables.contains(tableName))
     {
+        // removing table's and it's column's constraints
+        PTableModel table = getTableByName(tableName);
+        const QStringList tablesConstraintNames = table->constraintsNames();
+        foreach (const QString& item, tablesConstraintNames)
+        {
+            m_constraintNames.removeOne(item);
+        }
+        // removing table
         m_tables.remove(tableName);
         emit tableRemoved(tableName);
     }
@@ -50,22 +61,6 @@ PColumnModel ModelManager::getColumnByName(const QString& tableName, const QStri
         return 0;
 }
 
-const QList<QString> ModelManager::getTableListExceptOne(const QString& tableName) const
-{
-    QMap<QString, SharedTableModel>::const_iterator i = m_tables.constFind(tableName);
-    if (i == m_tables.constEnd())
-    {
-        return m_tables.keys();
-    }
-    else
-    {
-        QList<QString> lst(m_tables.keys());
-        int idx = lst.indexOf(tableName);
-        lst.removeAt(idx);
-        return lst;
-    }
-}
-
 // TODO: add filtering by datatype
 const QList<QString> ModelManager::getColumnList(const QString &tableName, const DataType) const
 {
@@ -76,4 +71,18 @@ const QList<QString> ModelManager::getColumnList(const QString &tableName, const
         rslt = table->columns().keys();
     }
     return rslt;
+}
+
+bool ModelManager::isTableNameValid(const QString& tableName) const
+{
+    QStringList lst(m_tables.keys());
+    if (!lst.contains(tableName, Qt::CaseInsensitive))
+    {
+        return true;
+    }
+    else
+    {
+        // TODO: insert ACTION if wrong name detected after validation check
+        return false;
+    }
 }

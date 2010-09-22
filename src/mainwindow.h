@@ -49,9 +49,9 @@ private:
     MainView * m_mainView;
     QPrinter * m_printer;
     QGraphicsScene * m_scene;
-    QGraphicsItemGroup * m_gridGroup;
     QUndoStack * m_undoStack;
     QSignalMapper * m_zoomSignalMapper;
+    bool m_showGrid;
 
 private slots:
     void slotNewProject();
@@ -69,7 +69,6 @@ private slots:
     void slotEditSelectAll();
 
     void slotViewCustomZoom();
-    void slotViewShowGrid(bool on);
 
     void slotProjectAddTable();
 

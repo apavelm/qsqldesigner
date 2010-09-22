@@ -24,12 +24,18 @@ MainView::~MainView()
 void MainView::drawBackground(QPainter *painter, const QRectF &rect)
 {
     painter->save();
+    // draw background
     QLinearGradient backgroundGradient(rect.left(),rect.top(),rect.left(),rect.bottom());
     backgroundGradient.setColorAt(0, SM->paperColor());
     backgroundGradient.setColorAt(1, QColor(Qt::white));
     painter->setPen(QPen(Qt::NoPen));
     painter->setBrush(QBrush(backgroundGradient));
     painter->drawRect(rect);
+    //draw grid
+    if (SM->showGrid())
+    {
+
+    }
     painter->restore();
 }
 

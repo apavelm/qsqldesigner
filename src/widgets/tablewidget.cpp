@@ -3,7 +3,7 @@
 
 TableWidget::TableWidget(QGraphicsScene *scene, QGraphicsItem  *parent, TableModel * model) : QGraphicsObject(parent), m_model(model), m_name(model->name())
 {
-    setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemSendsGeometryChanges | QGraphicsItem::ItemIsMovable);
+    setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemSendsGeometryChanges | QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsFocusable);
 
     scene->clearSelection();
     scene->addItem(this);
@@ -90,12 +90,12 @@ void TableWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 
         fCurrentYPos += fSmallLineHeight + 2 * PenWidth + fLineOffset; // set fCurrentYPos to new value
         painter->setPen(QPen(SM->columnFontColor()));
-        foreach (SharedColumnModel c, m_model->columns()) // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        foreach (const SharedColumnModel& c, m_model->columns()) // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         {
             painter->setFont(fontNormal);
             painter->drawText(QRect(innerBoundingRect.left() + PenWidth, fCurrentYPos, fColumnPrefixWidth, fLineHeight), Qt::AlignVCenter, c->getUMLColumnPrefix());
 
-            if (c->isConstraintType(ColumnConstraint::CT_Unique))
+            if (c->isConstraintType(Constraint::CT_Unique))
             {
                 painter->setFont(fontUnderline);
             }
@@ -104,17 +104,17 @@ void TableWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
             fCurrentYPos += fLineHeight; // set fCurrentYPos to new value
         }
 
-        int constraintTypeCounters[ColumnConstraint::CT_Last];
-        qFill(&constraintTypeCounters[0], &constraintTypeCounters[ColumnConstraint::CT_Last], 0 );
-        constraintTypeCounters[ColumnConstraint::CT_PrimaryKey] = m_model->columns().getAmountForType(ColumnConstraint::CT_PrimaryKey);
-        constraintTypeCounters[ColumnConstraint::CT_Unique] = m_model->columns().getAmountForType(ColumnConstraint::CT_Unique);
-        constraintTypeCounters[ColumnConstraint::CT_ForeignKey] = m_model->columns().getAmountForType(ColumnConstraint::CT_ForeignKey);
-        constraintTypeCounters[ColumnConstraint::CT_Default] = m_model->columns().getAmountForType(ColumnConstraint::CT_Default);
-        constraintTypeCounters[ColumnConstraint::CT_NotNull] = m_model->columns().getAmountForType(ColumnConstraint::CT_NotNull);
-        constraintTypeCounters[ColumnConstraint::CT_Check] = m_model->columns().getAmountForType(ColumnConstraint::CT_Check);
+        int constraintTypeCounters[Constraint::CT_Last];
+        qFill(&constraintTypeCounters[0], &constraintTypeCounters[Constraint::CT_Last], 0 );
+        constraintTypeCounters[Constraint::CT_PrimaryKey] = m_model->columns().getAmountForType(Constraint::CT_PrimaryKey);
+        constraintTypeCounters[Constraint::CT_Unique] = m_model->columns().getAmountForType(Constraint::CT_Unique);
+        constraintTypeCounters[Constraint::CT_ForeignKey] = m_model->columns().getAmountForType(Constraint::CT_ForeignKey);
+        constraintTypeCounters[Constraint::CT_Default] = m_model->columns().getAmountForType(Constraint::CT_Default);
+        constraintTypeCounters[Constraint::CT_NotNull] = m_model->columns().getAmountForType(Constraint::CT_NotNull);
+        constraintTypeCounters[Constraint::CT_Check] = m_model->columns().getAmountForType(Constraint::CT_Check);
 
         bool bHasConstraints = false;
-        for (int i = 0; i < ColumnConstraint::CT_Last; i++)
+        for (int i = 0; i < Constraint::CT_Last; i++)
         {
             if (constraintTypeCounters[i] > 0)
             {
@@ -132,7 +132,7 @@ void TableWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
         }
 
         // Foreign keys section
-        if (constraintTypeCounters[ColumnConstraint::CT_ForeignKey] > 0)
+        if (constraintTypeCounters[Constraint::CT_ForeignKey] > 0)
         {
             // draw backward gradient
             fCurrentYPos += fLineOffset;
@@ -146,11 +146,11 @@ void TableWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
             fCurrentYPos += fSmallLineHeight + 2 * PenWidth + fLineOffset; // set fCurrentYPos to new value
 
             QList<PColumnModel> lstForeignKeys;
-            m_model->columns().getColumnsForConstraintType(ColumnConstraint::CT_ForeignKey, lstForeignKeys);
-            foreach (PColumnModel c, lstForeignKeys)
+            m_model->columns().getColumnsForConstraintType(Constraint::CT_ForeignKey, lstForeignKeys);
+            foreach (const PColumnModel c, lstForeignKeys)
             {
-                PColumnConstraint cn = c->constraints().constraint(ColumnConstraint::CT_ForeignKey);
-                if (cn->type() != ColumnConstraint::CT_Unknown)
+                PConstraint cn = c->constraints().constraint(Constraint::CT_ForeignKey);
+                if (cn->type() != Constraint::CT_Unknown)
                 {
                     QString sConstraintName = cn->getUMLConstraintString();
                     painter->setFont(fontNormal);
@@ -163,7 +163,7 @@ void TableWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
         }
 
         // Primary keys section
-        if (constraintTypeCounters[ColumnConstraint::CT_PrimaryKey] > 0)
+        if (constraintTypeCounters[Constraint::CT_PrimaryKey] > 0)
         {
             // draw backward gradient
             fCurrentYPos += fLineOffset;
@@ -177,11 +177,11 @@ void TableWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
             fCurrentYPos += fSmallLineHeight + 2 * PenWidth + fLineOffset; // set fCurrentYPos to new value
 
             QList<PColumnModel> lstPrimaryKeys;
-            m_model->columns().getColumnsForConstraintType(ColumnConstraint::CT_PrimaryKey, lstPrimaryKeys);
-            foreach (PColumnModel c, lstPrimaryKeys)
+            m_model->columns().getColumnsForConstraintType(Constraint::CT_PrimaryKey, lstPrimaryKeys);
+            foreach (const PColumnModel c, lstPrimaryKeys)
             {
-                PColumnConstraint cn = c->constraints().constraint(ColumnConstraint::CT_PrimaryKey);
-                if (cn->type() != ColumnConstraint::CT_Unknown)
+                PConstraint cn = c->constraints().constraint(Constraint::CT_PrimaryKey);
+                if (cn->type() != Constraint::CT_Unknown)
                 {
                     QString sConstraintName = cn->getUMLConstraintString();
                     painter->setFont(fontNormal);
@@ -193,7 +193,7 @@ void TableWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
             }
         }
         // Unique section
-        if (constraintTypeCounters[ColumnConstraint::CT_Unique] > 0)
+        if (constraintTypeCounters[Constraint::CT_Unique] > 0)
         {
             // draw backward gradient
             fCurrentYPos += fLineOffset;
@@ -207,11 +207,11 @@ void TableWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
             fCurrentYPos += fSmallLineHeight + 2 * PenWidth + fLineOffset; // set fCurrentYPos to new value
 
             QList<PColumnModel> lstUnique;
-            m_model->columns().getColumnsForConstraintType(ColumnConstraint::CT_Unique, lstUnique);
-            foreach (PColumnModel c, lstUnique)
+            m_model->columns().getColumnsForConstraintType(Constraint::CT_Unique, lstUnique);
+            foreach (const PColumnModel c, lstUnique)
             {
-                PColumnConstraint cn = c->constraints().constraint(ColumnConstraint::CT_Unique);
-                if (cn->type() != ColumnConstraint::CT_Unknown)
+                PConstraint cn = c->constraints().constraint(Constraint::CT_Unique);
+                if (cn->type() != Constraint::CT_Unknown)
                 {
                     QString sConstraintName = cn->getUMLConstraintString();
                     painter->setFont(fontNormal);
@@ -279,20 +279,20 @@ QSizeF TableWidget::recalcMinimumSize() const
 
     const int nColumnAmount = m_model->columns().count();
 
-    int constraintTypeCounters[ColumnConstraint::CT_Last];
-    qFill(&constraintTypeCounters[0], &constraintTypeCounters[ColumnConstraint::CT_Last], 0 );
+    int constraintTypeCounters[Constraint::CT_Last];
+    qFill(&constraintTypeCounters[0], &constraintTypeCounters[Constraint::CT_Last], 0 );
 
     if (nColumnAmount > 0)
     {
-        constraintTypeCounters[ColumnConstraint::CT_PrimaryKey] = m_model->columns().getAmountForType(ColumnConstraint::CT_PrimaryKey);
-        constraintTypeCounters[ColumnConstraint::CT_Unique] = m_model->columns().getAmountForType(ColumnConstraint::CT_Unique);
-        constraintTypeCounters[ColumnConstraint::CT_ForeignKey] = m_model->columns().getAmountForType(ColumnConstraint::CT_ForeignKey);
-        constraintTypeCounters[ColumnConstraint::CT_Default] = m_model->columns().getAmountForType(ColumnConstraint::CT_Default);
-        constraintTypeCounters[ColumnConstraint::CT_NotNull] = m_model->columns().getAmountForType(ColumnConstraint::CT_NotNull);
-        constraintTypeCounters[ColumnConstraint::CT_Check] = m_model->columns().getAmountForType(ColumnConstraint::CT_Check);
+        constraintTypeCounters[Constraint::CT_PrimaryKey] = m_model->columns().getAmountForType(Constraint::CT_PrimaryKey);
+        constraintTypeCounters[Constraint::CT_Unique] = m_model->columns().getAmountForType(Constraint::CT_Unique);
+        constraintTypeCounters[Constraint::CT_ForeignKey] = m_model->columns().getAmountForType(Constraint::CT_ForeignKey);
+        constraintTypeCounters[Constraint::CT_Default] = m_model->columns().getAmountForType(Constraint::CT_Default);
+        constraintTypeCounters[Constraint::CT_NotNull] = m_model->columns().getAmountForType(Constraint::CT_NotNull);
+        constraintTypeCounters[Constraint::CT_Check] = m_model->columns().getAmountForType(Constraint::CT_Check);
 
         bool bHasConstraints = false;
-        for (int i = 0; i < ColumnConstraint::CT_Last; i++)
+        for (int i = 0; i < Constraint::CT_Last; i++)
         {
             if (constraintTypeCounters[i] > 0)
             {
@@ -306,20 +306,20 @@ QSizeF TableWidget::recalcMinimumSize() const
         m_minHeight += nColumnAmount * fLineHeight; // height per columns * amount of columns
         if (bHasConstraints)
             m_minHeight += fSmallLineHeight + fLineOffset * 2; // for separator line, if there are any constraints
-        if (constraintTypeCounters[ColumnConstraint::CT_ForeignKey] > 0)
+        if (constraintTypeCounters[Constraint::CT_ForeignKey] > 0)
         {
             m_minHeight += fSmallLineHeight + 2 * PenWidth + fLineOffset;
-            m_minHeight += (qreal)constraintTypeCounters[ColumnConstraint::CT_ForeignKey] * fLineHeight;
+            m_minHeight += (qreal)constraintTypeCounters[Constraint::CT_ForeignKey] * fLineHeight;
         }
-        if (constraintTypeCounters[ColumnConstraint::CT_PrimaryKey] > 0)
+        if (constraintTypeCounters[Constraint::CT_PrimaryKey] > 0)
         {
             m_minHeight += fSmallLineHeight + 2 * PenWidth + fLineOffset;
-            m_minHeight += (qreal)constraintTypeCounters[ColumnConstraint::CT_PrimaryKey] * fLineHeight;
+            m_minHeight += (qreal)constraintTypeCounters[Constraint::CT_PrimaryKey] * fLineHeight;
         }
-        if (constraintTypeCounters[ColumnConstraint::CT_Unique] > 0)
+        if (constraintTypeCounters[Constraint::CT_Unique] > 0)
         {
             m_minHeight += fSmallLineHeight + 2 * PenWidth + fLineOffset;
-            m_minHeight += (qreal)constraintTypeCounters[ColumnConstraint::CT_Unique] * fLineHeight;
+            m_minHeight += (qreal)constraintTypeCounters[Constraint::CT_Unique] * fLineHeight;
         }
 
         // calculate width
@@ -347,6 +347,15 @@ void TableWidget::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
     //myContextMenu->exec(event->screenPos());
 }
 
+void TableWidget::keyPressEvent(QKeyEvent *event)
+{
+    if (event->key() == Qt::Key_Delete)
+    {
+        // delete widget
+        emit deleteWidget(m_name);
+    }
+}
+
 void TableWidget::setModel(PTableModel model)
 {
     m_model = model;
@@ -357,12 +366,12 @@ void TableWidget::setModel(PTableModel model)
 qreal TableWidget::longestStringWidth(const QFontMetrics& metrics) const
 {
     qreal maxWidth = 0;
-    foreach (SharedColumnModel column, m_model->columns())
+    foreach (const SharedColumnModel& column, m_model->columns())
     {
         maxWidth = qMax(maxWidth, (qreal)metrics.boundingRect(column->getUMLColumnDescription()).width());
-        foreach (SharedColumnConstraint cn, column->constraints())
+        foreach (const SharedConstraint& cn, column->constraints())
         {
-            if (cn->type() != ColumnConstraint::CT_Unknown)
+            if (cn->type() != Constraint::CT_Unknown)
             {
                 maxWidth = qMax(maxWidth, (qreal)metrics.boundingRect(cn->getUMLConstraintString()).width());
             }

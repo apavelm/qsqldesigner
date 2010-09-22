@@ -12,6 +12,7 @@ SettingsManager::SettingsManager() : m_fontPointSize(8), m_smallPointSize(6)
     m_smallFont = QFont("Arial", m_smallPointSize);
     m_penWidth = 2.0;
     m_gridSize = 50;
+    m_showGrid = true;
 }
 
 SettingsManager::~SettingsManager()

@@ -3,6 +3,7 @@
 
 #include <QtCore/QtGlobal>
 #include <QtCore/QSharedPointer>
+#include <QtGui/QKeyEvent>
 #include <QtGui/QFontMetrics>
 #include <QtGui/QPainter>
 #include <QtGui/QPainterPath>
@@ -35,6 +36,7 @@ public slots:
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
+    void keyPressEvent(QKeyEvent *event);
 private:
     Q_DISABLE_COPY ( TableWidget )
     PTableModel m_model;
@@ -42,6 +44,8 @@ private:
 
     void paintSelectionOutline(QPainter *painter);
     qreal longestStringWidth(const QFontMetrics& metrics) const;
+signals:
+    void deleteWidget(QString name);
 };
 
 typedef TableWidget * PTableWidget;

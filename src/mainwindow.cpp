@@ -3,12 +3,13 @@
 #include "tabledialog.h"
 #include "models/modelmanager.h"
 #include "widgets/widgetmanager.h"
+#include "settingsmanager.h"
 
 #include "ui_mainwindow.h"
 
 #include <cmath>
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), m_gridGroup(0)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     m_printer = new QPrinter(QPrinter::HighResolution);
@@ -44,7 +45,6 @@ MainWindow::~MainWindow()
 {
     delete m_undoStack;
     delete m_printer;
-    delete m_gridGroup;
     delete m_mainView;
     delete m_zoomSignalMapper;
     delete ui;
@@ -105,7 +105,7 @@ void MainWindow::createActions()
     connect(ui->actionSelect_All, SIGNAL(triggered()), this, SLOT(slotEditSelectAll()));
 
     // View
-    connect(ui->actionShow_Grid, SIGNAL(toggled(bool)), this, SLOT(slotViewShowGrid(bool)));
+    connect(ui->actionShow_Grid, SIGNAL(toggled(bool)), SM, SLOT(setShowGrid(bool)));
     ui->actionZoom_In->setShortcuts(QKeySequence::ZoomIn);
     connect(ui->actionZoom_In, SIGNAL(triggered()), m_mainView, SLOT(zoomIn()));
     ui->actionZoom_Out->setShortcuts(QKeySequence::ZoomOut);
@@ -145,6 +145,8 @@ void MainWindow::createActions()
     connect(MM, SIGNAL(tableAdded(PTableModel)), WM, SLOT(addTable(PTableModel)) );
     connect(MM, SIGNAL(tableRemoved(QString)), WM, SLOT(removeTable(QString)) );
     connect(MM, SIGNAL(tableUpdate(QString,PTableModel)), WM, SLOT(updateTable(QString,PTableModel)) );
+
+    connect(SM, SIGNAL(dirty()), m_mainView, SLOT(update()));
 }
 
 void MainWindow::createToolBars()
@@ -286,38 +288,6 @@ void MainWindow::slotViewCustomZoom()
     }
 }
 
-void MainWindow::slotViewShowGrid(bool on)
-{
-    if (!m_gridGroup)
-    {
-        const int GridSize = SM->gridSize();
-        QPen pen(QColor(175, 175, 175, 127));
-        pen.setStyle(Qt::DotLine);
-        m_gridGroup = new QGraphicsItemGroup;
-        const int MaxX = static_cast<int>(std::ceil(m_scene->width())  / GridSize) * GridSize;
-        const int MaxY = static_cast<int>(std::ceil(m_scene->height()) / GridSize) * GridSize;
-        for (int x = 0; x <= MaxX; x += GridSize)
-        {
-            QGraphicsLineItem *item = new QGraphicsLineItem(x, 0, x, MaxY);
-            item->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
-            item->setPen(pen);
-            item->setZValue(-1000);
-            m_gridGroup->addToGroup(item);
-        }
-        for (int y = 0; y <= MaxY; y += GridSize)
-        {
-            QGraphicsLineItem *item = new QGraphicsLineItem(0, y, MaxX, y);
-            item->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
-            item->setPen(pen);
-            item->setZValue(-1000);
-            m_gridGroup->addToGroup(item);
-        }
-        m_gridGroup->setCacheMode(QGraphicsItem::DeviceCoordinateCache);
-        m_scene->addItem(m_gridGroup);
-    }
-    m_gridGroup->setVisible(on);
-}
-
 void MainWindow::slotProjectAddTable()
 {
     QScopedPointer<TableDialog> dlg(new TableDialog());
@@ -329,10 +299,10 @@ void MainWindow::slotProjectAddTable()
 
 bool MainWindow::sceneHasItems() const
 {
-    foreach (QGraphicsItem *item, m_scene->items())
-        if (item != m_gridGroup && item->group() != m_gridGroup)
-            return true;
-    return false;
+   if (m_scene->items().count() > 0)
+       return true;
+   else
+       return false;
 }
 
 void MainWindow::clear()

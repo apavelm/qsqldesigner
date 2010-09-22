@@ -18,14 +18,15 @@ public:
     PTableModel getTableByName(const QString& tableName) const;
     PColumnModel getColumnByName(const QString& tableName, const QString& columnName) const;
     inline const QList<QString> getTableList() const {return m_tables.keys();}
-    const QList<QString> getTableListExceptOne(const QString& tableName) const;
     const QList<QString> getColumnList(const QString& tableName, const DataType = DataType()) const;
+    bool isTableNameValid(const QString& tableName) const;
 private:
     friend class Singleton<ModelManager>;
     ModelManager();
     virtual ~ModelManager();
 
     QMap<QString, SharedTableModel> m_tables;
+    QStringList m_constraintNames;
 signals:
     void tableAdded(PTableModel table);
     void tableRemoved(const QString& tableName);
