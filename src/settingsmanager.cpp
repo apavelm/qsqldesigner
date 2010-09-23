@@ -11,10 +11,21 @@ SettingsManager::SettingsManager() : m_fontPointSize(8), m_smallPointSize(6)
     m_mainFont = QFont("Arial", m_fontPointSize);
     m_smallFont = QFont("Arial", m_smallPointSize);
     m_penWidth = 2.0;
-    m_gridSize = 50;
+    m_gridSize = 20.0;
     m_showGrid = true;
+    m_antialiasing = false;
+    m_textAntialiasing = true;
+    m_smoothPixmapTransform = false;
+    m_highQualityAntialiasing = false;
+    m_nonCosmeticDefaultPen = false;
 }
 
 SettingsManager::~SettingsManager()
 {
+}
+
+void SettingsManager::setShowGrid(bool showGrid)
+{
+    m_showGrid = showGrid;
+    emit dirty();
 }

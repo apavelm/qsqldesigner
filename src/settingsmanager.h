@@ -20,8 +20,13 @@ public:
     inline int  fontPointSize() const {return m_fontPointSize;}
     inline int  smallFontPointSize() const {return m_smallPointSize;}
     inline qreal  penWidth() const {return m_penWidth;}
-    inline int  gridSize() const {return m_gridSize;}
+    inline qreal  gridSize() const {return m_gridSize;}
     inline bool showGrid() const {return m_showGrid;}
+    inline bool antialiasing() const {return m_antialiasing;}
+    inline bool textAntialiasing() const {return m_textAntialiasing;}
+    inline bool smoothPixmapTransform() const {return m_smoothPixmapTransform;}
+    inline bool highQualityAntialiasing() const {return m_highQualityAntialiasing;}
+    inline bool nonCosmeticDefaultPen() const {return m_nonCosmeticDefaultPen;}
 public slots:
     inline void setPaperColor(const QColor& color) {m_paperColor = color;}
     inline void setTableColorStart(const QColor& color) {m_tableColorStart = color;}
@@ -33,8 +38,13 @@ public slots:
     inline void setFontPointSize(int newSize) {m_fontPointSize = newSize;}
     inline void setSmallFontPointSize(int newSize) {m_smallPointSize = newSize;}
     inline void setPenWidth(qreal newWidth) {m_penWidth = newWidth;}
-    inline void setGridSize(int newGridSize) {m_gridSize = newGridSize;}
-    inline void setShowGrid(bool showGrid) {m_showGrid = showGrid;}
+    inline void setGridSize(qreal newGridSize) {m_gridSize = newGridSize;}
+    void setShowGrid(bool showGrid);
+    inline void setAntialiasing(bool antialiasing) {m_antialiasing = antialiasing;}
+    inline void setTextAntialiasing(bool textAntialiasing) {m_textAntialiasing = textAntialiasing;}
+    inline void setSmoothPixmapTransform(bool smoothPixmapTransform) {m_smoothPixmapTransform = smoothPixmapTransform;}
+    inline void setHighQualityAntialiasing(bool highQualityAntialiasing) {m_highQualityAntialiasing = highQualityAntialiasing;}
+    inline void setNonCosmeticDefaultPen(bool nonCosmeticDefaultPen) {m_nonCosmeticDefaultPen = nonCosmeticDefaultPen;}
 private:
     friend class Singleton<SettingsManager>;
     SettingsManager();
@@ -51,8 +61,13 @@ private:
     int    m_fontPointSize;
     int    m_smallPointSize;
     qreal  m_penWidth;
-    int    m_gridSize;
+    qreal  m_gridSize;
     bool   m_showGrid;
+    bool   m_antialiasing;
+    bool   m_textAntialiasing;
+    bool   m_smoothPixmapTransform;
+    bool   m_highQualityAntialiasing;
+    bool   m_nonCosmeticDefaultPen;
 signals:
     void dirty();
 };

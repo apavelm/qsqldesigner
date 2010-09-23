@@ -178,19 +178,22 @@ void TableWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 
             QList<PColumnModel> lstPrimaryKeys;
             m_model->columns().getColumnsForConstraintType(Constraint::CT_PrimaryKey, lstPrimaryKeys);
+
+            QString sConstraintUMLString;
             foreach (const PColumnModel c, lstPrimaryKeys)
             {
                 PConstraint cn = c->constraints().constraint(Constraint::CT_PrimaryKey);
-                if (cn->type() != Constraint::CT_Unknown)
+                if (!cn->name().isEmpty())
                 {
-                    QString sConstraintName = cn->getUMLConstraintString();
-                    painter->setFont(fontNormal);
-                    painter->setPen(penBlack);
-                    painter->drawText(QRect(innerBoundingRect.left() + PenWidth, fCurrentYPos, fColumnPrefixWidth, fLineHeight), Qt::AlignVCenter, "+");
-                    painter->drawText(QRect(innerBoundingRect.left() + fColumnPrefixWidth, fCurrentYPos, innerBoundingRect.width() - fColumnPrefixWidth, fLineHeight), Qt::AlignVCenter | Qt::TextSingleLine | Qt::TextDontClip, sConstraintName);
-                    fCurrentYPos += fLineHeight; // set fCurrentYPos to new value
+                    sConstraintUMLString = cn->getUMLConstraintString();
                 }
             }
+
+            painter->setFont(fontNormal);
+            painter->setPen(penBlack);
+            painter->drawText(QRect(innerBoundingRect.left() + PenWidth, fCurrentYPos, fColumnPrefixWidth, fLineHeight), Qt::AlignVCenter, "+");
+            painter->drawText(QRect(innerBoundingRect.left() + fColumnPrefixWidth, fCurrentYPos, innerBoundingRect.width() - fColumnPrefixWidth, fLineHeight), Qt::AlignVCenter | Qt::TextSingleLine | Qt::TextDontClip, sConstraintUMLString);
+            fCurrentYPos += fLineHeight; // set fCurrentYPos to new value
         }
         // Unique section
         if (constraintTypeCounters[Constraint::CT_Unique] > 0)
@@ -314,7 +317,7 @@ QSizeF TableWidget::recalcMinimumSize() const
         if (constraintTypeCounters[Constraint::CT_PrimaryKey] > 0)
         {
             m_minHeight += fSmallLineHeight + 2 * PenWidth + fLineOffset;
-            m_minHeight += (qreal)constraintTypeCounters[Constraint::CT_PrimaryKey] * fLineHeight;
+            m_minHeight += /* (qreal)constraintTypeCounters[Constraint::CT_PrimaryKey] * */ fLineHeight; // because PK is always ONE (might be not simple, but one)
         }
         if (constraintTypeCounters[Constraint::CT_Unique] > 0)
         {
@@ -371,7 +374,7 @@ qreal TableWidget::longestStringWidth(const QFontMetrics& metrics) const
         maxWidth = qMax(maxWidth, (qreal)metrics.boundingRect(column->getUMLColumnDescription()).width());
         foreach (const SharedConstraint& cn, column->constraints())
         {
-            if (cn->type() != Constraint::CT_Unknown)
+            if ((cn->type() != Constraint::CT_Unknown) && (!cn->name().isEmpty()))
             {
                 maxWidth = qMax(maxWidth, (qreal)metrics.boundingRect(cn->getUMLConstraintString()).width());
             }

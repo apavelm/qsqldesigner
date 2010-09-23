@@ -20,6 +20,7 @@ public:
     inline const QList<QString> getTableList() const {return m_tables.keys();}
     const QList<QString> getColumnList(const QString& tableName, const DataType = DataType()) const;
     bool isTableNameValid(const QString& tableName) const;
+    bool isConstraintNameValid(const QString& name) const;
 private:
     friend class Singleton<ModelManager>;
     ModelManager();

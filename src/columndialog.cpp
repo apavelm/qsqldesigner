@@ -37,23 +37,23 @@ void ColumnDialog::accept()
 
     if (!ui->edtDefault->text().trimmed().isEmpty())
     {
-        m_model->addConstraint(new Constraint(Constraint::CT_Default, ui->edtDefault->text().trimmed()));
+        m_model->addConstraint(new Constraint(m_model, Constraint::CT_Default, ui->edtDefault->text().trimmed()));
     }
     if (!ui->edtCheck->text().trimmed().isEmpty())
     {
-        m_model->addConstraint(new Constraint(Constraint::CT_Check, ui->edtCheck->text().trimmed()));
+        m_model->addConstraint(new Constraint(m_model, Constraint::CT_Check, ui->edtCheck->text().trimmed()));
     }
     if (ui->chkPrimaryKey->checkState() && Qt::Checked)
     {
-        m_model->addConstraint(new Constraint(Constraint::CT_PrimaryKey));
+        m_model->addConstraint(new Constraint(m_model, Constraint::CT_PrimaryKey));
     }
     if (ui->chkNotNull->checkState() && Qt::Checked)
     {
-        m_model->addConstraint(new Constraint(Constraint::CT_NotNull));
+        m_model->addConstraint(new Constraint(m_model, Constraint::CT_NotNull));
     }
     if (ui->chkUnique->checkState() && Qt::Checked)
     {
-        m_model->addConstraint(new Constraint(Constraint::CT_Unique));
+        m_model->addConstraint(new Constraint(m_model, Constraint::CT_Unique));
     }
     // is ForeignKey
 
@@ -72,6 +72,7 @@ void ColumnDialog::reject()
 
 void ColumnDialog::on_btnAddFK_clicked()
 {
+    m_model->setName(ui->edtName->text().trimmed());
     QScopedPointer<ForeignKeySelectDialog> dlg( new ForeignKeySelectDialog(m_model));
     dlg->exec();
 }

@@ -14,7 +14,7 @@ class TableDialog : public QDialog
 {
     Q_OBJECT
 public:
-    TableDialog(QWidget *parent = 0);
+    TableDialog();
     ~TableDialog();
 
     inline PTableModel model() const {return m_model;}

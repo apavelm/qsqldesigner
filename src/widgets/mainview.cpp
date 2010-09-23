@@ -4,8 +4,9 @@
 
 MainView::MainView(QWidget * parent) : QGraphicsView(parent)
 {
+    m_gridPoints.clear();
     setDragMode(QGraphicsView::RubberBandDrag);
-    setRenderHints(QPainter::Antialiasing | QPainter::TextAntialiasing);
+    setRenderHintsAccordingSettings();
     setViewportUpdateMode(QGraphicsView::SmartViewportUpdate);
     setCacheMode(QGraphicsView::CacheBackground);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
@@ -21,6 +22,32 @@ MainView::~MainView()
 {
 }
 
+void MainView::setRenderHintsAccordingSettings()
+{
+    QPainter::RenderHints flags(0);
+    if (SM->antialiasing())
+    {
+        flags |= QPainter::Antialiasing;
+    }
+    if (SM->textAntialiasing())
+    {
+        flags |= QPainter::TextAntialiasing;
+    }
+    if (SM->smoothPixmapTransform())
+    {
+        flags |= QPainter::SmoothPixmapTransform;
+    }
+    if (SM->highQualityAntialiasing())
+    {
+        flags |= QPainter::HighQualityAntialiasing;
+    }
+    if (SM->nonCosmeticDefaultPen())
+    {
+        flags |= QPainter::NonCosmeticDefaultPen;
+    }
+    setRenderHints(flags);
+}
+
 void MainView::drawBackground(QPainter *painter, const QRectF &rect)
 {
     painter->save();
@@ -34,9 +61,33 @@ void MainView::drawBackground(QPainter *painter, const QRectF &rect)
     //draw grid
     if (SM->showGrid())
     {
-
+        // don't draw grid, if scale less then 0.5
+        if (curScale() > 0.5)
+        {
+            if (m_gridPoints.isEmpty())
+            {
+                recalcGridPoints(rect);
+            }
+            painter->setPen(QPen(Qt::black));
+            painter->drawPoints(QPolygonF(m_gridPoints));
+        }
     }
     painter->restore();
+}
+
+void MainView::recalcGridPoints(const QRectF &rect)
+{
+    int gridStep = qMin(curScale() * SM->gridSize(), SM->gridSize());
+
+    const qreal MaxX = rect.width();
+    const qreal MaxY = rect.height();
+    for (qreal y = 0; y <= MaxY; y += gridStep)
+    {
+        for (qreal x = 0; x <= MaxX; x += gridStep)
+        {
+            m_gridPoints << QPointF(rect.left() + x, rect.top() + y);
+        }
+    }
 }
 
 void MainView::scaleBy(qreal scaleFactor)
@@ -56,6 +107,7 @@ void MainView::scaleBy(qreal scaleFactor)
         {
         sc = maxScale / curScaleFactor;
     }
+    m_gridPoints.clear();
     scale(sc, sc);
 }
 
@@ -92,4 +144,11 @@ void MainView::zoomIn()
 void MainView::zoomOut()
 {
     scaleBy(1.0 / 1.1);
+}
+
+void MainView::update()
+{
+    m_gridPoints.clear();
+    resetCachedContent();
+    QGraphicsView::update();
 }
