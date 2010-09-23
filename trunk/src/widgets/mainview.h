@@ -20,16 +20,21 @@ public:
     ~MainView();
 
     inline qreal curScale() const {return transform().m11();}
+    void setRenderHintsAccordingSettings();
 public slots:
     void zoomIn();
     void zoomOut();
     void setZoom(int);
+    void update();
 
 protected:
     void wheelEvent(QWheelEvent * event);
 
 private:
     QScopedPointer<CornerZoomWidget> m_cornerButton;
+    QVector<QPointF> m_gridPoints;
+
+    void recalcGridPoints(const QRectF &rect);
     void scaleBy(qreal scaleFactor);
     void drawBackground(QPainter *painter, const QRectF &rect);
     void scrollContentsBy(int dx, int dy);

@@ -5,44 +5,47 @@
 #include <QtCore/QPair>
 #include <QtCore/QSharedPointer>
 #include <QtCore/QString>
+#include <QtCore/QStringList>
 #include <QtCore/QVariant>
 
-class ColumnConstraintForeignKey
+class ColumnModel;
+typedef ColumnModel * PColumnModel;
+
+class ConstraintForeignKey
 {
 public:
-    enum Type {ForeignKeyType = QVariant::UserType + 1};
+    enum Type {ForeignKeyType = QVariant::UserType + 2};
+    inline Type type() const {return ForeignKeyType;}
 
-    ColumnConstraintForeignKey(const QString& tableSource = QString(), const QString& columnSource = QString(), const QString& tableRef = QString(), const QString& columnRef = QString())
+    ConstraintForeignKey(const QString& tableRef = QString(), const QString& columnRef = QString())
     {
-        m_source = qMakePair(tableSource, columnSource);
         m_reference = qMakePair(tableRef, columnRef);
     }
 
-    ColumnConstraintForeignKey(const ColumnConstraintForeignKey& old)
+    ConstraintForeignKey(const ConstraintForeignKey& old)
     {
         if (old.isValid())
         {
-            m_source = old.source();
             m_reference = old.reference();
         }
     }
 
-    inline const QPair<QString, QString> source() const {return m_source;}
-    inline const QString sourceTable() const {return m_source.first;}
-    inline const QString sourceColumn() const {return m_source.second;}
     inline const QPair<QString, QString> reference() const {return m_reference;}
     inline const QString referenceTable() const {return m_reference.first;}
     inline const QString referenceColumn() const {return m_reference.second;}
 
     bool isValid() const
     {
-        return !m_source.first.isEmpty() && !m_source.second.isEmpty() && !m_reference.first.isEmpty() && !m_reference.second.isEmpty();
+        return !m_reference.first.isEmpty() && !m_reference.second.isEmpty();
     }
 private:
-    QPair<QString, QString> m_source, m_reference;
+    QPair<QString, QString> m_reference;
 };
 
-Q_DECLARE_METATYPE(ColumnConstraintForeignKey)
+typedef QList<ConstraintForeignKey> ConstraintForeignKeyList;
+
+Q_DECLARE_METATYPE(ConstraintForeignKey)
+Q_DECLARE_METATYPE(ConstraintForeignKeyList)
 
 class Constraint
 {
@@ -51,7 +54,7 @@ class Constraint
 public:
     enum ConstraintType {CT_Unknown = 0, CT_PrimaryKey = 0x1, CT_NotNull = 0x2, CT_Unique = 0x4, CT_Default = 0x8, CT_Check = 0x10, CT_ForeignKey = 0x20, CT_Last = 0x40};
     Q_DECLARE_FLAGS(ConstraintTypes, ConstraintType)
-    Constraint(const ConstraintType type = CT_Unknown, const QVariant& data = QVariant());
+    Constraint(PColumnModel column, const ConstraintType type = CT_Unknown, const QVariant& data = QVariant());
     Constraint(const Constraint& old);
     ~Constraint();
 
@@ -64,9 +67,12 @@ public:
 
     const QString getUMLConstraintString() const;
 private:
+    PColumnModel m_column;
     ConstraintType m_type;
     QVariant m_data;
     QString m_name;
+
+    QString defaultName(const ConstraintType type, const QVariant& var = QVariant());
 };
 
 typedef Constraint * PConstraint;

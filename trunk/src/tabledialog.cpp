@@ -6,7 +6,7 @@
 
 #include "ui_tabledialog.h"
 
-TableDialog::TableDialog(QWidget *parent) : QDialog(parent), ui(new Ui::TableDialog)
+TableDialog::TableDialog() : QDialog(0), ui(new Ui::TableDialog)
 {
     ui->setupUi(this);
     m_model = new TableModel();
@@ -33,6 +33,7 @@ void TableDialog::changeEvent(QEvent *e)
 
 void TableDialog::on_columnAddButton_clicked()
 {
+    m_model->setName(ui->edtTableName->text());
     QScopedPointer<ColumnDialog> dlg(new ColumnDialog(m_model));
     if (dlg->exec() == QDialog::Accepted)
     {

@@ -86,3 +86,16 @@ bool ModelManager::isTableNameValid(const QString& tableName) const
         return false;
     }
 }
+
+bool ModelManager::isConstraintNameValid(const QString& name) const
+{
+    if (!m_constraintNames.contains(name, Qt::CaseInsensitive))
+    {
+        return true;
+    }
+    else
+    {
+        // TODO: insert ACTION if wrong name detected after validation check
+        return false;
+    }
+}
