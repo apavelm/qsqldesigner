@@ -59,6 +59,7 @@ public:
     ~Constraint();
 
     inline const ConstraintType type() const {return m_type;}
+    inline PColumnModel column() const {return m_column;}
     void setType(const ConstraintType& newType);
     inline const QString& name() const {return m_name;}
     void setName(const QString& newName);
@@ -85,6 +86,7 @@ public:
     Constraints();
 
     void addConstraint(PConstraint constraint);
+    void deleteConstraint(PConstraint constraint);
     void deleteConstraint(int index);
 
     inline const Constraint::ConstraintTypes types() const {return m_types;}

@@ -134,8 +134,18 @@ const QString Constraint::getUMLConstraintString() const
             break;
         case CT_ForeignKey:
             {
-                if (!m_name.isEmpty())
+                // WRONG!
+                // TODO: if 2 or more FK references to same refTable -> than it is 1 string in FK-constraint else (datatype)
+
+                /*if (!m_name.isEmpty())
                 {
+                    QString refTableName;
+                    QVariant var;
+                    if (var.canConvert<ConstraintForeignKey>())
+                    {
+                        ConstraintForeignKey fk = var.value<ConstraintForeignKey>();
+                        refTableName = fk.referenceTable();
+                    }
                     QString sTypeListString;
                     QList<PColumnModel> lstForeignKeys;
                     m_column->table()->columns().getColumnsForConstraintType(Constraint::CT_ForeignKey, lstForeignKeys);
@@ -145,8 +155,11 @@ const QString Constraint::getUMLConstraintString() const
                         sTypeListString += c->dataType().typeName;
                     }
                     sTypeListString += ")";
+
                     rslt = m_name + sTypeListString;
-                }
+                }*/
+                // DELME: temporary
+                rslt = m_name + "()";
             }
             break;
         case CT_Default: break;
@@ -178,6 +191,15 @@ void Constraints::deleteConstraint(int index)
     if (index >= count() || index < 0) return;
     m_types ^= at(index)->type();
     removeAt(index);
+}
+
+void Constraints::deleteConstraint(PConstraint constraint)
+{
+    for (int i = 0; i < count(); i++)
+    {
+        if (at(i).data() == constraint)
+            deleteConstraint(i);
+    }
 }
 
 PConstraint Constraints::constraint(const Constraint::ConstraintType type) const
