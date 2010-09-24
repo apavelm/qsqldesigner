@@ -32,6 +32,7 @@ public:
     inline const Constraints& constraints() const {return m_constraints;}
     inline void addConstraint(PConstraint constraint) {m_constraints.addConstraint(constraint);}
     inline void deleteConstraint(int index) {m_constraints.deleteConstraint(index);}
+    inline void deleteConstraint(PConstraint constraint) {m_constraints.deleteConstraint(constraint);}
     inline bool isConstraintType(Constraint::ConstraintType type) const {return m_constraints.isConstraintType(type);}
 
     const QString getUMLColumnPrefix() const;

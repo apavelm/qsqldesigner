@@ -22,6 +22,7 @@ set ( SOURCES
 	 ./src/foreignkeyselectdialog.cpp
 	 ./src/foreignkeyselectionviewmodel.cpp
 	 ./src/widgets/widgetmanager.cpp
+	 ./src/widgets/arrowforeignkey.cpp
 )
 
 set ( MOC_HEADERS
@@ -43,6 +44,7 @@ set ( MOC_HEADERS
 	 ./src/foreignkeyselectdialog.h
 	 ./src/foreignkeyselectionviewmodel.h
 	 ./src/widgets/widgetmanager.h
+	 ./src/widgets/arrowforeignkey.h
 )
 
 set ( UIS
