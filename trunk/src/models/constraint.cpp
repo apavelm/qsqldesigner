@@ -75,7 +75,7 @@ QString Constraint::defaultName(const ConstraintType type, const QVariant& var)
     }
     if (type == Constraint::CT_PrimaryKey)
     {
-        rslt = QString("PK_%1_%2").arg(m_column->table()->name()).arg(m_column->name());
+        rslt = QString("PK_%1").arg(m_column->table()->name());
     }
     if (type == Constraint::CT_Unique)
     {

@@ -14,38 +14,56 @@ typedef ColumnModel * PColumnModel;
 class ConstraintForeignKey
 {
 public:
-    enum Type {ForeignKeyType = QVariant::UserType + 2};
-    inline Type type() const {return ForeignKeyType;}
+    enum { Type = QVariant::UserType + 2 };
+    inline int type() const {return Type;}
 
-    ConstraintForeignKey(const QString& tableRef = QString(), const QString& columnRef = QString())
+    ConstraintForeignKey() {}
+
+    ConstraintForeignKey(const QString& tableRef, const QList<QString>& columnsSource, const QList<QString>& columnsRef)
     {
-        m_reference = qMakePair(tableRef, columnRef);
+        m_referenceTable = tableRef;
+        m_sourceColumns = columnsSource;
+        m_referenceColumns = columnsRef;
+    }
+
+    // constructor for simple FK
+    ConstraintForeignKey(const QString& tableRef, const QString& columnSource, const QString& columnRef)
+    {
+        m_referenceTable = tableRef;
+        m_sourceColumns.append(columnSource);
+        m_referenceColumns.append(columnRef);
     }
 
     ConstraintForeignKey(const ConstraintForeignKey& old)
     {
         if (old.isValid())
         {
-            m_reference = old.reference();
+            m_referenceTable = old.referenceTable();
+            m_sourceColumns = old.sourceColumns();
+            m_referenceColumns = old.referenceColumns();
         }
     }
 
-    inline const QPair<QString, QString> reference() const {return m_reference;}
-    inline const QString referenceTable() const {return m_reference.first;}
-    inline const QString referenceColumn() const {return m_reference.second;}
+    inline const QString referenceTable() const {return m_referenceTable;}
+    inline const QList<QString>& referenceColumns() const {return m_referenceColumns;}
+    inline const QList<QString>& sourceColumns() const {return m_sourceColumns;}
 
-    bool isValid() const
+    inline bool isSimple() const
     {
-        return !m_reference.first.isEmpty() && !m_reference.second.isEmpty();
+        return m_sourceColumns.count() == 1 && m_referenceColumns.count() == 1;
+    }
+
+    inline bool isValid() const
+    {
+        return !m_referenceTable.isEmpty() && !m_referenceColumns.isEmpty() && !m_sourceColumns.isEmpty();
     }
 private:
-    QPair<QString, QString> m_reference;
+    QString m_referenceTable;
+    QList<QString> m_sourceColumns;
+    QList<QString> m_referenceColumns;
 };
 
-typedef QList<ConstraintForeignKey> ConstraintForeignKeyList;
-
 Q_DECLARE_METATYPE(ConstraintForeignKey)
-Q_DECLARE_METATYPE(ConstraintForeignKeyList)
 
 class Constraint
 {
