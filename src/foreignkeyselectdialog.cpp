@@ -36,7 +36,8 @@ void ForeignKeySelectDialog::accept()
     }
 
     QVariant variant;
-    variant.setValue(ConstraintForeignKey(tableRef, columnRef));
+    // TODO: FIXME: replace creation of simple FK.
+    variant.setValue(ConstraintForeignKey(tableRef, m_column->name(), columnRef));
     m_column->addConstraint(new Constraint(m_column, Constraint::CT_ForeignKey, variant));
     QDialog::accept();
 }

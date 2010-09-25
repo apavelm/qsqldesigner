@@ -17,11 +17,7 @@ class WidgetManager : public QObject, public Singleton<WidgetManager>
 public:
     inline void setScene(QGraphicsScene * scene) {m_scene = scene;}
     PTableWidget getTableWidgetByName(const QString& tableName) const;
-    PArrowForeignKey getArrowFrom(const QString& tableName, const QString& columnName) const;
-    PArrowForeignKey getArrowTo(const QString& tableName, const QString& columnName) const;
 
-    ListArrowForeignKey getArrowsFromTable(const QString& tableName) const;
-    ListArrowForeignKey getArrowsToTable(const QString& tableName) const;
 private:
     friend class Singleton<WidgetManager>;
     WidgetManager();
@@ -32,12 +28,16 @@ private:
     QList<SharedArrowForeignKey> m_arrowsFK;
 
     void removeArrowBeforeTable(const QString& tableName);
+    PArrowForeignKey getArrowFrom(const QString& tableName, const QString& columnName) const;
+    PArrowForeignKey getArrowTo(const QString& tableName, const QString& columnName) const;
+    ListArrowForeignKey getArrowsFromTable(const QString& tableName) const;
+    ListArrowForeignKey getArrowsToTable(const QString& tableName) const;
 public slots:
     void addTable(PTableModel table);
     void removeTable(const QString& tableName);
     void updateTable(const QString& tableName, PTableModel table = 0);
-    void addArrowFK(PArrowForeignKey fk);
-    void removeArrowFK(PArrowForeignKey fk);
+    void addArrowFK(PConstraint constraint);
+    void removeArrowFK(PConstraint constraint);
 };
 
 #define WM WidgetManager::getInstance()

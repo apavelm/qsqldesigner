@@ -16,7 +16,7 @@ public:
     enum { Type = UserType + 2 };
     inline int type() const {return Type;}
 
-    ArrowForeignKey(PConstraint constraint, QGraphicsItem *parent = 0, QGraphicsScene *scene = 0);
+    ArrowForeignKey(PConstraint constraint);
     ~ArrowForeignKey();
 
     QRectF boundingRect() const;

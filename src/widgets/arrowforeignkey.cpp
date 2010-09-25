@@ -4,11 +4,7 @@
 #include "widgetmanager.h"
 #include "../models/table.h"
 
-#include <math.h>
-
-const qreal Pi = 3.1415;
-
-ArrowForeignKey::ArrowForeignKey(PConstraint constraint, QGraphicsItem *parent, QGraphicsScene *scene) : QGraphicsPathItem(parent, scene), m_initiated(false), m_sourceTable(0), m_refTable(0)
+ArrowForeignKey::ArrowForeignKey(PConstraint constraint) : QGraphicsPathItem(), m_initiated(false), m_sourceTable(0), m_refTable(0)
 {
     if (constraint)
     {
@@ -16,7 +12,7 @@ ArrowForeignKey::ArrowForeignKey(PConstraint constraint, QGraphicsItem *parent, 
         if (constraint->type() == Constraint::CT_ForeignKey)
         {
             m_sourceTable = WM->getTableWidgetByName(constraint->column()->table()->name());
-            QVariant var;
+            QVariant var = m_constraint->data();
             if (var.canConvert<ConstraintForeignKey>())
             {
                 ConstraintForeignKey fk = var.value<ConstraintForeignKey>();
@@ -40,7 +36,7 @@ ArrowForeignKey::~ArrowForeignKey()
 
 PColumnModel ArrowForeignKey::refColumn() const
 {
-    QVariant var;
+    QVariant var = m_constraint->data();
     if (var.canConvert<ConstraintForeignKey>())
     {
         ConstraintForeignKey fk = var.value<ConstraintForeignKey>();

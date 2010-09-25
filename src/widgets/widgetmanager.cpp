@@ -20,6 +20,12 @@ void WidgetManager::addTable(PTableModel table)
         PTableWidget widget = new TableWidget(m_scene, 0, table);
         connect(widget, SIGNAL(deleteWidget(QString)), MM, SLOT(removeTable(QString)));
         m_tablesWidgets.insert(table->name(), SharedTableWidget(widget));
+
+        // check for FK constraints
+        if (table->isConstraintType(Constraint::CT_ForeignKey))
+        {
+            // for each FK adding ArrowForeignKeyWidget
+        }
     }
 }
 
@@ -152,25 +158,38 @@ ListArrowForeignKey WidgetManager::getArrowsToTable(const QString& tableName) co
     return lst;
 }
 
-void WidgetManager::addArrowFK(PArrowForeignKey fk)
+void WidgetManager::addArrowFK(PConstraint constraint)
 {
-    if (fk)
+    if (constraint)
     {
-        if (fk->isValid())
+        if (constraint->type() == Constraint::CT_ForeignKey)
         {
-            m_arrowsFK.append(SharedArrowForeignKey(fk));
+            PArrowForeignKey arrow = new ArrowForeignKey(constraint);
+            m_arrowsFK.append(SharedArrowForeignKey(arrow));
+            m_scene->addItem(arrow);
         }
     }
 }
 
-void WidgetManager::removeArrowFK(PArrowForeignKey fk)
+void WidgetManager::removeArrowFK(PConstraint constraint)
 {
-    if (fk)
+    if (constraint)
     {
-        foreach (const SharedArrowForeignKey& item, m_arrowsFK)
+        QVariant var = constraint->data();
+        if (var.canConvert<ConstraintForeignKey>())
         {
-            if (item.data() == fk)
-                m_arrowsFK.removeOne(item);
+            ConstraintForeignKey fk = var.value<ConstraintForeignKey>();
+            QList<SharedArrowForeignKey>::iterator arrow;
+            for(arrow = m_arrowsFK.begin(); arrow != m_arrowsFK.end(); ++arrow)
+            {
+                if (QString::compare((*arrow)->refTable()->name(), fk.referenceTable(), Qt::CaseInsensitive) == 0 &&
+                    QString::compare((*arrow)->sourceTable()->name(), constraint->column()->table()->name(), Qt::CaseInsensitive) == 0 &&
+                    QString::compare((*arrow)->sourceColumn()->name(), constraint->column()->name(), Qt::CaseInsensitive) == 0 &&
+                    QString::compare((*arrow)->refColumn()->name(), fk.referenceColumn(), Qt::CaseInsensitive) == 0)
+                {
+                    m_arrowsFK.erase(arrow);
+                }
+            }
         }
     }
 }
