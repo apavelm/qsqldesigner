@@ -33,6 +33,11 @@ void TableModel::addColumn(PColumnModel c)
     m_columns.addColumn(c);
 }
 
+void TableModel::removeColumn(const QString& columnName)
+{
+    m_columns.remove(columnName);
+}
+
 const QStringList TableModel::constraintsNames() const
 {
     QStringList rsltLst;

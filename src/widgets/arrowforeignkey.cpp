@@ -40,7 +40,7 @@ PColumnModel ArrowForeignKey::refColumn() const
     if (var.canConvert<ConstraintForeignKey>())
     {
         ConstraintForeignKey fk = var.value<ConstraintForeignKey>();
-        return MM->getColumnByName(fk.referenceTable(), fk.referenceColumn());
+        return MM->getColumnByName(fk.referenceTable(), fk.referenceColumns().first());
     }
     return 0;
 }

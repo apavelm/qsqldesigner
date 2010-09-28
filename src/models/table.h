@@ -21,7 +21,7 @@ public:
     inline const ColumnList& columns() const {return m_columns;}
     void setColumns(const ColumnList& newColumns);
     void addColumn(PColumnModel c);
-    // TODO: remove column function
+    void removeColumn(const QString& columnName);
 
     const QStringList constraintsNames() const;
     inline const Constraints& tableConstraints() const {return m_constraints;}
