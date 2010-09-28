@@ -5,12 +5,12 @@
 #include "mainwindow.h"
 #include "models/modelmanager.h"
 #include "widgets/widgetmanager.h"
+#include "pluginmanager.h"
 #include "settingsmanager.h"
 
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
-    SettingsManager::newInstance();
     app.setOrganizationName("Company name");
     app.setApplicationName("SQL Designer");
 
@@ -18,6 +18,18 @@ int main(int argc, char *argv[])
     splash->show();
     splash->showMessage(QSplashScreen::tr("Loading..."), Qt::AlignBottom | Qt::AlignHCenter, Qt::black);
     app.processEvents();
+    splash->showMessage(QSplashScreen::tr("Starting Settings Manager..."), Qt::AlignBottom | Qt::AlignHCenter, Qt::black);
+    app.processEvents();
+    SettingsManager::newInstance();
+    splash->showMessage(QSplashScreen::tr("Settings Manager: loading saved settings"), Qt::AlignBottom | Qt::AlignHCenter, Qt::black);
+    app.processEvents();
+    //SettingsManager::getInstance()->loadSettings(); // TODO: !!!!!!!!
+    splash->showMessage(QSplashScreen::tr("Starting Plugin Manager..."), Qt::AlignBottom | Qt::AlignHCenter, Qt::black);
+    app.processEvents();
+    PluginManager::newInstance();
+    splash->showMessage(QSplashScreen::tr("Plugin Manager: loading plugins"), Qt::AlignBottom | Qt::AlignHCenter, Qt::black);
+    app.processEvents();
+    PluginManager::getInstance()->loadPlugins();
     splash->showMessage(QSplashScreen::tr("Starting Model Manager..."), Qt::AlignBottom | Qt::AlignHCenter, Qt::black);
     app.processEvents();
     ModelManager::newInstance();
@@ -32,6 +44,7 @@ int main(int argc, char *argv[])
     int rslt = app.exec();
     WidgetManager::deleteInstance();
     ModelManager::deleteInstance();
+    PluginManager::deleteInstance();
     SettingsManager::deleteInstance();
     return rslt;
 }

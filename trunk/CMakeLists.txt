@@ -5,6 +5,7 @@ project ( qsqldesigner )
 set ( SOURCES
      ./src/main.cpp
      ./src/settingsmanager.cpp
+	 ./src/pluginmanager.cpp
      ./src/commands.cpp
      ./src/columndialog.cpp
      ./src/mainwindow.cpp
@@ -27,6 +28,7 @@ set ( SOURCES
 
 set ( MOC_HEADERS
      ./src/settingsmanager.h
+	 ./src/pluginmanager.h
      ./src/columndialog.h
      ./src/commands.h
      ./src/mainwindow.h
@@ -41,6 +43,7 @@ set ( MOC_HEADERS
 	 ./src/models/constraint.h
      ./src/models/column.h
      ./src/models/datatypes.h
+	 ./src/models/plugindatatypeinterface.h
 	 ./src/foreignkeyselectdialog.h
 	 ./src/foreignkeyselectionviewmodel.h
 	 ./src/widgets/widgetmanager.h

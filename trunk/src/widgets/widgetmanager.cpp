@@ -22,10 +22,10 @@ void WidgetManager::addTable(PTableModel table)
         m_tablesWidgets.insert(table->name(), SharedTableWidget(widget));
 
         // check for FK constraints
-        if (table->isConstraintType(Constraint::CT_ForeignKey))
-        {
+        //if (table->isConstraintType(Constraint::CT_ForeignKey))
+        //{
             // for each FK adding ArrowForeignKeyWidget
-        }
+        //}
     }
 }
 
@@ -185,7 +185,7 @@ void WidgetManager::removeArrowFK(PConstraint constraint)
                 if (QString::compare((*arrow)->refTable()->name(), fk.referenceTable(), Qt::CaseInsensitive) == 0 &&
                     QString::compare((*arrow)->sourceTable()->name(), constraint->column()->table()->name(), Qt::CaseInsensitive) == 0 &&
                     QString::compare((*arrow)->sourceColumn()->name(), constraint->column()->name(), Qt::CaseInsensitive) == 0 &&
-                    QString::compare((*arrow)->refColumn()->name(), fk.referenceColumn(), Qt::CaseInsensitive) == 0)
+                    QString::compare((*arrow)->refColumn()->name(), fk.referenceColumns().first(), Qt::CaseInsensitive) == 0)
                 {
                     m_arrowsFK.erase(arrow);
                 }

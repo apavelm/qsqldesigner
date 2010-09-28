@@ -26,7 +26,8 @@ SOURCES += src/main.cpp \
     src/widgets/columnpreviewwidget.cpp \
     src/widgets/widgetmanager.cpp \
     src/models/constraint.cpp \
-    src/widgets/arrowforeignkey.cpp
+    src/widgets/arrowforeignkey.cpp \
+    src/pluginmanager.cpp
 HEADERS += src/mainwindow.h \
 	src/columndialog.h \
 	src/magnifydialog.h \
@@ -46,7 +47,9 @@ HEADERS += src/mainwindow.h \
     src/widgets/columnpreviewwidget.h \
     src/widgets/widgetmanager.h \
     src/models/constraint.h \
-    src/widgets/arrowforeignkey.h
+    src/widgets/arrowforeignkey.h \
+    src/models/plugindatatypeinterface.h \
+    src/pluginmanager.h
 FORMS += src/ui/mainwindow.ui \
     src/ui/columndialog.ui \
     src/ui/magnifydialog.ui \

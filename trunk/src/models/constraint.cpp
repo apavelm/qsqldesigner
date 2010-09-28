@@ -70,7 +70,7 @@ QString Constraint::defaultName(const ConstraintType type, const QVariant& var)
         if (var.canConvert<ConstraintForeignKey>())
         {
             ConstraintForeignKey fk = var.value<ConstraintForeignKey>();
-            rslt = QString("FK_%1_%2_REF_%3_%4").arg(m_column->table()->name()).arg(m_column->name()).arg(fk.referenceTable()).arg(fk.referenceColumn());
+            rslt = QString("FK_%1_%2_REF_%3_%4").arg(m_column->table()->name()).arg(m_column->name()).arg(fk.referenceTable()).arg(fk.referenceColumns().first());
         }
     }
     if (type == Constraint::CT_PrimaryKey)
