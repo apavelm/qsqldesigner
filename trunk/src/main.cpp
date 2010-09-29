@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
     PluginManager::newInstance();
     splash->showMessage(QSplashScreen::tr("Plugin Manager: loading plugins"), Qt::AlignBottom | Qt::AlignHCenter, Qt::black);
     app.processEvents();
-    PluginManager::getInstance()->loadPlugins();
+    PluginManager::getInstance()->loadDataTypePlugins();
     splash->showMessage(QSplashScreen::tr("Starting Model Manager..."), Qt::AlignBottom | Qt::AlignHCenter, Qt::black);
     app.processEvents();
     ModelManager::newInstance();

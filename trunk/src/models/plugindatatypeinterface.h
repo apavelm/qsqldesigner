@@ -12,15 +12,12 @@ class PluginDataTypeInterface
 public:
     virtual ~PluginDataTypeInterface() {}
 
-    virtual QString databaseName() const = 0;
-    virtual QString internalVersion() const = 0;
+    virtual const QString databaseName() const = 0;
+    virtual int internalVersion() const = 0;
 
-    virtual QList<DataType> dataTypes() const = 0;
+    virtual const DataTypes& dataTypes() const = 0;
 };
 
 Q_DECLARE_INTERFACE(PluginDataTypeInterface, "org.qsqldesigner.plugin.datatype.interface");
-
-typedef QList<QPluginLoader *>    PluginLoaderList;
-typedef QList<PluginDataTypeInterface *>  PluginDataTypeList;
 
 #endif // PLUGINDATATYPEINTERFACE_H
