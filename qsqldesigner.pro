@@ -17,7 +17,6 @@ SOURCES += src/main.cpp \
 	src/widgets/tablewidget.cpp \
 	src/widgets/cornerzoomwidget.cpp \
 	src/models/column.cpp \
-	src/models/datatypes.cpp \
 	src/models/modelmanager.cpp \
 	src/models/table.cpp \
     src/settingsmanager.cpp \

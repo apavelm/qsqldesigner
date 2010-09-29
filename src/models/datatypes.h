@@ -2,19 +2,18 @@
 #define DATATYPES_H
 
 #include <QtCore/QList>
+#include <QtCore/QMap>
 #include <QtCore/QString>
 
-class DataType
+struct DataType
 {
-public:
-    DataType() {}
     QString typeName;
     QString sqlTypeAcronim;
     bool    canBeArray;
+    bool    canIncrement;
 };
 
 typedef QList<DataType> DataTypes;
-
-//static DataTypes loadDataTypes();
+typedef QMap<QString, DataTypes> AllDatabaseDataTypes;
 
 #endif //DATATYPES_H

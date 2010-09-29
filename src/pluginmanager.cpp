@@ -1,65 +1,43 @@
 #include "pluginmanager.h"
 
-PluginManager::PluginManager()
+#include <QtDebug>
+
+PluginManager::PluginManager() : m_dataTypeLoader(0)
 {
 }
 
 PluginManager::~PluginManager()
 {
-/*    foreach(PluginInterface *plugin, m_plugins)
-    {
-        if(plugin) plugin->release();
-    }
-
-    qDeleteAll(m_loaders);
-    */
-    m_plugins.clear();
-    m_loaders.clear();
 }
 
-PluginDataTypeInterface * PluginManager::loadPlugin(const QString &path)
+PluginDataTypeInterface * PluginManager::loadDataTypePlugin(const QString &path)
 {
-    QPluginLoader *loader = new QPluginLoader(path);
-    if(!loader->load())
+    if (m_dataTypeLoader.isNull())
     {
-        return 0;
-    }
-
-    PluginDataTypeInterface *plugin = qobject_cast<PluginDataTypeInterface *>(loader->instance());
-    if(!plugin)
-    {
-        loader->unload();
-        delete loader;
-        return 0;
-    }
-
-
-    m_plugins.append(plugin);
-    m_loaders.append(loader);
-
-    return plugin;
-}
-
-bool PluginManager::unloadPlugin(PluginDataTypeInterface *object)
-{
-    for(int i = 0; i < m_loaders.count(); ++i)
-    {
-        QPluginLoader *loader = m_loaders[i];
-        PluginDataTypeInterface *plugin = qobject_cast<PluginDataTypeInterface *>(loader->instance());
-        if(plugin == object) {
-            //plugin->release();
-            delete loader;
-            m_loaders.removeAt(i);
-            m_plugins.removeAll(plugin);
-            return true;
+        m_dataTypeLoader.reset(new QPluginLoader(path));
+        if(!m_dataTypeLoader->load())
+        {
+            return 0;
         }
-    }
 
-    return false;
+        PluginDataTypeInterface *plugin = qobject_cast<PluginDataTypeInterface *>(m_dataTypeLoader->instance());
+        if(!plugin)
+        {
+            m_dataTypeLoader->unload();
+            m_dataTypeLoader.reset();
+            return 0;
+        }
+
+        return plugin;
+    }
+    else
+        return 0;
 }
 
-void PluginManager::loadPlugins()
+void PluginManager::loadDataTypePlugins()
 {
+    m_dataTypes.clear();
+    m_dbDatatypesPluginVersions.clear();
     QString path = qApp->applicationDirPath() + "/plugins/";
     QDir plugins_dir(path);
 
@@ -68,23 +46,33 @@ void PluginManager::loadPlugins()
     for(int i = 0; i < files.count(); ++i)
     {
         QString filename = files[i].prepend(path);
-        PluginDataTypeInterface * plugin = loadPlugin(filename);
-        if (!plugin) continue;
-    }
-}
-
-PluginDataTypeInterface * PluginManager::getDataTypePlugin(const QString& databaseName) const
-{
-    PluginDataTypeInterface * result = 0;
-
-    foreach(PluginDataTypeInterface * p, m_plugins)
-    {
-        if (QString::compare(databaseName, p->databaseName(), Qt::CaseInsensitive) == 0 )
+        PluginDataTypeInterface * plugin = loadDataTypePlugin(filename);
+        if (plugin)
         {
-            result = p;
-            break;
+            // search if plugin for this DB type is already loaded
+            QMap<QString, int>::const_iterator iterator = m_dbDatatypesPluginVersions.constFind(plugin->databaseName());
+            if (iterator != m_dbDatatypesPluginVersions.constEnd())
+            {
+                // if new plugin version more than already loaded plugin
+                if (*iterator < plugin->internalVersion())
+                {
+                    m_dbDatatypesPluginVersions.insert(plugin->databaseName(), plugin->internalVersion());
+                    m_dataTypes.insert(plugin->databaseName(), plugin->dataTypes());
+                }
+            }
+            else
+            {
+                // if there is no such plugin loaded
+                m_dbDatatypesPluginVersions.insert(plugin->databaseName(), plugin->internalVersion());
+                m_dataTypes.insert(plugin->databaseName(), plugin->dataTypes());
+            }
+
+            // unload plugin
+            if (!m_dataTypeLoader.isNull())
+            {
+                m_dataTypeLoader->unload();
+                m_dataTypeLoader.reset();
+            }
         }
     }
-
-    return result;
 }

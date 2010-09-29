@@ -13,21 +13,20 @@
 class PluginManager: public Singleton<PluginManager>
 {
 public:
-        PluginDataTypeInterface * loadPlugin(const QString& path);
-        bool unloadPlugin(PluginDataTypeInterface *object);
-        void loadPlugins();
-        inline int pluginsCount() const {return m_loaders.count();}
-
-        PluginDataTypeInterface * getDataTypePlugin(const QString& databaseName) const;
-        inline PluginDataTypeList & getPluginList() { return m_plugins; }
+        // Datatypes
+        void loadDataTypePlugins();
+        const DataTypes& dataTypesForDataBase(const QString& dbName) const {return m_dataTypes.value(dbName);}
 
 private:
         friend class Singleton<PluginManager>;
         PluginManager();
         virtual ~PluginManager();
 
-        PluginLoaderList m_loaders;
-        PluginDataTypeList m_plugins;
+        // Datatypes
+        PluginDataTypeInterface * loadDataTypePlugin(const QString& path);
+        QScopedPointer<QPluginLoader> m_dataTypeLoader;
+        AllDatabaseDataTypes m_dataTypes;
+        QMap<QString, int> m_dbDatatypesPluginVersions;
 };
 
 #define PLUGINMANAGER PluginManager::getInstance()
