@@ -1,10 +1,9 @@
 #ifndef PLUGINMANAGER_H
 #define PLUGINMANAGER_H
 
-#include <QtCore/QCoreApplication>
-#include <QtCore/QDir>
-#include <QtCore/QList>
+#include <QtCore/QMap>
 #include <QtCore/QPluginLoader>
+#include <QtCore/QScopedPointer>
 #include <QtCore/QString>
 
 #include "singleton.h"
@@ -15,7 +14,7 @@ class PluginManager: public Singleton<PluginManager>
 public:
         // Datatypes
         void loadDataTypePlugins();
-        const DataTypes& dataTypesForDataBase(const QString& dbName) const {return m_dataTypes.value(dbName);}
+        DataTypes dataTypesForDataBase(const QString& dbName) const {return m_dataTypes.value(dbName);}
 
 private:
         friend class Singleton<PluginManager>;

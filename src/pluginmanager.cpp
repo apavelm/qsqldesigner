@@ -1,6 +1,8 @@
 #include "pluginmanager.h"
 
-#include <QtDebug>
+#include <QtCore/QCoreApplication>
+#include <QtCore/QDir>
+#include <QtCore/QStringList>
 
 PluginManager::PluginManager() : m_dataTypeLoader(0)
 {
