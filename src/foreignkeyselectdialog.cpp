@@ -5,7 +5,7 @@
 
 #include "ui_foreignkeyselectdialog.h"
 
-ForeignKeySelectDialog::ForeignKeySelectDialog(PColumnModel column) : QDialog(0), ui(new Ui::ForeignKeySelectDialog), m_column(column)
+ForeignKeySelectDialog::ForeignKeySelectDialog(PColumnModel column, QWidget * parent) : QDialog(parent), ui(new Ui::ForeignKeySelectDialog), m_column(column)
 {
     ui->setupUi(this);
 

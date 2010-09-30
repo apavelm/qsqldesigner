@@ -1,14 +1,17 @@
 #include "widgetmanager.h"
+#include "../sqldesignerproject.h"
 #include "../models/modelmanager.h"
 
-WidgetManager::WidgetManager() : m_scene(0)
+WidgetManager::WidgetManager(QObject * parent, QGraphicsScene * scene) : QObject(parent), m_scene(scene)
 {
+    m_project = qobject_cast<PSqlDesignerProject>(parent);
     m_tablesWidgets.clear();
     m_arrowsFK.clear();
 }
 
 WidgetManager::~WidgetManager()
 {
+    m_scene = 0;
     m_arrowsFK.clear();
     m_tablesWidgets.clear();
 }
@@ -18,7 +21,7 @@ void WidgetManager::addTable(PTableModel table)
     if (table)
     {
         PTableWidget widget = new TableWidget(m_scene, 0, table);
-        connect(widget, SIGNAL(deleteWidget(QString)), MM, SLOT(removeTable(QString)));
+        connect(widget, SIGNAL(deleteWidget(QString)), m_project->modelManager(), SLOT(removeTable(QString)));
         m_tablesWidgets.insert(table->name(), SharedTableWidget(widget));
 
         // check for FK constraints
@@ -93,7 +96,7 @@ PTableWidget WidgetManager::getTableWidgetByName(const QString& tableName) const
         return 0;
     }
 }
-
+/*
 PArrowForeignKey WidgetManager::getArrowFrom(const QString& tableName, const QString& columnName) const
 {
     foreach (const SharedArrowForeignKey& arrow, m_arrowsFK)
@@ -125,7 +128,7 @@ PArrowForeignKey WidgetManager::getArrowTo(const QString& tableName, const QStri
     }
     return 0;
 }
-
+*/
 ListArrowForeignKey WidgetManager::getArrowsFromTable(const QString& tableName) const
 {
     ListArrowForeignKey lst;
@@ -164,13 +167,13 @@ void WidgetManager::addArrowFK(PConstraint constraint)
     {
         if (constraint->type() == Constraint::CT_ForeignKey)
         {
-            PArrowForeignKey arrow = new ArrowForeignKey(constraint);
+            PArrowForeignKey arrow = new ArrowForeignKey(this, constraint);
             m_arrowsFK.append(SharedArrowForeignKey(arrow));
             m_scene->addItem(arrow);
         }
     }
 }
-
+/*
 void WidgetManager::removeArrowFK(PConstraint constraint)
 {
     if (constraint)
@@ -193,3 +196,4 @@ void WidgetManager::removeArrowFK(PConstraint constraint)
         }
     }
 }
+*/

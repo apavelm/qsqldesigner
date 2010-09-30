@@ -5,6 +5,7 @@
 #include <QtGui/QDialog>
 
 #include "models/table.h"
+#include "sqldesignerproject.h"
 
 namespace Ui {
     class TableDialog;
@@ -14,7 +15,7 @@ class TableDialog : public QDialog
 {
     Q_OBJECT
 public:
-    TableDialog();
+    TableDialog(QWidget * parent = 0, PSqlDesignerProject project = 0);
     ~TableDialog();
 
     inline PTableModel model() const {return m_model;}

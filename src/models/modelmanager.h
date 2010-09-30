@@ -5,16 +5,19 @@
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 
-#include "../singleton.h"
-
 #include "datatypes.h"
 #include "table.h"
 #include "column.h"
 
-class ModelManager : public QObject, public Singleton<ModelManager>
+class SqlDesignerProject;
+typedef SqlDesignerProject * PSqlDesignerProject;
+
+class ModelManager : public QObject
 {
     Q_OBJECT
 public:
+    explicit ModelManager(QObject * parent = 0);
+
     PTableModel getTableByName(const QString& tableName) const;
     PColumnModel getColumnByName(const QString& tableName, const QString& columnName) const;
     inline const QList<QString> getTableList() const {return m_tables.keys();}
@@ -22,10 +25,7 @@ public:
     bool isTableNameValid(const QString& tableName) const;
     bool isConstraintNameValid(const QString& name) const;
 private:
-    friend class Singleton<ModelManager>;
-    ModelManager();
-    virtual ~ModelManager();
-
+    PSqlDesignerProject m_project;
     QMap<QString, SharedTableModel> m_tables;
     QStringList m_constraintNames;
 signals:
@@ -37,7 +37,7 @@ public slots:
     void removeTable(const QString& tableName);
 };
 
-#define MM ModelManager::getInstance()
+typedef ModelManager * PModelManager;
 
 #endif // MODELMANAGER_H
 

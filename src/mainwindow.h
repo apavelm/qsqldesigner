@@ -7,8 +7,6 @@
 #include <QtGui/QUndoView>
 #include <QtGui/QClipboard>
 #include <QtGui/QCloseEvent>
-#include <QtGui/QGraphicsItemGroup>
-#include <QtGui/QGraphicsScene>
 #include <QtGui/QMainWindow>
 #include <QtGui/QPrinter>
 #include <QtGui/QUndoCommand>
@@ -21,7 +19,8 @@ namespace Ui {
     class MainWindow;
 }
 
-class MainWindow : public QMainWindow {
+class MainWindow : public QMainWindow
+{
     Q_OBJECT
 public:
     MainWindow(QWidget *parent = 0);
@@ -31,10 +30,6 @@ protected:
     void changeEvent(QEvent *e);
     void closeEvent(QCloseEvent *event);
 
-public slots:
-    void setDirty(bool on = true);
-    void clear();
-
 private:
     void createSceneAndView();
     void createMenus();
@@ -43,12 +38,9 @@ private:
     void createStatusBar();
     void copyItems(const QList<QGraphicsItem*> &items);
 
-    bool sceneHasItems() const;
-
     Ui::MainWindow * ui;
     MainView * m_mainView;
     QPrinter * m_printer;
-    QGraphicsScene * m_scene;
     QUndoStack * m_undoStack;
     QSignalMapper * m_zoomSignalMapper;
     bool m_showGrid;
@@ -56,7 +48,6 @@ private:
 private slots:
     void slotNewProject();
     void slotOpenProject();
-    void slotCloseProject();
     void slotSave();
     void slotSaveAs();
     void slotPrint();
@@ -73,6 +64,8 @@ private slots:
     void slotProjectAddTable();
 
     void slotAboutAbout();
+
+    void slotCurrentProjectChange(const QString& projectName);
 };
 
 #endif // MAINWINDOW_H

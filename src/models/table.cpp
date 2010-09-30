@@ -1,10 +1,10 @@
 #include "table.h"
 
-#include <limits>
 #include "modelmanager.h"
 
-TableModel::TableModel(const QString& name)
+TableModel::TableModel(PModelManager mm, const QString& name)
 {
+    m_mm = mm;
     if (name.isEmpty())
     {
         m_name = defaultTableName();
@@ -17,7 +17,7 @@ TableModel::TableModel(const QString& name)
 
 void TableModel::setName(const QString& name)
 {
-    if (isValidName(name))
+    if (m_mm->isTableNameValid(name))
     {
         m_name = name;
     }
@@ -69,25 +69,15 @@ const QStringList TableModel::constraintsNames() const
 
 const QString TableModel::defaultTableName() const
 {
-    QStringList strLst(MM->getTableList());
+    QStringList strLst(m_mm->getTableList());
     QString defaultName = tr("Table");
     QString newName = defaultName;
-    if (!strLst.contains(newName, Qt::CaseInsensitive))
+    int i = 1;
+    while (strLst.contains(newName, Qt::CaseInsensitive))
     {
-        return defaultName;
+        newName = defaultName + QString("_%1").arg(i++);
     }
-    else
-    {
-        for (int i = 1; i < std::numeric_limits<int>::max(); i++)
-        {
-            newName = defaultName + "_" + QString::number(i);
-            if (!strLst.contains(newName, Qt::CaseInsensitive))
-            {
-                return newName;
-            }
-        }
-    }
-    return QString();
+    return newName;
 }
 
 void TableModel::addConstraint(PConstraint constraint)
@@ -97,9 +87,4 @@ void TableModel::addConstraint(PConstraint constraint)
     {
         m_constraints.addConstraint(constraint);
     }
-}
-
-bool TableModel::isValidName(const QString& name) const
-{
-    return MM->isTableNameValid(name);
 }

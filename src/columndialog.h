@@ -13,7 +13,7 @@ class ColumnDialog : public QDialog
 {
     Q_OBJECT
 public:
-    ColumnDialog(PTableModel table = 0);
+    ColumnDialog(PTableModel table = 0, QWidget * parent = 0);
     ~ColumnDialog();
     inline PColumnModel model() const {return m_model;}
 

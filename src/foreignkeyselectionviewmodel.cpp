@@ -1,15 +1,17 @@
 #include "foreignkeyselectionviewmodel.h"
+
+#include "projectmanager.h"
 #include "models/modelmanager.h"
 
 ForeignKeySelectionViewModel::ForeignKeySelectionViewModel(QObject *parent) : QStandardItemModel(parent)
 {
-    QList<QString> lstTables = MM->getTableList();
+    QList<QString> lstTables = CURRENTPROJECT->modelManager()->getTableList();
     foreach (const QString& tableName, lstTables)
     {
         // Create the phone groups as QStandardItems
         QStandardItem * table = new QStandardItem(QIcon(":/table24"), tableName);
 
-        QList<QString> lstColumns = MM->getColumnList(tableName);
+        QList<QString> lstColumns =  CURRENTPROJECT->modelManager()->getColumnList(tableName);
         if (lstColumns.count() > 0)
         {
             foreach (const QString& columnName, lstColumns)

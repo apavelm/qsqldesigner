@@ -15,7 +15,7 @@ class ForeignKeySelectDialog : public QDialog
     Q_OBJECT
 
 public:
-    ForeignKeySelectDialog(PColumnModel column);
+    ForeignKeySelectDialog(PColumnModel column, QWidget * parent = 0);
     ~ForeignKeySelectDialog();
 
     void accept();
