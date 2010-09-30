@@ -25,6 +25,7 @@ protected:
     void changeEvent(QEvent *e);
 
 private:
+    PSqlDesignerProject m_project;
     Ui::TableDialog *ui;
     PTableModel m_model;
 

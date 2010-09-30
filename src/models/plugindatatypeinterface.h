@@ -1,7 +1,6 @@
 #ifndef PLUGINDATATYPEINTERFACE_H
 #define PLUGINDATATYPEINTERFACE_H
 
-#include <QtCore/QList>
 #include <QtCore/QPluginLoader>
 #include <QtCore/QString>
 

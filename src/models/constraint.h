@@ -76,7 +76,7 @@ public:
     Constraint(const Constraint& old);
     ~Constraint();
 
-    inline const ConstraintType type() const {return m_type;}
+    inline ConstraintType type() const {return m_type;}
     inline PColumnModel column() const {return m_column;}
     void setType(const ConstraintType& newType);
     inline const QString& name() const {return m_name;}

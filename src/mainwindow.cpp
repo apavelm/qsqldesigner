@@ -269,8 +269,11 @@ void MainWindow::slotViewCustomZoom()
 
 void MainWindow::slotProjectAddTable()
 {
-    TableDialog dlg(this, CURRENTPROJECT);
-    dlg.exec();
+    if (CURRENTPROJECT)
+    {
+        TableDialog dlg(this, CURRENTPROJECT);
+        dlg.exec();
+    }
 }
 
 void MainWindow::slotAboutAbout()

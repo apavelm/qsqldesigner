@@ -1,13 +1,12 @@
-#include <QtCore/QScopedPointer>
-
 #include "columndialog.h"
 #include "foreignkeyselectdialog.h"
 #include "models/table.h"
 #include "ui_columndialog.h"
 
-ColumnDialog::ColumnDialog(PTableModel table, QWidget * parent) :  QDialog(parent),  m_table(table), ui(new Ui::ColumnDialog)
+ColumnDialog::ColumnDialog(PTableModel table, QWidget * parent, PSqlDesignerProject project) :  QDialog(parent),  m_table(table), ui(new Ui::ColumnDialog)
 {
     ui->setupUi(this);
+    m_project = project;
     m_model = new ColumnModel(table);
     ui->edtName->setText(m_model->name());
 }
@@ -73,6 +72,6 @@ void ColumnDialog::reject()
 void ColumnDialog::on_btnAddFK_clicked()
 {
     m_model->setName(ui->edtName->text().trimmed());
-    QScopedPointer<ForeignKeySelectDialog> dlg( new ForeignKeySelectDialog(m_model, this));
-    dlg->exec();
+    ForeignKeySelectDialog dlg(m_model, this, m_project);
+    dlg.exec();
 }
