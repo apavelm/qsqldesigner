@@ -26,7 +26,9 @@ SOURCES += src/main.cpp \
     src/widgets/widgetmanager.cpp \
     src/models/constraint.cpp \
     src/widgets/arrowforeignkey.cpp \
-    src/pluginmanager.cpp
+    src/pluginmanager.cpp \
+    src/projectmanager.cpp \
+    src/sqldesignerproject.cpp
 HEADERS += src/mainwindow.h \
 	src/columndialog.h \
 	src/magnifydialog.h \
@@ -48,7 +50,9 @@ HEADERS += src/mainwindow.h \
     src/models/constraint.h \
     src/widgets/arrowforeignkey.h \
     src/models/plugindatatypeinterface.h \
-    src/pluginmanager.h
+    src/pluginmanager.h \
+    src/projectmanager.h \
+    src/sqldesignerproject.h
 FORMS += src/ui/mainwindow.ui \
     src/ui/columndialog.ui \
     src/ui/magnifydialog.ui \

@@ -1,13 +1,10 @@
 #include "mainwindow.h"
+
 #include "settingsmanager.h"
+#include "projectmanager.h"
 #include "tabledialog.h"
-#include "models/modelmanager.h"
-#include "widgets/widgetmanager.h"
-#include "settingsmanager.h"
 
 #include "ui_mainwindow.h"
-
-#include <cmath>
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
@@ -21,18 +18,11 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     createActions();
     createToolBars();
     createStatusBar();
-
-    //clear();
 }
 
 void MainWindow::createSceneAndView()
 {
     m_mainView = new MainView;
-    m_scene = new QGraphicsScene(this);
-    QSize pageSize = m_printer->paperSize(QPrinter::Point).toSize();
-    m_scene->setSceneRect(0, 0, pageSize.width(), pageSize.height());
-    m_mainView->setScene(m_scene);
-    WM->setScene(m_scene);
     setCentralWidget(m_mainView);
 }
 
@@ -62,12 +52,6 @@ void MainWindow::changeEvent(QEvent *e)
     }
 }
 
-void MainWindow::setDirty(bool on)
-{
-    setWindowModified(on);
-    //updateUi();
-}
-
 void MainWindow::closeEvent(QCloseEvent *event)
 {
     event->accept();
@@ -80,6 +64,7 @@ void MainWindow::createActions()
     connect (ui->actionNew_Project, SIGNAL(triggered()), this, SLOT(slotNewProject()));
     ui->actionOpen_Project->setShortcuts(QKeySequence::Open);
     connect(ui->actionOpen_Project, SIGNAL(triggered()), this, SLOT(slotOpenProject()));
+    connect(ui->actionClose_Project, SIGNAL(triggered()), PROJECTMANAGER, SLOT(closeProject()));
 
     ui->actionSave->setShortcuts(QKeySequence::Save);
     connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(slotSave()));
@@ -142,9 +127,7 @@ void MainWindow::createActions()
     connect(textEdit, SIGNAL(copyAvailable(bool)),
             copyAct, SLOT(setEnabled(bool)));*/
 
-    connect(MM, SIGNAL(tableAdded(PTableModel)), WM, SLOT(addTable(PTableModel)) );
-    connect(MM, SIGNAL(tableRemoved(QString)), WM, SLOT(removeTable(QString)) );
-    connect(MM, SIGNAL(tableUpdate(QString,PTableModel)), WM, SLOT(updateTable(QString,PTableModel)) );
+    connect(PROJECTMANAGER, SIGNAL(currentProjectChanged(QString)), this, SLOT(slotCurrentProjectChange(QString)));
 
     connect(SM, SIGNAL(dirty()), m_mainView, SLOT(update()));
 }
@@ -161,17 +144,11 @@ void MainWindow::createStatusBar()
 
 void MainWindow::slotNewProject()
 {
-    clear();
-    setWindowFilePath(tr("Untitled"));
-    setDirty(false);
+    QString projectName = tr("Untitled");
+    PROJECTMANAGER->newProject(projectName);
 }
 
 void MainWindow::slotOpenProject()
-{
-
-}
-
-void MainWindow::slotCloseProject()
 {
 
 }
@@ -242,7 +219,6 @@ void MainWindow::slotEditCut()
         QScopedPointer<QGraphicsItem> item(i.next());
         scene->removeItem(item.data());
     }*/
-    setDirty(true);
 }
 
 
@@ -270,7 +246,6 @@ void MainWindow::slotEditPaste()
     else
         return;
         */
-    setDirty(true);
 }
 
 void MainWindow::slotEditSelectAll()
@@ -290,30 +265,18 @@ void MainWindow::slotViewCustomZoom()
 
 void MainWindow::slotProjectAddTable()
 {
-    QScopedPointer<TableDialog> dlg(new TableDialog());
-    connect(dlg.data(), SIGNAL(addTable(PTableModel)), MM, SLOT(addTable(PTableModel)));
-    connect(dlg.data(), SIGNAL(removeTable(QString)), MM, SLOT(removeTable(QString)));
-    connect(dlg.data(), SIGNAL(updateTable(QString,PTableModel)), MM, SIGNAL(tableUpdate(QString,PTableModel)));
-    dlg->exec();
-}
-
-bool MainWindow::sceneHasItems() const
-{
-   if (m_scene->items().count() > 0)
-       return true;
-   else
-       return false;
-}
-
-void MainWindow::clear()
-{
-    // WARNING
-    // TODO: BUG here with small GridSize value
-    //slotViewShowGrid(ui->actionShow_Grid->isChecked());
+    TableDialog dlg(this, CURRENTPROJECT);
+    dlg.exec();
 }
 
 void MainWindow::slotAboutAbout()
 {
 
+}
+
+void MainWindow::slotCurrentProjectChange(const QString& projectName)
+{
+    setWindowTitle(QString("%1 - %2").arg(tr("SQL Designer")).arg(projectName));
+    m_mainView->setScene(CURRENTPROJECT->scene());
 }
 

@@ -1,8 +1,6 @@
 #include "column.h"
 #include "table.h"
 
-#include <limits>
-
 // ColumnModel
 ColumnModel::ColumnModel(PTableModel table, const QString& name) : m_parent(table)
 {
@@ -46,21 +44,13 @@ const QString ColumnModel::defaultColumnName() const
         QStringList strLst(m_parent->columns().keys());
         QString defaultName = tr("Column");
         QString newName = defaultName;
-        if (!strLst.contains(newName, Qt::CaseInsensitive))
+        int i = 1;
+        while (strLst.contains(newName, Qt::CaseInsensitive))
         {
-            return defaultName;
+            newName = defaultName + QString("_%1").arg(i++);
         }
-        else
-        {
-            for (int i = 1; i < std::numeric_limits<int>::max(); i++)
-            {
-                newName = defaultName + "_" + QString::number(i);
-                if (!strLst.contains(newName, Qt::CaseInsensitive))
-                {
-                    return newName;
-                }
-            }
-        }
+
+        return newName;
     }
     return QString();
 }

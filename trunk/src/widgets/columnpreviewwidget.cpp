@@ -1,6 +1,7 @@
 #include "columnpreviewwidget.h"
 #include "../foreignkeyselectionviewmodel.h"
 #include "../models/modelmanager.h"
+#include "../projectmanager.h"
 
 #include "ui_columnpreviewwidget.h"
 
@@ -27,7 +28,7 @@ void ColumnPreviewWidget::onUpdatePreviewWidget(QModelIndex index)
                 const QString tableName = parent->text();
                 const QString columnName = item->text();
 
-                PColumnModel column = MM->getColumnByName(tableName, columnName);
+                PColumnModel column = CURRENTPROJECT->modelManager()->getColumnByName(tableName, columnName);
 
                 ui->lblColumnName->setText(column->name());
                 const QString & comment = column->comment();

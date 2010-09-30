@@ -5,7 +5,7 @@
 #include "models/table.h"
 #include "ui_columndialog.h"
 
-ColumnDialog::ColumnDialog(PTableModel table) :  QDialog(0),  m_table(table), ui(new Ui::ColumnDialog)
+ColumnDialog::ColumnDialog(PTableModel table, QWidget * parent) :  QDialog(parent),  m_table(table), ui(new Ui::ColumnDialog)
 {
     ui->setupUi(this);
     m_model = new ColumnModel(table);
@@ -73,6 +73,6 @@ void ColumnDialog::reject()
 void ColumnDialog::on_btnAddFK_clicked()
 {
     m_model->setName(ui->edtName->text().trimmed());
-    QScopedPointer<ForeignKeySelectDialog> dlg( new ForeignKeySelectDialog(m_model));
+    QScopedPointer<ForeignKeySelectDialog> dlg( new ForeignKeySelectDialog(m_model, this));
     dlg->exec();
 }

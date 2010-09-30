@@ -3,33 +3,32 @@
 
 #include <QtCore/QMap>
 #include <QtCore/QObject>
-#include <QtCore/QSharedPointer>
 #include <QtGui/QGraphicsScene>
 
 #include "arrowforeignkey.h"
 #include "tablewidget.h"
 
-#include "../singleton.h"
+class SqlDesignerProject;
+typedef SqlDesignerProject * PSqlDesignerProject;
 
-class WidgetManager : public QObject, public Singleton<WidgetManager>
+class WidgetManager : public QObject
 {
     Q_OBJECT
 public:
-    inline void setScene(QGraphicsScene * scene) {m_scene = scene;}
+    explicit WidgetManager(QObject * parent = 0, QGraphicsScene * scene = 0);
+    ~WidgetManager();
+
     PTableWidget getTableWidgetByName(const QString& tableName) const;
 
 private:
-    friend class Singleton<WidgetManager>;
-    WidgetManager();
-    virtual ~WidgetManager();
-
+    PSqlDesignerProject m_project;
     QGraphicsScene * m_scene;
     QMap<QString, SharedTableWidget> m_tablesWidgets;
     QList<SharedArrowForeignKey> m_arrowsFK;
 
     void removeArrowBeforeTable(const QString& tableName);
-    PArrowForeignKey getArrowFrom(const QString& tableName, const QString& columnName) const;
-    PArrowForeignKey getArrowTo(const QString& tableName, const QString& columnName) const;
+    //PArrowForeignKey getArrowFrom(const QString& tableName, const QString& columnName) const;
+    //PArrowForeignKey getArrowTo(const QString& tableName, const QString& columnName) const;
     ListArrowForeignKey getArrowsFromTable(const QString& tableName) const;
     ListArrowForeignKey getArrowsToTable(const QString& tableName) const;
 public slots:
@@ -37,9 +36,9 @@ public slots:
     void removeTable(const QString& tableName);
     void updateTable(const QString& tableName, PTableModel table = 0);
     void addArrowFK(PConstraint constraint);
-    void removeArrowFK(PConstraint constraint);
+    //void removeArrowFK(PConstraint constraint);
 };
 
-#define WM WidgetManager::getInstance()
+typedef WidgetManager * PWidgetManager;
 
 #endif // WIDGETMANAGER_H

@@ -6,11 +6,17 @@
 
 #include "ui_tabledialog.h"
 
-TableDialog::TableDialog() : QDialog(0), ui(new Ui::TableDialog)
+TableDialog::TableDialog(QWidget * parent, PSqlDesignerProject project) :
+            QDialog(parent),
+            ui(new Ui::TableDialog)
 {
     ui->setupUi(this);
-    m_model = new TableModel();
+    m_model = new TableModel(project->modelManager());
     ui->edtTableName->setText(m_model->name());
+
+    connect(this, SIGNAL(addTable(PTableModel)), project->modelManager(), SLOT(addTable(PTableModel)));
+    connect(this, SIGNAL(removeTable(QString)), project->modelManager(), SLOT(removeTable(QString)));
+    connect(this, SIGNAL(updateTable(QString,PTableModel)), project->modelManager(), SIGNAL(tableUpdate(QString,PTableModel)));
 //    emit addTable(m_model);
 }
 
@@ -34,7 +40,7 @@ void TableDialog::changeEvent(QEvent *e)
 void TableDialog::on_columnAddButton_clicked()
 {
     m_model->setName(ui->edtTableName->text());
-    QScopedPointer<ColumnDialog> dlg(new ColumnDialog(m_model));
+    QScopedPointer<ColumnDialog> dlg(new ColumnDialog(m_model, this));
     if (dlg->exec() == QDialog::Accepted)
     {
         ui->columnsTable->addItem(dlg->model()->name());

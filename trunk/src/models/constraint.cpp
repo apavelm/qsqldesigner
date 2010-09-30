@@ -3,8 +3,6 @@
 #include "modelmanager.h"
 #include "table.h"
 
-#include <limits>
-
 // Constraint
 Constraint::Constraint(PColumnModel column, const ConstraintType type, const QVariant& data) : m_column(column), m_type(type)
 {
@@ -34,21 +32,13 @@ Constraint::~Constraint()
 void Constraint::setName(const QString& newName)
 {
     // if necessary to clear name, do it w/o any checks
-    if (newName.isEmpty())
+    if (newName.isEmpty() || m_column->table()->modelManager()->isConstraintNameValid(newName))
     {
         m_name = newName;
         return;
     }
 
-    // name validation check
-    if (MM->isConstraintNameValid(newName))
-    {
-        m_name = newName;
-    }
-    else
-    {
-        // TODO: insert ACTION after exception
-    }
+    // TODO: insert ACTION after exception
 }
 
 void Constraint::setType(const ConstraintType& newType)
@@ -85,18 +75,13 @@ QString Constraint::defaultName(const ConstraintType type, const QVariant& var)
     //checking for duplicate
     if (!rslt.isEmpty())
     {
-        QString newName;
-        if (!MM->isConstraintNameValid(rslt))
+        QString newName = rslt;
+        int i = 1;
+        while (!m_column->table()->modelManager()->isConstraintNameValid(rslt))
         {
-            for (int i = 1; i < std::numeric_limits<int>::max(); i++)
-            {
-                newName = rslt + "_" + QString::number(i);
-                if (MM->isConstraintNameValid(newName))
-                {
-                    return newName;
-                }
-            }
+            newName = rslt + "_" + QString::number(i++);
         }
+        return newName;
     }
 
     // returning value
