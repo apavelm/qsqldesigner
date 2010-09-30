@@ -1,5 +1,3 @@
-#include <QtCore/QScopedPointer>
-
 #include "columndialog.h"
 #include "tabledialog.h"
 #include "models/column.h"
@@ -8,6 +6,7 @@
 
 TableDialog::TableDialog(QWidget * parent, PSqlDesignerProject project) :
             QDialog(parent),
+            m_project(project),
             ui(new Ui::TableDialog)
 {
     ui->setupUi(this);
@@ -40,10 +39,10 @@ void TableDialog::changeEvent(QEvent *e)
 void TableDialog::on_columnAddButton_clicked()
 {
     m_model->setName(ui->edtTableName->text());
-    QScopedPointer<ColumnDialog> dlg(new ColumnDialog(m_model, this));
-    if (dlg->exec() == QDialog::Accepted)
+    ColumnDialog dlg(m_model, this, m_project);
+    if (dlg.exec() == QDialog::Accepted)
     {
-        ui->columnsTable->addItem(dlg->model()->name());
+        ui->columnsTable->addItem(dlg.model()->name());
     }
 }
 

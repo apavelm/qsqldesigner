@@ -7,7 +7,6 @@
 #include <QtCore/QStringList>
 
 #include "column.h"
-//#include "modelmanager.h"
 
 class ModelManager;
 typedef ModelManager * PModelManager;
