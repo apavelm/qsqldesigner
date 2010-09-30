@@ -28,7 +28,8 @@ SOURCES += src/main.cpp \
     src/widgets/arrowforeignkey.cpp \
     src/pluginmanager.cpp \
     src/projectmanager.cpp \
-    src/sqldesignerproject.cpp
+    src/sqldesignerproject.cpp \
+    src/newprojectdialog.cpp
 HEADERS += src/mainwindow.h \
 	src/columndialog.h \
 	src/magnifydialog.h \
@@ -52,11 +53,13 @@ HEADERS += src/mainwindow.h \
     src/models/plugindatatypeinterface.h \
     src/pluginmanager.h \
     src/projectmanager.h \
-    src/sqldesignerproject.h
+    src/sqldesignerproject.h \
+    src/newprojectdialog.h
 FORMS += src/ui/mainwindow.ui \
     src/ui/columndialog.ui \
     src/ui/magnifydialog.ui \
     src/ui/tabledialog.ui \
     src/ui/foreignkeyselectdialog.ui \
-    src/ui/columnpreviewwidget.ui
+    src/ui/columnpreviewwidget.ui \
+    src/ui/newprojectdialog.ui
 RESOURCES += resources/main.qrc

@@ -3,6 +3,7 @@
 #include "settingsmanager.h"
 #include "projectmanager.h"
 #include "tabledialog.h"
+#include "newprojectdialog.h"
 
 #include "ui_mainwindow.h"
 
@@ -144,8 +145,11 @@ void MainWindow::createStatusBar()
 
 void MainWindow::slotNewProject()
 {
-    QString projectName = tr("Untitled");
-    PROJECTMANAGER->newProject(projectName);
+    NewProjectDialog dlg(this);
+    if (dlg.exec() == QDialog::Accepted)
+    {
+        PROJECTMANAGER->newProject(dlg.projectName());
+    }
 }
 
 void MainWindow::slotOpenProject()
