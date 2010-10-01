@@ -48,6 +48,7 @@ public:
     inline bool smoothPixmapTransform() const {return m_smoothPixmapTransform;}
     inline bool highQualityAntialiasing() const {return m_highQualityAntialiasing;}
     inline bool nonCosmeticDefaultPen() const {return m_nonCosmeticDefaultPen;}
+    inline const QString& pluginDirectory() const {return m_pluginDirectory;}
 public slots:
     inline void setPaperColor(const QColor& color) {m_paperColor = color;}
     inline void setTableColorStart(const QColor& color) {m_tableColorStart = color;}
@@ -66,6 +67,7 @@ public slots:
     inline void setSmoothPixmapTransform(bool smoothPixmapTransform) {m_smoothPixmapTransform = smoothPixmapTransform;}
     inline void setHighQualityAntialiasing(bool highQualityAntialiasing) {m_highQualityAntialiasing = highQualityAntialiasing;}
     inline void setNonCosmeticDefaultPen(bool nonCosmeticDefaultPen) {m_nonCosmeticDefaultPen = nonCosmeticDefaultPen;}
+    inline void setPluginDirectory(const QString& path) {m_pluginDirectory = path;}
 private:
     friend class Singleton<SettingsManager>;
     SettingsManager();
@@ -89,6 +91,7 @@ private:
     bool   m_smoothPixmapTransform;
     bool   m_highQualityAntialiasing;
     bool   m_nonCosmeticDefaultPen;
+    QString m_pluginDirectory;
 signals:
     void dirty();
 };

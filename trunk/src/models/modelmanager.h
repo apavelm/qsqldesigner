@@ -38,6 +38,7 @@ class ModelManager : public QObject
     Q_OBJECT
 public:
     explicit ModelManager(QObject * parent = 0);
+    inline PSqlDesignerProject project() const {return m_project;}
 
     PTableModel getTableByName(const QString& tableName) const;
     PColumnModel getColumnByName(const QString& tableName, const QString& columnName) const;

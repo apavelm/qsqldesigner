@@ -43,7 +43,7 @@ public:
     void setName(const QString& name);
 
     inline const ColumnList& columns() const {return m_columns;}
-    const PColumnModel column(const QString& columnName) const;
+    PColumnModel column(const QString& columnName) const;
     void setColumns(const ColumnList& newColumns);
     void addColumn(PColumnModel c);
     void removeColumn(const QString& columnName);

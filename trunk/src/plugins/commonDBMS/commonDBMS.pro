@@ -7,7 +7,8 @@ SOURCES += commondbms.cpp \
     ../../models/modelmanager.cpp \
     ../../models/table.cpp \
     ../../models/column.cpp \
-    ../../models/constraint.cpp
+    ../../models/constraint.cpp \
+    ../../sqldesignerproject.cpp
 HEADERS += commondbms.h \
     plugindbmsinterface.h \
     modelmanager.h \

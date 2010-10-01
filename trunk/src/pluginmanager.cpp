@@ -21,9 +21,10 @@
 
 #include "pluginmanager.h"
 
-#include <QtCore/QCoreApplication>
 #include <QtCore/QDir>
 #include <QtCore/QStringList>
+
+#include "settingsmanager.h"
 
 PluginManager::PluginManager()
 {
@@ -81,11 +82,11 @@ void PluginManager::loadDBMSPlugins()
     m_dbmsPlugins.clear();
     m_databaseLoaders.clear();
 
-    const QString path = qApp->applicationDirPath() + "/plugins/";
+    const QString& path = SM->pluginDirectory();
     QDir plugins_dir(path);
 
     // We're don't need to process symlinks, only files
-    const QStringList files = plugins_dir.entryList(QDir::Files | QDir::NoDotAndDotDot);
+    const QStringList files = plugins_dir.entryList(QDir::Files | QDir::NoDotAndDotDot | QDir::NoSymLinks);
     foreach (QString file, files)
     {
         file.prepend(path);

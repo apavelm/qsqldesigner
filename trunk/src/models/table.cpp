@@ -44,7 +44,7 @@ void TableModel::setName(const QString& name)
     }
 };
 
-const PColumnModel TableModel::column(const QString& columnName) const
+PColumnModel TableModel::column(const QString& columnName) const
 {
     if (m_columns.contains(columnName))
     {
