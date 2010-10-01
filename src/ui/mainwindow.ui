@@ -48,6 +48,7 @@
      <string>&amp;Project</string>
     </property>
     <addaction name="actionAdd_Table"/>
+    <addaction name="actionGenerate_DDL"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -391,6 +392,11 @@
    </property>
    <property name="statusTip">
     <string>Close the current project</string>
+   </property>
+  </action>
+  <action name="actionGenerate_DDL">
+   <property name="text">
+    <string>Generate DDL Script</string>
    </property>
   </action>
  </widget>

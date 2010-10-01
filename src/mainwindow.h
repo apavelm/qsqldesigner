@@ -67,6 +67,7 @@ private:
     bool m_showGrid;
 
 private slots:
+    void on_actionGenerate_DDL_triggered();
     void slotNewProject();
     void slotOpenProject();
     void slotSave();

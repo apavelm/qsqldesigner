@@ -60,6 +60,7 @@ public:
             }
         }
     }
+
 };
 
 typedef QMap<QString, DataTypes> AllDatabaseDataTypes;

@@ -19,14 +19,12 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef COMMONDATATYPESPLUGIN_H
-#define COMMONDATATYPESPLUGIN_H
+#ifndef COMMONDBMSPLUGIN_H
+#define COMMONDBMSPLUGIN_H
 
 #include <QtCore/QtPlugin>
 
-#include "plugindbmsinterface.h"
-#include "datatypes.h"
-
+#include "../../models/plugindbmsinterface.h"
 
 class CommonDBMSPlugin : public QObject, public PluginDBMSInterface
 {
@@ -34,12 +32,19 @@ class CommonDBMSPlugin : public QObject, public PluginDBMSInterface
     Q_INTERFACES(PluginDBMSInterface)
 public:
     CommonDBMSPlugin();
+    ~CommonDBMSPlugin();
 
     inline const QString databaseName() const { return "Common Database"; }
     inline int internalVersion() const { return 1; }
     inline const DataTypes& dataTypes() const {return m_dataypeList;}
+
+    QString generateDDL(PModelManager model) const;
 private:
     DataTypes m_dataypeList;
+
+    QString generateDDL_Table(PTableModel pTable) const;
+    QString generateDDL_Column(PColumnModel pColumn) const;
+    QString generateDDL_TableConstraint(PConstraint pConstraint) const;
 };
 
-#endif // COMMONDATATYPESPLUGIN_H
+#endif // COMMONDBMSPLUGIN_H

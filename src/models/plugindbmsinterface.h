@@ -26,6 +26,7 @@
 #include <QtCore/QString>
 
 #include "datatypes.h"
+#include "modelmanager.h"
 
 class PluginDBMSInterface
 {
@@ -36,8 +37,10 @@ public:
     virtual int internalVersion() const = 0;
 
     virtual const DataTypes& dataTypes() const = 0;
+
+    virtual QString generateDDL(PModelManager model) const = 0;
 };
 
-Q_DECLARE_INTERFACE(PluginDBMSInterface, "org.qsqldesigner.plugin.dbms.interface");
+Q_DECLARE_INTERFACE(PluginDBMSInterface, "org.qsqldesigner.plugin.dbms.interface/1.0");
 
 #endif // PLUGINDBMSINTERFACE_H
