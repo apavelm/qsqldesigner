@@ -19,49 +19,27 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef DATATYPES_H
-#define DATATYPES_H
+#ifndef COMMONDATATYPESPLUGIN_H
+#define COMMONDATATYPESPLUGIN_H
 
-#include <QtCore/QList>
-#include <QtCore/QMap>
-#include <QtCore/QString>
-#include <QtCore/QStringList>
+#include <QtCore/QtPlugin>
 
-struct DataType
+#include "plugindbmsinterface.h"
+#include "datatypes.h"
+
+
+class CommonDBMSPlugin : public QObject, public PluginDBMSInterface
 {
-    QString typeName;
-    QString sqlTypeAcronim;
-    bool    canBeArray;
-    bool    canIncrement;
-};
-
-class DataTypes : public QList<DataType>
-{
+    Q_OBJECT
+    Q_INTERFACES(PluginDBMSInterface)
 public:
-    DataTypes() : QList<DataType>() {}
+    CommonDBMSPlugin();
 
-    QStringList toStringList()
-    {
-        QStringList rslt;
-        foreach (const DataType& dt, *this)
-        {
-            rslt << dt.sqlTypeAcronim;
-        }
-        return rslt;
-    }
-
-    const DataType& typeByAcronim(const QString& acronim)
-    {
-        foreach (const DataType& dt, *this)
-        {
-            if (QString::compare(dt.sqlTypeAcronim, acronim, Qt::CaseInsensitive) == 0 )
-            {
-                return dt;
-            }
-        }
-    }
+    inline const QString databaseName() const { return "Common Database"; }
+    inline int internalVersion() const { return 1; }
+    inline const DataTypes& dataTypes() const {return m_dataypeList;}
+private:
+    DataTypes m_dataypeList;
 };
 
-typedef QMap<QString, DataTypes> AllDatabaseDataTypes;
-
-#endif //DATATYPES_H
+#endif // COMMONDATATYPESPLUGIN_H
