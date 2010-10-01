@@ -21,8 +21,10 @@
 
 #include "mainwindow.h"
 
-#include "settingsmanager.h"
+#include "pluginmanager.h"
 #include "projectmanager.h"
+#include "settingsmanager.h"
+
 #include "tabledialog.h"
 #include "newprojectdialog.h"
 
@@ -308,3 +310,14 @@ void MainWindow::slotCurrentProjectChange(const QString& projectName)
     m_mainView->setScene(CURRENTPROJECT->scene());
 }
 
+
+#include <QMessageBox>
+void MainWindow::on_actionGenerate_DDL_triggered()
+{
+    if (CURRENTPROJECT)
+    {
+        PSqlDesignerProject proj = CURRENTPROJECT;
+        QString ddlScript = PLUGINMANAGER->pluginForDatabase(proj->dbmsType())->generateDDL(proj->modelManager());
+        QMessageBox::information(this, "DDL Script", ddlScript, QMessageBox::Ok, QMessageBox::Ok);
+    }
+}
