@@ -50,7 +50,7 @@ public:
         return rslt;
     }
 
-    const DataType& typeByAcronim(const QString& acronim)
+    const DataType typeByAcronim(const QString& acronim)
     {
         foreach (const DataType& dt, *this)
         {
@@ -59,6 +59,7 @@ public:
                 return dt;
             }
         }
+        return DataType();
     }
 
 };

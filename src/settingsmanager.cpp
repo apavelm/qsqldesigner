@@ -21,6 +21,8 @@
 
 #include "settingsmanager.h"
 
+#include <QtCore/QCoreApplication>
+
 SettingsManager::SettingsManager() : m_fontPointSize(8), m_smallPointSize(6)
 {
     // set default values;
@@ -39,6 +41,7 @@ SettingsManager::SettingsManager() : m_fontPointSize(8), m_smallPointSize(6)
     m_smoothPixmapTransform = false;
     m_highQualityAntialiasing = false;
     m_nonCosmeticDefaultPen = false;
+    m_pluginDirectory = qApp->applicationDirPath() + "/plugins/";
 }
 
 SettingsManager::~SettingsManager()

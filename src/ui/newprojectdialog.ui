@@ -40,7 +40,14 @@
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QComboBox" name="cbDBMS"/>
+        <widget class="QComboBox" name="cbDBMS">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Maximum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
