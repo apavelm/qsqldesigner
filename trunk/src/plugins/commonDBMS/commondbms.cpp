@@ -19,49 +19,40 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef DATATYPES_H
-#define DATATYPES_H
+#include "commondbms.h"
 
-#include <QtCore/QList>
-#include <QtCore/QMap>
-#include <QtCore/QString>
-#include <QtCore/QStringList>
-
-struct DataType
+CommonDBMSPlugin::CommonDBMSPlugin()
 {
-    QString typeName;
-    QString sqlTypeAcronim;
-    bool    canBeArray;
-    bool    canIncrement;
-};
+    DataType dt;
+        dt.typeName = "INTEGER";
+        dt.sqlTypeAcronim = "INT";
+        dt.canBeArray = false;
+        dt.canIncrement = true;
+        m_dataypeList << dt;
 
-class DataTypes : public QList<DataType>
-{
-public:
-    DataTypes() : QList<DataType>() {}
+        dt.typeName = "BIG INTEGER";
+        dt.sqlTypeAcronim = "BIGINT";
+        dt.canBeArray = false;
+        dt.canIncrement = true;
+        m_dataypeList << dt;
 
-    QStringList toStringList()
-    {
-        QStringList rslt;
-        foreach (const DataType& dt, *this)
-        {
-            rslt << dt.sqlTypeAcronim;
-        }
-        return rslt;
-    }
+        dt.typeName = "CHARACTER";
+        dt.sqlTypeAcronim = "CHAR";
+        dt.canBeArray = true;
+        dt.canIncrement = false;
+        m_dataypeList << dt;
 
-    const DataType& typeByAcronim(const QString& acronim)
-    {
-        foreach (const DataType& dt, *this)
-        {
-            if (QString::compare(dt.sqlTypeAcronim, acronim, Qt::CaseInsensitive) == 0 )
-            {
-                return dt;
-            }
-        }
-    }
-};
+        dt.typeName = "VARYING CHARACTER";
+        dt.sqlTypeAcronim = "VARCHAR";
+        dt.canBeArray = true;
+        dt.canIncrement = false;
+        m_dataypeList << dt;
 
-typedef QMap<QString, DataTypes> AllDatabaseDataTypes;
+        dt.typeName = "DATE AND TIME";
+        dt.sqlTypeAcronim = "DATETIME";
+        dt.canBeArray = false;
+        dt.canIncrement = false;
+        m_dataypeList << dt;
+}
 
-#endif //DATATYPES_H
+Q_EXPORT_PLUGIN2(commonDBMS, CommonDBMSPlugin);

@@ -50,7 +50,7 @@ HEADERS += src/mainwindow.h \
     src/widgets/widgetmanager.h \
     src/models/constraint.h \
     src/widgets/arrowforeignkey.h \
-    src/models/plugindatatypeinterface.h \
+    src/models/plugindbmsinterface.h \
     src/pluginmanager.h \
     src/projectmanager.h \
     src/sqldesignerproject.h \

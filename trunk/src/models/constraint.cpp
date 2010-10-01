@@ -1,3 +1,24 @@
+/***************************************************************************
+ *   Copyright (C) 2010 by Pavel Andreev                                   *
+ *   Mail: apavelm on gmail point com (apavelm@gmail.com)                  *
+ *                                                                         *
+ *   This program is free software; you can redistribute it and/or modify  *
+ *   it under the terms of the GNU General Public License as published by  *
+ *   the Free Software Foundation; either version 3 of the License, or     *
+ *   (at your option) any later version.                                   *
+ *                                                                         *
+ *   This program is distributed in the hope that it will be useful,       *
+ *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ *   GNU General Public License for more details.                          *
+ *                                                                         *
+ *   You should have received a copy of the GNU General Public License     *
+ *   along with this program; if not, you can read it                      *
+ *   here <http://www.gnu.org/licenses/>, or write to the                  *
+ *   Free Software Foundation, Inc.,                                       *
+ *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
+ ***************************************************************************/
+
 #include "constraint.h"
 #include "column.h"
 #include "modelmanager.h"
@@ -91,7 +112,7 @@ QString Constraint::defaultName(const ConstraintType type, const QVariant& var)
 const QString Constraint::getUMLConstraintString() const
 {
     QString rslt;
-    // template: "+   NAME(datatype)"
+
     switch (m_type)
     {
         case CT_PrimaryKey:
@@ -119,32 +140,27 @@ const QString Constraint::getUMLConstraintString() const
             break;
         case CT_ForeignKey:
             {
-                // WRONG!
-                // TODO: if 2 or more FK references to same refTable -> than it is 1 string in FK-constraint else (datatype)
-
-                /*if (!m_name.isEmpty())
+                if (!m_name.isEmpty())
                 {
-                    QString refTableName;
-                    QVariant var;
+                    QStringList sTypes;
+                    QVariant var = m_data;
                     if (var.canConvert<ConstraintForeignKey>())
                     {
                         ConstraintForeignKey fk = var.value<ConstraintForeignKey>();
-                        refTableName = fk.referenceTable();
+                        const QList<QString> cols = fk.sourceColumns();
+                        foreach (const QString& c, cols)
+                        {
+                            PColumnModel pColumn = m_column->table()->column(c);
+                            if (pColumn)
+                            {
+                                sTypes << pColumn->dataType().sqlTypeAcronim;
+                            }
+                        }
                     }
-                    QString sTypeListString;
-                    QList<PColumnModel> lstForeignKeys;
-                    m_column->table()->columns().getColumnsForConstraintType(Constraint::CT_ForeignKey, lstForeignKeys);
-                    foreach (const PColumnModel c, lstForeignKeys)
-                    {
-                        sTypeListString += ( sTypeListString.isEmpty() ? "(" : ", ");
-                        sTypeListString += c->dataType().typeName;
-                    }
-                    sTypeListString += ")";
+                    if (sTypes.count() > 0)
+                        rslt = m_name + "(" + sTypes.join(", ") +")";
+                }
 
-                    rslt = m_name + sTypeListString;
-                }*/
-                // DELME: temporary
-                rslt = m_name + "()";
             }
             break;
         case CT_Default: break;
