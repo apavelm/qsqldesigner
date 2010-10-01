@@ -25,6 +25,7 @@
 #include "projectmanager.h"
 #include "settingsmanager.h"
 
+#include "aboutdialog.h"
 #include "tabledialog.h"
 #include "newprojectdialog.h"
 
@@ -301,7 +302,8 @@ void MainWindow::slotProjectAddTable()
 
 void MainWindow::slotAboutAbout()
 {
-
+    AboutDialog dlg(this);
+    dlg.exec();
 }
 
 void MainWindow::slotCurrentProjectChange(const QString& projectName)
