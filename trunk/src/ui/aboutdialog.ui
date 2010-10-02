@@ -2,16 +2,19 @@
 <ui version="4.0">
  <class>AboutDialog</class>
  <widget class="QDialog" name="AboutDialog">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>417</width>
+    <height>328</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>About SQrL Designer</string>
+   <string>About SQL Designer</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
@@ -39,6 +42,19 @@ p, li { white-space: pre-wrap; }
         <attribute name="title">
          <string>About</string>
         </attribute>
+        <widget class="QLabel" name="label">
+         <property name="geometry">
+          <rect>
+           <x>40</x>
+           <y>90</y>
+           <width>251</width>
+           <height>16</height>
+          </rect>
+         </property>
+         <property name="text">
+          <string>http://code.google.com/p/qsqldesigner</string>
+         </property>
+        </widget>
        </widget>
        <widget class="QWidget" name="tabAuthors">
         <attribute name="title">
