@@ -26,7 +26,9 @@ SqlDesignerProject::SqlDesignerProject(const QString& projectName, const QString
             m_settings(new SqlDesignerProjectSettings(projectName, dbmsType)),
             m_modelManager(new ModelManager(this, m_settings.data())),
             m_scene(new QGraphicsScene(this)),
-            m_widgetManager(new WidgetManager(this, m_scene.data()))
+            m_widgetManager(new WidgetManager(this, m_scene.data())),
+            m_printer(new QPrinter(QPrinter::HighResolution)),
+            m_undoStack(new QUndoStack(this))
 {
     connect(m_modelManager.data(), SIGNAL(tableAdded(PTableModel)), m_widgetManager.data(), SLOT(addTable(PTableModel)) );
     connect(m_modelManager.data(), SIGNAL(tableRemoved(QString)), m_widgetManager.data(), SLOT(removeTable(QString)) );

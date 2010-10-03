@@ -24,13 +24,9 @@
 
 #include <QtCore/QMimeData>
 #include <QtCore/QSignalMapper>
-#include <QtGui/QUndoStack>
-#include <QtGui/QUndoView>
 #include <QtGui/QClipboard>
 #include <QtGui/QCloseEvent>
 #include <QtGui/QMainWindow>
-#include <QtGui/QPrinter>
-#include <QtGui/QUndoCommand>
 
 #include "magnifydialog.h"
 #include "widgets/mainview.h"
@@ -61,8 +57,6 @@ private:
 
     Ui::MainWindow * ui;
     MainView * m_mainView;
-    QPrinter * m_printer;
-    QUndoStack * m_undoStack;
     QSignalMapper * m_zoomSignalMapper;
     bool m_showGrid;
 

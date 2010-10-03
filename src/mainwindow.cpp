@@ -34,8 +34,6 @@
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    m_printer = new QPrinter(QPrinter::HighResolution);
-    m_undoStack = new QUndoStack();
     m_zoomSignalMapper = new QSignalMapper(this);
 
     createSceneAndView();
@@ -58,8 +56,6 @@ void MainWindow::createMenus()
 
 MainWindow::~MainWindow()
 {
-    delete m_undoStack;
-    delete m_printer;
     delete m_mainView;
     delete m_zoomSignalMapper;
     delete ui;
