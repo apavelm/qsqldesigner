@@ -22,6 +22,7 @@
 #ifndef COMMONDBMSPLUGIN_H
 #define COMMONDBMSPLUGIN_H
 
+#include <QtCore/QObject>
 #include <QtCore/QtPlugin>
 
 #include "../../models/plugindbmsinterface.h"

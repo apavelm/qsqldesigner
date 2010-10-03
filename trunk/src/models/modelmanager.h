@@ -23,6 +23,7 @@
 #define MODELMANAGER_H
 
 #include <QtCore/QMap>
+#include <QtCore/QObject>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 
@@ -30,15 +31,16 @@
 #include "table.h"
 #include "column.h"
 
-class SqlDesignerProject;
-typedef SqlDesignerProject * PSqlDesignerProject;
+class SqlDesignerProjectSettings;
+typedef SqlDesignerProjectSettings * PSqlDesignerProjectSettings;
 
 class ModelManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit ModelManager(QObject * parent = 0);
-    inline PSqlDesignerProject project() const {return m_project;}
+    explicit ModelManager(QObject * parent = 0, PSqlDesignerProjectSettings settings = 0);
+    ~ModelManager();
+    inline PSqlDesignerProjectSettings projectSettings() const {return m_projectSettings;}
 
     PTableModel getTableByName(const QString& tableName) const;
     PColumnModel getColumnByName(const QString& tableName, const QString& columnName) const;
@@ -47,7 +49,7 @@ public:
     bool isTableNameValid(const QString& tableName) const;
     bool isConstraintNameValid(const QString& name) const;
 private:
-    PSqlDesignerProject m_project;
+    PSqlDesignerProjectSettings m_projectSettings;
     QMap<QString, SharedTableModel> m_tables;
     QStringList m_constraintNames;
 signals:

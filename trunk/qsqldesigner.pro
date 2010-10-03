@@ -30,7 +30,8 @@ SOURCES += src/main.cpp \
     src/projectmanager.cpp \
     src/sqldesignerproject.cpp \
     src/newprojectdialog.cpp \
-    src/aboutdialog.cpp
+    src/aboutdialog.cpp \
+    src/sqldesignerprojectsettings.cpp
 HEADERS += src/mainwindow.h \
 	src/columndialog.h \
 	src/magnifydialog.h \
@@ -56,7 +57,8 @@ HEADERS += src/mainwindow.h \
     src/projectmanager.h \
     src/sqldesignerproject.h \
     src/newprojectdialog.h \
-    src/aboutdialog.h
+    src/aboutdialog.h \
+    src/sqldesignerprojectsettings.h
 FORMS += src/ui/mainwindow.ui \
     src/ui/columndialog.ui \
     src/ui/magnifydialog.ui \

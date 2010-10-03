@@ -31,27 +31,29 @@
 #include "models/modelmanager.h"
 #include "widgets/widgetmanager.h"
 
+#include "sqldesignerprojectsettings.h"
 
 class SqlDesignerProject : public QObject
 {
     Q_OBJECT
 public:
     explicit SqlDesignerProject(const QString& projectName, const QString& dbmsType);
-    inline const QString& name() const {return m_projectName;}
-    inline const QString& dbmsType() const {return m_dbmsType;}
+    ~SqlDesignerProject();
+
+    inline const QString& name() const {return m_settings->name();}
+    inline const QString& dbmsType() const {return m_settings->dbmsType();}
 
     inline PModelManager modelManager() {return m_modelManager.data();}
     inline PWidgetManager widgetManager() {return m_widgetManager.data();}
     inline QGraphicsScene * scene() {return m_scene.data();}
-    void rename(const QString& newName);
 private:
+    QScopedPointer<SqlDesignerProjectSettings> m_settings;
     QScopedPointer<ModelManager> m_modelManager;
     QScopedPointer<QGraphicsScene> m_scene;
     QScopedPointer<WidgetManager> m_widgetManager;
-    QString m_projectName;
-    QString m_dbmsType;
 };
 
+typedef SqlDesignerProjectSettings * PSqlDesignerProjectSettings;
 typedef SqlDesignerProject * PSqlDesignerProject;
 typedef QSharedPointer<SqlDesignerProject> SharedSqlDesignerProject;
 
