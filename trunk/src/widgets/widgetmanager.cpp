@@ -23,6 +23,8 @@
 #include "../sqldesignerproject.h"
 #include "../models/modelmanager.h"
 
+const qreal TABLE_Z_ORDER = 30.0;
+
 WidgetManager::WidgetManager(QObject * parent, QGraphicsScene * scene) : QObject(parent), m_scene(scene)
 {
     m_project = qobject_cast<PSqlDesignerProject>(parent);
@@ -42,6 +44,7 @@ void WidgetManager::addTable(PTableModel table)
     if (table)
     {
         PTableWidget widget = new TableWidget(m_scene, 0, table);
+        widget->setZValue(TABLE_Z_ORDER);
         connect(widget, SIGNAL(deleteWidget(QString)), m_project->modelManager(), SLOT(removeTable(QString)));
         m_tablesWidgets.insert(table->name(), SharedTableWidget(widget));
 

@@ -28,6 +28,11 @@
 #include <QtCore/QString>
 #include <QtGui/QGraphicsScene>
 
+#include <QtGui/QPrinter>
+#include <QtGui/QUndoCommand>
+#include <QtGui/QUndoStack>
+#include <QtGui/QUndoView>
+
 #include "models/modelmanager.h"
 #include "widgets/widgetmanager.h"
 
@@ -51,6 +56,8 @@ private:
     QScopedPointer<ModelManager> m_modelManager;
     QScopedPointer<QGraphicsScene> m_scene;
     QScopedPointer<WidgetManager> m_widgetManager;
+    QScopedPointer<QPrinter> m_printer;
+    QScopedPointer<QUndoStack> m_undoStack;
 };
 
 typedef SqlDesignerProjectSettings * PSqlDesignerProjectSettings;
