@@ -21,11 +21,16 @@
 
 #include "modelmanager.h"
 
-#include "../sqldesignerproject.h"
+#include "../sqldesignerprojectsettings.h"
 
-ModelManager::ModelManager(QObject * parent) : QObject(parent)
+ModelManager::ModelManager(QObject *parent, PSqlDesignerProjectSettings settings) :
+        QObject(parent),
+        m_projectSettings(settings)
 {
-    m_project = qobject_cast<PSqlDesignerProject>(parent);
+}
+
+ModelManager::~ModelManager()
+{
 }
 
 void ModelManager::addTable(PTableModel table)
