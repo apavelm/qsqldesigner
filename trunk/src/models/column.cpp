@@ -114,7 +114,7 @@ const QString ColumnModel::getUMLColumnPrefix() const
 
 const QString ColumnModel::getUMLColumnDescription() const
 {
-    QString rslt = m_columnName + ": " + m_dataType.sqlTypeAcronim;
+    QString rslt = m_columnName + ": " + m_dataType.typeName;
     return rslt;
 }
 

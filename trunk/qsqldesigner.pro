@@ -20,8 +20,8 @@ SOURCES += src/main.cpp \
 	src/models/modelmanager.cpp \
 	src/models/table.cpp \
     src/settingsmanager.cpp \
-    src/foreignkeyselectdialog.cpp \
-    src/foreignkeyselectionviewmodel.cpp \
+    src/simpleforeignkeyselectdialog.cpp \
+    src/simpleforeignkeyselectionviewmodel.cpp \
     src/widgets/columnpreviewwidget.cpp \
     src/widgets/widgetmanager.cpp \
     src/models/constraint.cpp \
@@ -31,7 +31,9 @@ SOURCES += src/main.cpp \
     src/sqldesignerproject.cpp \
     src/newprojectdialog.cpp \
     src/aboutdialog.cpp \
-    src/sqldesignerprojectsettings.cpp
+    src/sqldesignerprojectsettings.cpp \
+    src/widgets/objecteditor.cpp \
+    src/widgets/widgetviewmodel.cpp
 HEADERS += src/mainwindow.h \
 	src/columndialog.h \
 	src/magnifydialog.h \
@@ -46,8 +48,8 @@ HEADERS += src/mainwindow.h \
 	src/models/table.h \
     src/settingsmanager.h \
     src/singleton.h \
-    src/foreignkeyselectdialog.h \
-    src/foreignkeyselectionviewmodel.h \
+    src/simpleforeignkeyselectdialog.h \
+    src/simpleforeignkeyselectionviewmodel.h \
     src/widgets/columnpreviewwidget.h \
     src/widgets/widgetmanager.h \
     src/models/constraint.h \
@@ -58,13 +60,16 @@ HEADERS += src/mainwindow.h \
     src/sqldesignerproject.h \
     src/newprojectdialog.h \
     src/aboutdialog.h \
-    src/sqldesignerprojectsettings.h
+    src/sqldesignerprojectsettings.h \
+    src/widgets/objecteditor.h \
+    src/widgets/widgetviewmodel.h
 FORMS += src/ui/mainwindow.ui \
     src/ui/columndialog.ui \
     src/ui/magnifydialog.ui \
     src/ui/tabledialog.ui \
-    src/ui/foreignkeyselectdialog.ui \
+    src/ui/simpleforeignkeyselectdialog.ui \
     src/ui/columnpreviewwidget.ui \
     src/ui/newprojectdialog.ui \
-    src/ui/aboutdialog.ui
+    src/ui/aboutdialog.ui \
+    src/ui/objecteditor.ui
 RESOURCES += resources/main.qrc

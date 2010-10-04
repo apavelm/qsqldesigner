@@ -134,7 +134,9 @@
    <attribute name="dockWidgetArea">
     <number>2</number>
    </attribute>
-   <widget class="QWidget" name="propertyDockWidgetContents"/>
+   <widget class="QWidget" name="propertyDockWidgetContents">
+    <layout class="QGridLayout" name="gridLayout_2"/>
+   </widget>
   </widget>
   <action name="actionNew_Project">
    <property name="text">

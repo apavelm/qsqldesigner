@@ -51,7 +51,7 @@ public:
     const QStringList constraintsNames() const;
     inline const Constraints& tableConstraints() const {return m_constraints;}
     void addConstraint(PConstraint constraint);
-    inline void deleteConstraint(int index) {m_constraints.deleteConstraint(index);}
+    //inline void deleteConstraint(int index) {m_constraints.deleteConstraint(index);}
 private:
     PModelManager m_mm;
     ColumnList m_columns;

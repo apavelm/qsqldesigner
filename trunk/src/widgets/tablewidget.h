@@ -36,8 +36,6 @@
 class TableWidget : public QGraphicsObject
 {
     Q_OBJECT
-
-    Q_PROPERTY(QString name READ name WRITE setName)
 public:
     enum { Type = UserType + 1 };
     inline int type() const {return Type;}

@@ -30,9 +30,10 @@
 struct DataType
 {
     QString typeName;
-    QString sqlTypeAcronim;
     bool    canBeArray;
     bool    canIncrement;
+    QString relativeTypes;
+    int     parametersAmount;
 };
 
 class DataTypes : public QList<DataType>
@@ -45,16 +46,16 @@ public:
         QStringList rslt;
         foreach (const DataType& dt, *this)
         {
-            rslt << dt.sqlTypeAcronim;
+            rslt << dt.typeName;
         }
         return rslt;
     }
 
-    const DataType typeByAcronim(const QString& acronim)
+    const DataType typeByName(const QString& typeName)
     {
         foreach (const DataType& dt, *this)
         {
-            if (QString::compare(dt.sqlTypeAcronim, acronim, Qt::CaseInsensitive) == 0 )
+            if (QString::compare(dt.typeName, typeName, Qt::CaseInsensitive) == 0 )
             {
                 return dt;
             }

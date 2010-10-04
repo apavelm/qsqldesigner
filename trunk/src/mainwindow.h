@@ -23,6 +23,7 @@
 #define MAINWINDOW_H
 
 #include <QtCore/QMimeData>
+#include <QtCore/QScopedPointer>
 #include <QtCore/QSignalMapper>
 #include <QtGui/QClipboard>
 #include <QtGui/QCloseEvent>
@@ -31,6 +32,7 @@
 #include "magnifydialog.h"
 #include "widgets/mainview.h"
 #include "models/table.h"
+#include "widgets/objecteditor.h"
 
 namespace Ui {
     class MainWindow;
@@ -57,8 +59,9 @@ private:
 
     Ui::MainWindow * ui;
     MainView * m_mainView;
-    QSignalMapper * m_zoomSignalMapper;
+    QScopedPointer<QSignalMapper> m_zoomSignalMapper;
     bool m_showGrid;
+    ObjectEditor * m_objEditor;
 
 private slots:
     void on_actionGenerate_DDL_triggered();

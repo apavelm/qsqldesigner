@@ -19,51 +19,28 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef SQLDESIGNERPROJECT_H
-#define SQLDESIGNERPROJECT_H
+#include "objecteditor.h"
+#include "ui_objecteditor.h"
 
-#include <QtCore/QObject>
-#include <QtCore/QScopedPointer>
-#include <QtCore/QSharedPointer>
-#include <QtCore/QString>
-#include <QtGui/QGraphicsScene>
-
-#include <QtGui/QPrinter>
-#include <QtGui/QUndoCommand>
-#include <QtGui/QUndoStack>
-#include <QtGui/QUndoView>
-
-#include "models/modelmanager.h"
-#include "widgets/widgetmanager.h"
-
-#include "sqldesignerprojectsettings.h"
-
-class SqlDesignerProject : public QObject
+ObjectEditor::ObjectEditor(QWidget *parent) : QWidget(parent), ui(new Ui::ObjectEditor)
 {
-    Q_OBJECT
-public:
-    explicit SqlDesignerProject(const QString& projectName, const QString& dbmsType);
-    ~SqlDesignerProject();
+    ui->setupUi(this);
+}
 
-    inline const QString& name() const {return m_settings->name();}
-    inline const QString& dbmsType() const {return m_settings->dbmsType();}
+ObjectEditor::~ObjectEditor()
+{
+    delete ui;
+}
 
-    inline PModelManager modelManager() {return m_modelManager.data();}
-    inline PWidgetManager widgetManager() {return m_widgetManager.data();}
-    inline QGraphicsScene * scene() {return m_scene.data();}
-private:
-    QScopedPointer<SqlDesignerProjectSettings> m_settings;
-    QScopedPointer<ModelManager> m_modelManager;
-    QScopedPointer<QGraphicsScene> m_scene;
-    QScopedPointer<WidgetManager> m_widgetManager;
-    QScopedPointer<QPrinter> m_printer;
-    QScopedPointer<QUndoStack> m_undoStack;
-signals:
-    void modelChanged();
-};
+void ObjectEditor::setProject(PSqlDesignerProject project)
+{
+    m_project = project;
+    m_browserModel.reset(new WidgetViewModel(this, project));
+    // clear all view-models
+    ui->objectExplorer->setModel(m_browserModel.data());
+}
 
-typedef SqlDesignerProjectSettings * PSqlDesignerProjectSettings;
-typedef SqlDesignerProject * PSqlDesignerProject;
-typedef QSharedPointer<SqlDesignerProject> SharedSqlDesignerProject;
-
-#endif // SQLDESIGNERPROJECT_H
+void ObjectEditor::updateModel()
+{
+    m_browserModel->updateModel();
+}

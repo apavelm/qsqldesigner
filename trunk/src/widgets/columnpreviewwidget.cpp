@@ -20,13 +20,13 @@
  ***************************************************************************/
 
 #include "columnpreviewwidget.h"
-#include "../foreignkeyselectionviewmodel.h"
+#include "../Simpleforeignkeyselectionviewmodel.h"
 #include "../models/modelmanager.h"
 #include "../projectmanager.h"
 
 #include "ui_columnpreviewwidget.h"
 
-ColumnPreviewWidget::ColumnPreviewWidget(QWidget *parent, ForeignKeySelectionViewModel *model) : QWidget(parent), m_model(model), ui(new Ui::ColumnPreviewWidget)
+ColumnPreviewWidget::ColumnPreviewWidget(QWidget *parent, SimpleForeignKeySelectionViewModel *model) : QWidget(parent), m_model(model), ui(new Ui::ColumnPreviewWidget)
 {
     ui->setupUi(this);
 }

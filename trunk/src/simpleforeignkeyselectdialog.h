@@ -22,30 +22,33 @@
 #ifndef FOREIGNKEYSELECTDIALOG_H
 #define FOREIGNKEYSELECTDIALOG_H
 
+#include <QtCore/QScopedPointer>
 #include <QtGui/QDialog>
 
 #include "sqldesignerproject.h"
 #include "models/column.h"
-#include "foreignkeyselectionviewmodel.h"
+#include "simpleforeignkeyselectionviewmodel.h"
 
 namespace Ui {
-    class ForeignKeySelectDialog;
+    class SimpleForeignKeySelectDialog;
 }
 
-class ForeignKeySelectDialog : public QDialog
+class SimpleForeignKeySelectDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    ForeignKeySelectDialog(PColumnModel column, QWidget * parent = 0, PSqlDesignerProject project = 0);
-    ~ForeignKeySelectDialog();
+    SimpleForeignKeySelectDialog(PColumnModel column, QWidget * parent = 0, PSqlDesignerProject project = 0);
+    ~SimpleForeignKeySelectDialog();
 
     void accept();
+    inline PConstraint constraint() const {return m_constraint;}
 private:
-    Ui::ForeignKeySelectDialog *ui;
-    ForeignKeySelectionViewModel * m_model;
+    Ui::SimpleForeignKeySelectDialog *ui;
+    QScopedPointer<SimpleForeignKeySelectionViewModel> m_model;
     PColumnModel m_column;
     PSqlDesignerProject m_project;
+    PConstraint m_constraint;
 };
 
 #endif // FOREIGNKEYSELECTDIALOG_H

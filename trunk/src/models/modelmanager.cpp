@@ -83,14 +83,20 @@ PColumnModel ModelManager::getColumnByName(const QString& tableName, const QStri
         return 0;
 }
 
-// TODO: add filtering by datatype
-const QList<QString> ModelManager::getColumnList(const QString &tableName, const DataType) const
+const QList<QString> ModelManager::getColumnList(const QString &tableName, const DataType datatype) const
 {
     PTableModel table = getTableByName(tableName);
     QList<QString> rslt;
     if (table)
     {
-        rslt = table->columns().keys();
+        const ColumnList& columnList = table->columns();
+
+        for (ColumnList::const_iterator i = columnList.constBegin(); i != columnList.constEnd(); ++i)
+        {
+            if (isRelativesDataTypes(i->data()->dataType(), datatype))
+                rslt << i.key();
+        }
+
     }
     return rslt;
 }
@@ -120,4 +126,16 @@ bool ModelManager::isConstraintNameValid(const QString& name) const
         // TODO: insert ACTION if wrong name detected after validation check
         return false;
     }
+}
+
+bool ModelManager::isRelativesDataTypes(const DataType first, const DataType second) const
+{
+    if (QString::compare(first.typeName, second.typeName, Qt::CaseInsensitive) == 0)
+        return true;
+
+    QStringList relativeLst = first.relativeTypes.split(";");
+    if (relativeLst.contains(second.typeName, Qt::CaseInsensitive))
+        return true;
+
+    return false;
 }
