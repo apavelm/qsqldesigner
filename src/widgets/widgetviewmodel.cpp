@@ -19,20 +19,28 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#include "foreignkeyselectionviewmodel.h"
+#include "widgetviewmodel.h"
 
-#include "projectmanager.h"
-#include "models/modelmanager.h"
-
-ForeignKeySelectionViewModel::ForeignKeySelectionViewModel(QObject *parent) : QStandardItemModel(parent)
+WidgetViewModel::WidgetViewModel(QObject *parent, PSqlDesignerProject project) : QStandardItemModel(parent), m_project(project)
 {
-    QList<QString> lstTables = CURRENTPROJECT->modelManager()->getTableList();
+    updateModel();
+}
+
+void WidgetViewModel::updateModel()
+{
+    clear();
+    if (!m_project)
+    {
+        return;
+    }
+
+    QList<QString> lstTables = m_project->modelManager()->getTableList();
     foreach (const QString& tableName, lstTables)
     {
         // Create the phone groups as QStandardItems
         QStandardItem * table = new QStandardItem(QIcon(":/table24"), tableName);
 
-        QList<QString> lstColumns =  CURRENTPROJECT->modelManager()->getColumnList(tableName);
+        QList<QString> lstColumns =  m_project->modelManager()->getColumnList(tableName);
         if (lstColumns.count() > 0)
         {
             foreach (const QString& columnName, lstColumns)
@@ -46,4 +54,3 @@ ForeignKeySelectionViewModel::ForeignKeySelectionViewModel(QObject *parent) : QS
         }
     }
 }
-

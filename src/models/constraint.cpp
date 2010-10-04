@@ -153,7 +153,7 @@ const QString Constraint::getUMLConstraintString() const
                             PColumnModel pColumn = m_column->table()->column(c);
                             if (pColumn)
                             {
-                                sTypes << pColumn->dataType().sqlTypeAcronim;
+                                sTypes << pColumn->dataType().typeName;
                             }
                         }
                     }
@@ -194,6 +194,21 @@ void Constraints::deleteConstraint(int index)
     removeAt(index);
 }
 
+void Constraints::deleteConstraint(Constraint::ConstraintType type)
+{
+    if (m_types.testFlag(type))
+    {
+        for( int i = 0; i < count(); i++)
+        {
+            if (at(i)->type() == type)
+            {
+                deleteConstraint(i);
+            }
+        }
+    }
+}
+
+/*
 void Constraints::deleteConstraint(PConstraint constraint)
 {
     for (int i = 0; i < count(); i++)
@@ -202,16 +217,16 @@ void Constraints::deleteConstraint(PConstraint constraint)
             deleteConstraint(i);
     }
 }
-
+*/
 PConstraint Constraints::constraint(const Constraint::ConstraintType type) const
 {
     if (m_types.testFlag(type))
     {
-        foreach (const SharedConstraint& c, *this)
+        for(int i = 0; i < count(); i++)
         {
-            if (c->type() == type)
+            if (at(i)->type() == type)
             {
-                return c.data();
+                return at(i).data();
             }
         }
     }

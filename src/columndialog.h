@@ -50,10 +50,12 @@ private:
     PColumnModel m_model;
     PSqlDesignerProject m_project;
     DataTypes m_dataTypes;
+    QString m_oldDataType;
 
-
+    void applyDataTypeToUI(const DataType& datatype);
 private slots:
     void on_btnAddFK_clicked();
+    void changedDataType(const QString& newDataType);
 };
 
 #endif // COLUMNDIALOG_H

@@ -19,16 +19,31 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef FOREIGNKEYSELECTIONVIEWMODEL_H
-#define FOREIGNKEYSELECTIONVIEWMODEL_H
+#include "simpleforeignkeyselectionviewmodel.h"
 
-#include <QtGui/QStandardItemModel>
+#include "projectmanager.h"
+#include "models/modelmanager.h"
 
-class ForeignKeySelectionViewModel : public QStandardItemModel
+SimpleForeignKeySelectionViewModel::SimpleForeignKeySelectionViewModel(QObject *parent, const DataType& datatype) : QStandardItemModel(parent)
 {
-    Q_OBJECT
-public:
-    ForeignKeySelectionViewModel(QObject * parent = 0);
-};
+    QList<QString> lstTables = CURRENTPROJECT->modelManager()->getTableList();
+    foreach (const QString& tableName, lstTables)
+    {
+        // Create the phone groups as QStandardItems
+        QStandardItem * table = new QStandardItem(QIcon(":/table24"), tableName);
 
-#endif // FOREIGNKEYSELECTIONVIEWMODEL_H
+        QList<QString> lstColumns =  CURRENTPROJECT->modelManager()->getColumnList(tableName, datatype);
+        if (lstColumns.count() > 0)
+        {
+            foreach (const QString& columnName, lstColumns)
+            {
+                QStandardItem * column = new QStandardItem(QIcon(":/column24"), columnName);
+                // the appendRow function appends the column as new row
+                table->appendRow(column);
+            }
+            // append table as new row to the model. model takes the ownership of the item
+            appendRow(table);
+        }
+    }
+}
+

@@ -33,6 +33,10 @@ SqlDesignerProject::SqlDesignerProject(const QString& projectName, const QString
     connect(m_modelManager.data(), SIGNAL(tableAdded(PTableModel)), m_widgetManager.data(), SLOT(addTable(PTableModel)) );
     connect(m_modelManager.data(), SIGNAL(tableRemoved(QString)), m_widgetManager.data(), SLOT(removeTable(QString)) );
     connect(m_modelManager.data(), SIGNAL(tableUpdate(QString,PTableModel)), m_widgetManager.data(), SLOT(updateTable(QString,PTableModel)) );
+
+    connect(m_modelManager.data(), SIGNAL(tableAdded(PTableModel)), SIGNAL(modelChanged()));
+    connect(m_modelManager.data(), SIGNAL(tableRemoved(QString)), SIGNAL(modelChanged()));
+    connect(m_modelManager.data(), SIGNAL(tableUpdate(QString,PTableModel)), SIGNAL(modelChanged()));
 }
 
 SqlDesignerProject::~SqlDesignerProject()

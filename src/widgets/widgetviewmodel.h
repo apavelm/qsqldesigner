@@ -19,51 +19,23 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef SQLDESIGNERPROJECT_H
-#define SQLDESIGNERPROJECT_H
+#ifndef WIDGETVIEWMODEL_H
+#define WIDGETVIEWMODEL_H
 
 #include <QtCore/QObject>
-#include <QtCore/QScopedPointer>
-#include <QtCore/QSharedPointer>
-#include <QtCore/QString>
-#include <QtGui/QGraphicsScene>
+#include <QtGui/QStandardItemModel>
 
-#include <QtGui/QPrinter>
-#include <QtGui/QUndoCommand>
-#include <QtGui/QUndoStack>
-#include <QtGui/QUndoView>
+#include "../sqldesignerproject.h"
 
-#include "models/modelmanager.h"
-#include "widgets/widgetmanager.h"
-
-#include "sqldesignerprojectsettings.h"
-
-class SqlDesignerProject : public QObject
+class WidgetViewModel : public QStandardItemModel
 {
     Q_OBJECT
 public:
-    explicit SqlDesignerProject(const QString& projectName, const QString& dbmsType);
-    ~SqlDesignerProject();
-
-    inline const QString& name() const {return m_settings->name();}
-    inline const QString& dbmsType() const {return m_settings->dbmsType();}
-
-    inline PModelManager modelManager() {return m_modelManager.data();}
-    inline PWidgetManager widgetManager() {return m_widgetManager.data();}
-    inline QGraphicsScene * scene() {return m_scene.data();}
+    WidgetViewModel(QObject * parent = 0, PSqlDesignerProject project = 0);
 private:
-    QScopedPointer<SqlDesignerProjectSettings> m_settings;
-    QScopedPointer<ModelManager> m_modelManager;
-    QScopedPointer<QGraphicsScene> m_scene;
-    QScopedPointer<WidgetManager> m_widgetManager;
-    QScopedPointer<QPrinter> m_printer;
-    QScopedPointer<QUndoStack> m_undoStack;
-signals:
-    void modelChanged();
+    PSqlDesignerProject m_project;
+public slots:
+    void updateModel();
 };
 
-typedef SqlDesignerProjectSettings * PSqlDesignerProjectSettings;
-typedef SqlDesignerProject * PSqlDesignerProject;
-typedef QSharedPointer<SqlDesignerProject> SharedSqlDesignerProject;
-
-#endif // SQLDESIGNERPROJECT_H
+#endif // WIDGETVIEWMODEL_H

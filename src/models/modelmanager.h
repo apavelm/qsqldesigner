@@ -45,9 +45,10 @@ public:
     PTableModel getTableByName(const QString& tableName) const;
     PColumnModel getColumnByName(const QString& tableName, const QString& columnName) const;
     inline const QList<QString> getTableList() const {return m_tables.keys();}
-    const QList<QString> getColumnList(const QString& tableName, const DataType = DataType()) const;
+    const QList<QString> getColumnList(const QString& tableName, const DataType datatype = DataType()) const;
     bool isTableNameValid(const QString& tableName) const;
     bool isConstraintNameValid(const QString& name) const;
+    bool isRelativesDataTypes(const DataType first, const DataType second) const;
 private:
     PSqlDesignerProjectSettings m_projectSettings;
     QMap<QString, SharedTableModel> m_tables;

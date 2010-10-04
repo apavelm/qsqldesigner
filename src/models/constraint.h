@@ -125,14 +125,16 @@ public:
     Constraints();
 
     void addConstraint(PConstraint constraint);
-    void deleteConstraint(PConstraint constraint);
-    void deleteConstraint(int index);
+    //void deleteConstraint(PConstraint constraint);
+    void deleteConstraint(Constraint::ConstraintType type);
 
     inline const Constraint::ConstraintTypes types() const {return m_types;}
     inline bool isConstraintType(Constraint::ConstraintType type) const {return m_types.testFlag(type);}
     PConstraint constraint(const Constraint::ConstraintType type) const;
 private:
     Constraint::ConstraintTypes m_types;
+
+    void deleteConstraint(int index);
 };
 
 #endif // CONSTRAINT_H
