@@ -31,7 +31,10 @@
 
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow), m_zoomSignalMapper(new QSignalMapper(this))
+MainWindow::MainWindow(QWidget *parent) :
+            QMainWindow(parent),
+            ui(new Ui::MainWindow),
+            m_zoomSignalMapper(new QSignalMapper(this))
 {
     ui->setupUi(this);
     m_objEditor = new ObjectEditor(this);
@@ -291,8 +294,17 @@ void MainWindow::slotProjectAddTable()
 {
     if (CURRENTPROJECT)
     {
-        TableDialog dlg(this, CURRENTPROJECT);
-        dlg.exec();
+        PTableModel table = new TableModel(CURRENTPROJECT->modelManager());
+
+        TableDialog dlg(table, this);
+        if (dlg.exec() == QDialog::Accepted)
+        {
+            CURRENTPROJECT->modelManager()->addTable(table);
+        }
+        else
+        {
+            delete table;
+        }
     }
 }
 

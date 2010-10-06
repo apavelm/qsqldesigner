@@ -22,13 +22,13 @@
 #ifndef COLUMN_H
 #define COLUMN_H
 
-#include <QtGui/QApplication>
 #include <QtCore/QList>
+#include <QtCore/QObject>
 #include <QtCore/QPair>
+#include <QtCore/QSet>
 #include <QtCore/QSharedPointer>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
-#include <QtCore/QVariant>
 
 #include "constraint.h"
 #include "datatypes.h"
@@ -36,45 +36,48 @@
 class TableModel;
 typedef TableModel * PTableModel;
 
-class ColumnModel
+class ColumnModel: public QObject
 {
-    Q_DECLARE_TR_FUNCTIONS(ColumnModel)
+    Q_OBJECT
 public:
     ColumnModel(PTableModel table, const QString& name = QString());
-    inline PTableModel table() const {return m_parent;}
+    inline PTableModel table() const {return m_table;}
 
     inline const QString name() const {return m_columnName;}
     void setName(const QString& name);
     inline const QString comment() const {return m_columnComment;}
     void setComment(const QString& comment);
-    inline const DataType& dataType() const {return m_dataType;}
-    void setDataType(const DataType& dataType);
+    inline PDataType dataType() const {return m_dataType;}
+    void setDataType(PDataType dataType);
+    inline const QPair<int, int>& dataTypeParameters() const {return m_dataTypeParameters;}
+    inline void setDataTypeParameters(const QPair<int, int>& params) {m_dataTypeParameters = params;}
 
     inline PConstraint constraint(Constraint::ConstraintType type) const {return m_constraints.constraint(type);}
     inline const Constraints& constraints() const {return m_constraints;}
-    inline void addConstraint(PConstraint constraint) {m_constraints.addConstraint(constraint);}
-    //inline void deleteConstraint(int index) {m_constraints.deleteConstraint(index);}
-    //inline void deleteConstraint(PConstraint constraint) {m_constraints.deleteConstraint(constraint);}
+    void addConstraint(PConstraint constraint);
     inline void deleteConstraint(Constraint::ConstraintType type) {m_constraints.deleteConstraint(type);}
     inline bool isConstraintType(Constraint::ConstraintType type) const {return m_constraints.isConstraintType(type);}
 
     const QString getUMLColumnPrefix() const;
     const QString getUMLColumnDescription() const;
 private:
-    PTableModel m_parent;
+    PTableModel m_table;
     QString  m_columnName;
     QString  m_columnComment;
-    DataType m_dataType;
+    PDataType m_dataType;
+    QPair<int, int> m_dataTypeParameters;
     Constraints m_constraints;
 
     const QString defaultColumnName() const;
     bool isValidName(const QString& name) const;
+signals:
+    void addedForeignKey();
 };
 
 typedef ColumnModel * PColumnModel;
 typedef QSharedPointer<ColumnModel> SharedColumnModel;
 
-class ColumnList: public QMap<QString, SharedColumnModel>
+class ColumnList: public QList<SharedColumnModel>
 {
 public:
     ColumnList();
@@ -83,8 +86,12 @@ public:
     inline int getAmountForType(const Constraint::ConstraintType type) const {return m_constraintCounters[type];}
     PColumnModel getColumnByName(const QString& columnName) const;
     void getColumnsForConstraintType(const Constraint::ConstraintType type, QList<PColumnModel>& result) const;
+    bool contains(const QString & columnName) const;
+    void remove(const QString& columnName);
+    QStringList keys() const {return m_columnNames.toList();}
 private:
     int m_constraintCounters[Constraint::CT_Last];
+    QSet<QString> m_columnNames;
 };
 
 #endif //COLUMN_H

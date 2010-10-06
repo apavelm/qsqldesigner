@@ -23,7 +23,7 @@
 #include "table.h"
 
 // ColumnModel
-ColumnModel::ColumnModel(PTableModel table, const QString& name) : m_parent(table)
+ColumnModel::ColumnModel(PTableModel table, const QString& name) : QObject(table), m_table(table), m_dataType(0)
 {
     if (name.isEmpty())
     {
@@ -33,7 +33,6 @@ ColumnModel::ColumnModel(PTableModel table, const QString& name) : m_parent(tabl
     {
         setName(name);
     }
-
 }
 
 void ColumnModel::setName(const QString& name)
@@ -48,21 +47,36 @@ void ColumnModel::setName(const QString& name)
     }
 }
 
+
+void ColumnModel::addConstraint(PConstraint constraint)
+{
+    if (constraint)
+    {
+        m_constraints.addConstraint(constraint);
+        if (constraint->type() == Constraint::CT_ForeignKey)
+        {
+            emit addedForeignKey();
+        }
+    }
+}
+
 void ColumnModel::setComment(const QString& comment)
 {
     m_columnComment = comment;
 }
 
-void ColumnModel::setDataType(const DataType& dataType)
+void ColumnModel::setDataType(PDataType dataType)
 {
     m_dataType = dataType;
+    m_dataTypeParameters.first = 0;
+    m_dataTypeParameters.second = 0;
 }
 
 const QString ColumnModel::defaultColumnName() const
 {
-    if (m_parent)
+    if (m_table)
     {
-        QStringList strLst(m_parent->columns().keys());
+        QStringList strLst(m_table->columns().keys());
         QString defaultName = tr("Column");
         QString newName = defaultName;
         int i = 1;
@@ -78,7 +92,7 @@ const QString ColumnModel::defaultColumnName() const
 
 bool ColumnModel::isValidName(const QString& name) const
 {
-    if (m_parent)
+    if (m_table)
     {
         // TODO: insert validation check
             return true;
@@ -114,13 +128,22 @@ const QString ColumnModel::getUMLColumnPrefix() const
 
 const QString ColumnModel::getUMLColumnDescription() const
 {
-    QString rslt = m_columnName + ": " + m_dataType.typeName;
+    QString rslt = m_columnName + ": " + m_dataType->typeName();
+    if (m_dataType->parametersAmount() > 0)
+    {
+        rslt += "(" + QString::number(m_dataTypeParameters.first);
+        if (m_dataType->parametersAmount() > 1)
+        {
+            rslt += "," + QString::number(m_dataTypeParameters.second);
+        }
+        rslt += ")";
+    }
     return rslt;
 }
 
 // Column List
 
-ColumnList::ColumnList() : QMap<QString, SharedColumnModel>()
+ColumnList::ColumnList() : QList<SharedColumnModel>()
 {
     qFill(&m_constraintCounters[0], &m_constraintCounters[Constraint::CT_Last], 0 );
 }
@@ -129,23 +152,32 @@ void ColumnList::addColumn(PColumnModel column)
 {
     if (column)
     {
-        foreach (const SharedConstraint& c, column->constraints())
+        if (!m_columnNames.contains(column->name()))
         {
-            m_constraintCounters[c->type()]++;
+            foreach (const SharedConstraint& c, column->constraints())
+            {
+                m_constraintCounters[c->type()]++;
+            }
+            append(SharedColumnModel(column));
+            m_columnNames.insert(column->name());
         }
-        insert(column->name(), SharedColumnModel(column));
+        else
+        {
+            // throw exception
+        }
     }
 }
 
 PColumnModel ColumnList::getColumnByName(const QString& columnName) const
 {
-    QMap<QString, SharedColumnModel>::const_iterator i = this->constFind(columnName);
-    if (i != this->constEnd())
+    for (ColumnList::const_iterator i = this->constBegin(); i != this->constEnd(); ++i)
     {
-        return i.value().data();
+        if (QString::compare( (*i)->name(), columnName, Qt::CaseInsensitive) == 0)
+        {
+           return (*i).data();
+        }
     }
-    else
-        return 0;
+    return 0;
 }
 
 void ColumnList::getColumnsForConstraintType(const Constraint::ConstraintType type, QList<PColumnModel>& result) const
@@ -153,10 +185,29 @@ void ColumnList::getColumnsForConstraintType(const Constraint::ConstraintType ty
     result.clear();
     if (m_constraintCounters[type] > 0)
     {
-        foreach (const SharedColumnModel& c, *this)
+        for (ColumnList::const_iterator i = this->constBegin(); i != this->constEnd(); ++i)
         {
-            if (c->isConstraintType(type))
-                result.append(c.data());
+            if ((*i)->isConstraintType(type))
+            {
+                result.append((*i).data());
+            }
+        }
+    }
+}
+
+bool ColumnList::contains(const QString & columnName) const
+{
+    return m_columnNames.contains(columnName);
+}
+
+void ColumnList::remove(const QString& columnName)
+{
+    for (ColumnList::iterator i = this->begin(); i != this->end(); ++i)
+    {
+        if (QString::compare( (*i)->name(), columnName, Qt::CaseInsensitive) == 0)
+        {
+            erase(i);
+            m_columnNames.remove(columnName);
         }
     }
 }

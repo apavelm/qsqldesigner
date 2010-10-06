@@ -24,7 +24,7 @@
 #include "projectmanager.h"
 #include "models/modelmanager.h"
 
-SimpleForeignKeySelectionViewModel::SimpleForeignKeySelectionViewModel(QObject *parent, const DataType& datatype) : QStandardItemModel(parent)
+SimpleForeignKeySelectionViewModel::SimpleForeignKeySelectionViewModel(QObject *parent, PDataType datatype) : QStandardItemModel(parent)
 {
     QList<QString> lstTables = CURRENTPROJECT->modelManager()->getTableList();
     foreach (const QString& tableName, lstTables)
@@ -43,6 +43,10 @@ SimpleForeignKeySelectionViewModel::SimpleForeignKeySelectionViewModel(QObject *
             }
             // append table as new row to the model. model takes the ownership of the item
             appendRow(table);
+        }
+        else
+        {
+            delete table;
         }
     }
 }

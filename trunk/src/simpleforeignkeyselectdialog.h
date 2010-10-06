@@ -25,7 +25,6 @@
 #include <QtCore/QScopedPointer>
 #include <QtGui/QDialog>
 
-#include "sqldesignerproject.h"
 #include "models/column.h"
 #include "simpleforeignkeyselectionviewmodel.h"
 
@@ -36,9 +35,8 @@ namespace Ui {
 class SimpleForeignKeySelectDialog : public QDialog
 {
     Q_OBJECT
-
 public:
-    SimpleForeignKeySelectDialog(PColumnModel column, QWidget * parent = 0, PSqlDesignerProject project = 0);
+    SimpleForeignKeySelectDialog(PColumnModel column, QWidget * parent = 0);
     ~SimpleForeignKeySelectDialog();
 
     void accept();
@@ -47,7 +45,6 @@ private:
     Ui::SimpleForeignKeySelectDialog *ui;
     QScopedPointer<SimpleForeignKeySelectionViewModel> m_model;
     PColumnModel m_column;
-    PSqlDesignerProject m_project;
     PConstraint m_constraint;
 };
 

@@ -26,12 +26,11 @@
 
 #include "ui_simpleforeignkeyselectdialog.h"
 
-SimpleForeignKeySelectDialog::SimpleForeignKeySelectDialog(PColumnModel column, QWidget * parent, PSqlDesignerProject project) :
+SimpleForeignKeySelectDialog::SimpleForeignKeySelectDialog(PColumnModel column, QWidget * parent) :
         QDialog(parent),
         ui(new Ui::SimpleForeignKeySelectDialog),
         m_model(new SimpleForeignKeySelectionViewModel(this, column->dataType())),
         m_column(column),
-        m_project(project),
         m_constraint(0)
 {
     ui->setupUi(this);

@@ -28,48 +28,13 @@
 
 CommonDBMSPlugin::CommonDBMSPlugin() : QObject(0)
 {
-    DataType dt;
-        dt.typeName = "INT";
-        dt.canBeArray = false;
-        dt.canIncrement = true;
-        dt.relativeTypes = "BIGINT";
-        dt.parametersAmount = 0;
-        m_dataypeList << dt;
-
-        dt.typeName = "BIGINT";
-        dt.canBeArray = false;
-        dt.canIncrement = true;
-        dt.relativeTypes = "INT";
-        dt.parametersAmount = 0;
-        m_dataypeList << dt;
-
-        dt.typeName = "CHAR";
-        dt.canBeArray = true;
-        dt.canIncrement = false;
-        dt.relativeTypes = "VARCHAR";
-        dt.parametersAmount = 1;
-        m_dataypeList << dt;
-
-        dt.typeName = "VARCHAR";
-        dt.canBeArray = true;
-        dt.canIncrement = false;
-        dt.relativeTypes = "CHAR";
-        dt.parametersAmount = 1;
-        m_dataypeList << dt;
-
-        dt.typeName = "DATETIME";
-        dt.canBeArray = false;
-        dt.canIncrement = false;
-        dt.relativeTypes = "";
-        dt.parametersAmount = 0;
-        m_dataypeList << dt;
-
-        dt.typeName = "FLOAT";
-        dt.canBeArray = false;
-        dt.canIncrement = false;
-        dt.relativeTypes = "";
-        dt.parametersAmount = 2;
-        m_dataypeList << dt;
+    m_dataTypeList << SharedDataType(new DataType("SHORTINT", 0));
+    m_dataTypeList << SharedDataType(new DataType("INT", 0, "SHORTINT"));
+    m_dataTypeList << SharedDataType(new DataType("BIGINT", 0, "INT;SHORTINT"));
+    m_dataTypeList << SharedDataType(new DataType("CHAR", 0, "VARCHAR"));
+    m_dataTypeList << SharedDataType(new DataType("VARCHAR", 1, "CHAR"));
+    m_dataTypeList << SharedDataType(new DataType("DATETIME"));
+    m_dataTypeList << SharedDataType(new DataType("FLOAT", 2));
 }
 
 CommonDBMSPlugin::~CommonDBMSPlugin()
@@ -188,7 +153,7 @@ QString CommonDBMSPlugin::generateDDL_Column(PColumnModel pColumn) const
     QString rslt;
     if (pColumn)
     {
-        rslt += QString("\t%1 %2").arg(pColumn->name()).arg(pColumn->dataType().typeName);
+        rslt += QString("\t%1 %2").arg(pColumn->name()).arg(pColumn->dataType()->typeName());
         const Constraints& lstConstraints = pColumn->constraints();
         if (lstConstraints.isConstraintType(Constraint::CT_NotNull))
         {

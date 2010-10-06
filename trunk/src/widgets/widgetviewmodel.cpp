@@ -34,23 +34,44 @@ void WidgetViewModel::updateModel()
         return;
     }
 
+    QStringList lstHeaderLabels;
+    lstHeaderLabels << tr("Object") << tr("Class");
+    setHorizontalHeaderLabels(lstHeaderLabels);
+
     QList<QString> lstTables = m_project->modelManager()->getTableList();
     foreach (const QString& tableName, lstTables)
     {
         // Create the phone groups as QStandardItems
+        QList<QStandardItem*> rowTableLst;
         QStandardItem * table = new QStandardItem(QIcon(":/table24"), tableName);
+        rowTableLst << table << new QStandardItem(tr("Table"));
 
         QList<QString> lstColumns =  m_project->modelManager()->getColumnList(tableName);
         if (lstColumns.count() > 0)
         {
             foreach (const QString& columnName, lstColumns)
             {
-                QStandardItem * column = new QStandardItem(QIcon(":/column24"), columnName);
+                PColumnModel pColumn = m_project->modelManager()->getColumnByName(tableName, columnName);
+                PDataType pDataType = pColumn->dataType();
+                QString typeName = pDataType->typeName();
+                QPair<int, int> params = pColumn->dataTypeParameters();
+                if (pDataType->parametersAmount() > 0)
+                {
+                    typeName += "(" + QString::number(params.first);
+                    if (pDataType->parametersAmount() > 1)
+                    {
+                        typeName += "," + QString::number(params.second);
+                    }
+                    typeName += ")";
+                }
+                QList<QStandardItem*> rowLst;
+                rowLst << new QStandardItem(QIcon(":/column24"), columnName);
+                rowLst << new QStandardItem(typeName);
                 // the appendRow function appends the column as new row
-                table->appendRow(column);
+                table->appendRow(rowLst);
             }
             // append table as new row to the model. model takes the ownership of the item
-            appendRow(table);
         }
+        appendRow(rowTableLst);
     }
 }

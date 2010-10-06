@@ -29,7 +29,7 @@ class SimpleForeignKeySelectionViewModel : public QStandardItemModel
 {
     Q_OBJECT
 public:
-    SimpleForeignKeySelectionViewModel(QObject * parent, const DataType& datatype);
+    SimpleForeignKeySelectionViewModel(QObject * parent, PDataType datatype);
 };
 
 #endif // FOREIGNKEYSELECTIONVIEWMODEL_H

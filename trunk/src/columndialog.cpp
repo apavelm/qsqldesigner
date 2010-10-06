@@ -21,25 +21,64 @@
 
 #include "columndialog.h"
 #include "simpleforeignkeyselectdialog.h"
-#include "models/table.h"
 #include "ui_columndialog.h"
 
 #include "pluginmanager.h"
-#include "projectmanager.h"
+#include "sqldesignerprojectsettings.h"
 
 #include <QtGui/QMessageBox>
 
-ColumnDialog::ColumnDialog(PTableModel table, QWidget * parent, PSqlDesignerProject project) :  QDialog(parent),  m_table(table), ui(new Ui::ColumnDialog)
+ColumnDialog::ColumnDialog(PColumnModel column, QWidget * parent) :
+            QDialog(parent),
+            ui(new Ui::ColumnDialog),
+            m_model(column)
 {
     ui->setupUi(this);
-    m_project = project;
-    m_model = new ColumnModel(table);
-    ui->edtName->setText(m_model->name());
-    m_dataTypes = PLUGINMANAGER->dataTypesForDatabase(CURRENTPROJECT->dbmsType());
+    clearFKtable();
 
+    ui->edtName->setText(m_model->name());
+    m_dataTypes = PLUGINMANAGER->dataTypesForDatabase(m_model->table()->modelManager()->projectSettings()->dbmsType());
     ui->cbDataType->addItems(m_dataTypes.toStringList());
-    m_oldDataType = ui->cbDataType->currentText();
+    m_oldDataType = (column->dataType() == 0 ? ui->cbDataType->currentText() : column->dataType()->typeName());
+
+    ui->edtSize->setValue(m_model->dataTypeParameters().first);
+    ui->edtPrecision->setValue(m_model->dataTypeParameters().second);
+
+    ui->edtComment->setText(m_model->comment());
+
+    PConstraint cn = 0;
+    cn = m_model->constraint(Constraint::CT_Default);
+    if (cn)
+    {
+        QVariant var = cn->data();
+        if (var.canConvert<QString>())
+        {
+            QString sDefault = var.value<QString>();
+            ui->edtDefault->setText(sDefault);
+        }
+    }
+
+    cn = m_model->constraint(Constraint::CT_Check);
+    if (cn)
+    {
+        QVariant var = cn->data();
+        if (var.canConvert<QString>())
+        {
+            QString sCheck = var.value<QString>();
+            ui->edtCheck->setText(sCheck);
+        }
+    }
+
+    ui->chkPrimaryKey->setCheckState( (m_model->constraint(Constraint::CT_PrimaryKey) == 0 ? Qt::Unchecked : Qt::Checked ) );
+    ui->chkNotNull->setCheckState( (m_model->constraint(Constraint::CT_NotNull) == 0 ? Qt::Unchecked : Qt::Checked ) );
+    ui->chkUnique->setCheckState( (m_model->constraint(Constraint::CT_Unique) == 0 ? Qt::Unchecked : Qt::Checked ) );
+
+    PConstraint pFK = m_model->constraint(Constraint::CT_ForeignKey);
+    addFKtoWidget(pFK);
+    setUIbuttonFKEnabled(pFK == 0);
+
     connect(ui->cbDataType, SIGNAL(currentIndexChanged(QString)), this, SLOT(changedDataType(QString)));
+    applyDataTypeToUI(m_dataTypes.typeByName(m_oldDataType));
 }
 
 ColumnDialog::~ColumnDialog()
@@ -63,40 +102,128 @@ void ColumnDialog::accept()
 {
     m_model->setName(ui->edtName->text().trimmed());
     m_model->setComment(ui->edtComment->text().trimmed());
-    m_model->setDataType(m_dataTypes.typeByName(ui->cbDataType->currentText()));
+    PDataType pDataType = m_dataTypes.typeByName(ui->cbDataType->currentText());
+    m_model->setDataType(pDataType);
 
-    if (!ui->edtDefault->text().trimmed().isEmpty())
+    if (pDataType->parametersAmount() > 0)
     {
-        m_model->addConstraint(new Constraint(m_model, Constraint::CT_Default, ui->edtDefault->text().trimmed()));
+        int a1 = ui->edtSize->value();
+        int a2 = (pDataType->parametersAmount() > 1 ?  ui->edtPrecision->value() : 0);
+        m_model->setDataTypeParameters(qMakePair<int, int>(a1, a2));
     }
-    if (!ui->edtCheck->text().trimmed().isEmpty())
-    {
-        m_model->addConstraint(new Constraint(m_model, Constraint::CT_Check, ui->edtCheck->text().trimmed()));
-    }
+
+    // Primary key
     if (ui->chkPrimaryKey->checkState() && Qt::Checked)
     {
-        m_model->addConstraint(new Constraint(m_model, Constraint::CT_PrimaryKey));
+        if (!m_model->isConstraintType(Constraint::CT_PrimaryKey))
+        {
+            m_model->addConstraint(new Constraint(m_model, Constraint::CT_PrimaryKey));
+        }
     }
-    if (ui->chkNotNull->checkState() && Qt::Checked)
+    else
     {
-        m_model->addConstraint(new Constraint(m_model, Constraint::CT_NotNull));
-    }
-    if (ui->chkUnique->checkState() && Qt::Checked)
-    {
-        m_model->addConstraint(new Constraint(m_model, Constraint::CT_Unique));
+        if (m_model->isConstraintType(Constraint::CT_PrimaryKey))
+        {
+            m_model->deleteConstraint(Constraint::CT_PrimaryKey);
+        }
     }
 
-    m_table->addColumn(m_model);
+    // Not null
+    if (ui->chkNotNull->checkState() && Qt::Checked)
+    {
+        if (!m_model->isConstraintType(Constraint::CT_NotNull))
+        {
+            m_model->addConstraint(new Constraint(m_model, Constraint::CT_NotNull));
+        }
+    }
+    else
+    {
+        if (m_model->isConstraintType(Constraint::CT_NotNull))
+        {
+            m_model->deleteConstraint(Constraint::CT_NotNull);
+        }
+    }
+
+
+    // Unique
+    if (ui->chkUnique->checkState() && Qt::Checked)
+    {
+        if (!m_model->isConstraintType(Constraint::CT_Unique))
+        {
+            m_model->addConstraint(new Constraint(m_model, Constraint::CT_Unique));
+        }
+    }
+    else
+    {
+        if (m_model->isConstraintType(Constraint::CT_Unique))
+        {
+            m_model->deleteConstraint(Constraint::CT_Unique);
+        }
+    }
+
+    // Default
+    if (m_model->isConstraintType(Constraint::CT_Default))
+    {
+        m_model->deleteConstraint(Constraint::CT_Default);
+        if (!ui->edtDefault->text().trimmed().isEmpty())
+        {
+            m_model->addConstraint(new Constraint(m_model, Constraint::CT_Default, ui->edtDefault->text().trimmed()));
+        }
+    }
+    else
+    {
+        if (!ui->edtDefault->text().trimmed().isEmpty())
+        {
+            m_model->addConstraint(new Constraint(m_model, Constraint::CT_Default, ui->edtDefault->text().trimmed()));
+        }
+    }
+
+    // Check
+    if (m_model->isConstraintType(Constraint::CT_Check))
+    {
+        m_model->deleteConstraint(Constraint::CT_Check);
+        if (!ui->edtCheck->text().trimmed().isEmpty())
+        {
+            m_model->addConstraint(new Constraint(m_model, Constraint::CT_Check, ui->edtCheck->text().trimmed()));
+        }
+    }
+    else
+    {
+        if (!ui->edtCheck->text().trimmed().isEmpty())
+        {
+            m_model->addConstraint(new Constraint(m_model, Constraint::CT_Check, ui->edtCheck->text().trimmed()));
+        }
+    }
+
     QDialog::accept();
 }
 
-void ColumnDialog::reject()
+void ColumnDialog::addFKtoWidget(PConstraint cn)
 {
-    if (m_model)
+    if (cn)
     {
-        delete m_model;
+        if (cn->type() == Constraint::CT_ForeignKey)
+        {
+            // adding foreign key inforamtion to TableWidget
+            QVariant var = cn->data();
+            if (var.canConvert<ConstraintForeignKey>())
+            {
+                ConstraintForeignKey m_fk = var.value<ConstraintForeignKey>();
+
+                int row = ui->viewForeignKeys->rowCount();
+                ui->viewForeignKeys->insertRow(row);
+                QTableWidgetItem *item0 = new QTableWidgetItem(QIcon(":/table24"), m_fk.referenceTable());
+                ui->viewForeignKeys->setItem(row, 0, item0);
+                QTableWidgetItem *item1 = new QTableWidgetItem(QIcon(":/column24"), m_fk.referenceColumns().at(0));
+                ui->viewForeignKeys->setItem(row, 1, item1);
+                QTableWidgetItem *item2 = new QTableWidgetItem(m_model->dataType()->fullTypeName(m_model->dataTypeParameters()));
+                item2->setTextAlignment(Qt::AlignCenter | Qt::AlignVCenter);
+                ui->viewForeignKeys->setItem(row, 2, item2);
+
+                setUIbuttonFKEnabled(true);
+            }
+        }
     }
-    QDialog::reject();
 }
 
 void ColumnDialog::on_btnAddFK_clicked()
@@ -104,32 +231,10 @@ void ColumnDialog::on_btnAddFK_clicked()
     m_model->setName(ui->edtName->text().trimmed());
     m_model->setDataType(m_dataTypes.typeByName(ui->cbDataType->currentText()));
 
-    SimpleForeignKeySelectDialog dlg(m_model, this, m_project);
+    SimpleForeignKeySelectDialog dlg(m_model, this);
     if (dlg.exec() == QDialog::Accepted)
     {
-        PConstraint cn = dlg.constraint();
-        if (cn)
-        {
-            if (cn->type() == Constraint::CT_ForeignKey)
-            {
-                // adding foreign key inforamtion to TableWidget
-                QVariant var = cn->data();
-                if (var.canConvert<ConstraintForeignKey>())
-                {
-                    ConstraintForeignKey m_fk = var.value<ConstraintForeignKey>();
-
-                    int row = ui->viewForeignKeys->rowCount();
-                    ui->viewForeignKeys->insertRow(row);
-                    QTableWidgetItem *item0 = new QTableWidgetItem(QIcon(":/table24"), m_fk.referenceTable());
-                    ui->viewForeignKeys->setItem(row, 0, item0);
-                    QTableWidgetItem *item1 = new QTableWidgetItem(QIcon(":/column24"), m_fk.referenceColumns().at(0));
-                    ui->viewForeignKeys->setItem(row, 1, item1);
-                    QTableWidgetItem *item2 = new QTableWidgetItem(m_model->dataType().typeName);
-                    item2->setTextAlignment(Qt::AlignCenter | Qt::AlignVCenter);
-                    ui->viewForeignKeys->setItem(row, 2, item2);
-                }
-            }
-        }
+        addFKtoWidget(dlg.constraint());
     }
 }
 
@@ -143,28 +248,81 @@ void ColumnDialog::changedDataType(const QString& newDataType)
             {
                 // YES
                 m_model->deleteConstraint(Constraint::CT_ForeignKey);
-                ui->viewForeignKeys->clearContents();
+                ui->viewForeignKeys->removeRow(0);
                 applyDataTypeToUI(m_dataTypes.typeByName(newDataType));
-                // TODO: insert setEnable(true/false) for "add FK" button
+                setUIbuttonFKEnabled(false);
+                return;
             }
             else
             {
                 // NO
                 int idx = ui->cbDataType->findText(m_oldDataType, Qt::MatchFixedString);
                 if (idx != -1)
+                {
                     ui->cbDataType->setCurrentIndex(idx);
+                }
                 return;
             }
         }
+        m_oldDataType = newDataType;
+        applyDataTypeToUI(m_dataTypes.typeByName(newDataType));
     }
-    m_oldDataType = newDataType;
+    else
+    {
+        if (!m_oldDataType.isEmpty())
+        {
+            int idx = ui->cbDataType->findText(m_oldDataType, Qt::MatchFixedString);
+            if (idx != -1)
+            {
+                ui->cbDataType->setCurrentIndex(idx);
+            }
+        }
+    }
 }
 
-void ColumnDialog::applyDataTypeToUI(const DataType& datatype)
+void ColumnDialog::applyDataTypeToUI(PDataType datatype)
 {
-    ui->edtPrecision->setEnabled(datatype.parametersAmount == 2);
-    ui->blPrecision->setEnabled(datatype.parametersAmount == 2);
+    ui->cbDataType->setCurrentIndex(ui->cbDataType->findText(datatype->typeName(), Qt::MatchFixedString));
+    ui->edtPrecision->setEnabled(datatype->parametersAmount() == 2);
+    ui->blPrecision->setEnabled(datatype->parametersAmount() == 2);
 
-    ui->edtSize->setEnabled(datatype.parametersAmount > 0);
-    ui->lblSize->setEnabled(datatype.parametersAmount > 0);
+    ui->edtSize->setEnabled(datatype->parametersAmount() > 0);
+    ui->lblSize->setEnabled(datatype->parametersAmount() > 0);
+    setUIbuttonFKEnabled(!hasNoForeignKeyConstraint());
+}
+
+
+bool ColumnDialog::hasNoForeignKeyConstraint() const
+{
+    return !m_model->isConstraintType(Constraint::CT_ForeignKey);
+}
+
+void ColumnDialog::setUIbuttonFKEnabled(bool hasFK)
+{
+    ui->btnAddFK->setEnabled(!hasFK);
+    ui->btnDelFK->setEnabled(hasFK);
+}
+
+void ColumnDialog::on_btnDelFK_clicked()
+{
+    m_model->deleteConstraint(Constraint::CT_ForeignKey);
+    clearFKtable();
+}
+
+void ColumnDialog::clearFKtable()
+{
+    ui->viewForeignKeys->clear();
+    for (int i = ui->viewForeignKeys->rowCount() - 1; i >= 0; --i)
+    {
+        ui->viewForeignKeys->removeRow(i);
+    }
+    QStringList labelsHeader;
+    labelsHeader << tr("Table") << tr("Column") << tr("Data Type");
+    ui->viewForeignKeys->setHorizontalHeaderLabels(labelsHeader);
+    ui->viewForeignKeys->horizontalHeader()->setHighlightSections(false);
+    ui->viewForeignKeys->horizontalHeader()->setClickable(false);
+    ui->viewForeignKeys->horizontalHeader()->resizeSection(0, 100);
+    ui->viewForeignKeys->horizontalHeader()->resizeSection(1, 200);
+    ui->viewForeignKeys->horizontalHeader()->resizeSection(2, 100);
+    setUIbuttonFKEnabled(false);
 }
