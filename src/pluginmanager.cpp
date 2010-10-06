@@ -23,6 +23,7 @@
 
 #include <QtCore/QDir>
 #include <QtCore/QStringList>
+#include <QtGui/QApplication>
 
 #include "settingsmanager.h"
 

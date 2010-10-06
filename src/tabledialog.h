@@ -26,7 +26,6 @@
 #include <QtGui/QDialog>
 
 #include "models/table.h"
-#include "sqldesignerproject.h"
 
 namespace Ui {
     class TableDialog;
@@ -36,26 +35,28 @@ class TableDialog : public QDialog
 {
     Q_OBJECT
 public:
-    TableDialog(QWidget * parent = 0, PSqlDesignerProject project = 0);
+    TableDialog(PTableModel table, QWidget * parent = 0);
     ~TableDialog();
 
-    inline PTableModel model() const {return m_model;}
-    void reject();
     void accept();
 protected:
     void changeEvent(QEvent *e);
 
 private:
-    PSqlDesignerProject m_project;
     Ui::TableDialog *ui;
     PTableModel m_model;
 
+    void clearColumnsTable();
+    void applyColumnToTableUI(int row, PColumnModel column);
+    void swapRowsInTableWidget(int row1, int row2);
+
 private slots:
+    void on_columnsTable_itemSelectionChanged();
+    void on_columnDownButton_clicked();
+    void on_columnUpButton_clicked();
+    void on_columnDeleteButton_clicked();
+    void on_columnEditButton_clicked();
     void on_columnAddButton_clicked();
-signals:
-    void updateTable(QString tableName, PTableModel tablePtr);
-    void removeTable(QString tableName);
-    void addTable(PTableModel table);
 };
 
 #endif // TABLEDIALOG_H

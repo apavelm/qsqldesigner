@@ -23,7 +23,6 @@
 #define COLUMNDIALOG_H
 
 #include <QtGui/QDialog>
-#include "sqldesignerproject.h"
 #include "models/column.h"
 #include "models/datatypes.h"
 
@@ -35,25 +34,26 @@ class ColumnDialog : public QDialog
 {
     Q_OBJECT
 public:
-    ColumnDialog(PTableModel table = 0, QWidget * parent = 0, PSqlDesignerProject project = 0);
+    ColumnDialog(PColumnModel column, QWidget * parent = 0);
     ~ColumnDialog();
-    inline PColumnModel model() const {return m_model;}
 
     void accept();
-    void reject();
 protected:
     void changeEvent(QEvent *e);
 
 private:
-    PTableModel m_table;
     Ui::ColumnDialog *ui;
     PColumnModel m_model;
-    PSqlDesignerProject m_project;
     DataTypes m_dataTypes;
     QString m_oldDataType;
 
-    void applyDataTypeToUI(const DataType& datatype);
+    void applyDataTypeToUI(PDataType datatype);
+    bool hasNoForeignKeyConstraint() const;
+    void setUIbuttonFKEnabled(bool hasFK);
+    void addFKtoWidget(PConstraint cn);
+    void clearFKtable();
 private slots:
+    void on_btnDelFK_clicked();
     void on_btnAddFK_clicked();
     void changedDataType(const QString& newDataType);
 };

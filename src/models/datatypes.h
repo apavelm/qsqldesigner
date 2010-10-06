@@ -23,46 +23,41 @@
 #define DATATYPES_H
 
 #include <QtCore/QList>
-#include <QtCore/QMap>
+#include <QtCore/QPair>
+#include <QtCore/QSharedPointer>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
 
-struct DataType
-{
-    QString typeName;
-    bool    canBeArray;
-    bool    canIncrement;
-    QString relativeTypes;
-    int     parametersAmount;
-};
-
-class DataTypes : public QList<DataType>
+class DataType
 {
 public:
-    DataTypes() : QList<DataType>() {}
+    DataType(const QString name = QString(), int parametersCount = 0, const QString relatives = QString());
+    DataType(const DataType& other);
+    virtual ~DataType() {}
 
-    QStringList toStringList()
-    {
-        QStringList rslt;
-        foreach (const DataType& dt, *this)
-        {
-            rslt << dt.typeName;
-        }
-        return rslt;
-    }
+    inline const QString& typeName() const {return m_typeName;}
+    inline const QString& relativeTypes() const {return m_relativeTypes;}
+    inline int parametersAmount() const {return m_parametersAmount;}
 
-    const DataType typeByName(const QString& typeName)
-    {
-        foreach (const DataType& dt, *this)
-        {
-            if (QString::compare(dt.typeName, typeName, Qt::CaseInsensitive) == 0 )
-            {
-                return dt;
-            }
-        }
-        return DataType();
-    }
+    bool isRelative(DataType * other) const;
+    QString fullTypeName(const QPair<int, int> params) const;
+private:
+    QString m_typeName;
+    QString m_relativeTypes;
+    int m_parametersAmount;
+};
 
+typedef DataType * PDataType;
+typedef QSharedPointer<DataType> SharedDataType;
+
+class DataTypes : public QList<SharedDataType>
+{
+public:
+    DataTypes();
+    ~DataTypes() {}
+
+    QStringList toStringList() const;
+    const PDataType typeByName(const QString& typeName);
 };
 
 typedef QMap<QString, DataTypes> AllDatabaseDataTypes;

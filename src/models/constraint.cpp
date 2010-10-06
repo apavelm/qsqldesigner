@@ -125,7 +125,7 @@ const QString Constraint::getUMLConstraintString() const
                     foreach (const PColumnModel c, lstPrimaryKeys)
                     {
                         sTypeListString += ( sTypeListString.isEmpty() ? "(" : ", ");
-                        sTypeListString += c->dataType().typeName;
+                        sTypeListString += c->dataType()->typeName();
                     }
                     sTypeListString += ")";
                     rslt = m_name + sTypeListString;
@@ -135,7 +135,7 @@ const QString Constraint::getUMLConstraintString() const
         case CT_NotNull: break;
         case CT_Unique:
             {
-                rslt = QString("%1(%2)").arg(m_name).arg(m_column->dataType().typeName);
+                rslt = QString("%1(%2)").arg(m_name).arg(m_column->dataType()->typeName());
             }
             break;
         case CT_ForeignKey:
@@ -153,7 +153,7 @@ const QString Constraint::getUMLConstraintString() const
                             PColumnModel pColumn = m_column->table()->column(c);
                             if (pColumn)
                             {
-                                sTypes << pColumn->dataType().typeName;
+                                sTypes << pColumn->dataType()->typeName();
                             }
                         }
                     }

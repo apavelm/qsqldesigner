@@ -37,11 +37,11 @@ public:
 
     inline const QString databaseName() const { return "Common Database"; }
     inline int internalVersion() const { return 1; }
-    inline const DataTypes& dataTypes() const {return m_dataypeList;}
+    inline const DataTypes& dataTypes() const {return m_dataTypeList;}
 
     QString generateDDL(PModelManager model) const;
 private:
-    DataTypes m_dataypeList;
+    DataTypes m_dataTypeList;
 
     QString generateDDL_Table(PTableModel pTable) const;
     QString generateDDL_Column(PColumnModel pColumn) const;

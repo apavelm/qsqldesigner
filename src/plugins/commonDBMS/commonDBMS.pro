@@ -5,6 +5,7 @@ TEMPLATE = lib
 DEFINES += QSQLDESIGNER_DBMS_PLUGIN_LIBRARY
 SOURCES += commondbms.cpp \
     ../../sqldesignerprojectsettings.cpp \
+    ../../models/datatypes.cpp \
     ../../models/modelmanager.cpp \
     ../../models/table.cpp \
     ../../models/column.cpp \

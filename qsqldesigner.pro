@@ -33,7 +33,8 @@ SOURCES += src/main.cpp \
     src/aboutdialog.cpp \
     src/sqldesignerprojectsettings.cpp \
     src/widgets/objecteditor.cpp \
-    src/widgets/widgetviewmodel.cpp
+    src/widgets/widgetviewmodel.cpp \
+    src/models/datatypes.cpp
 HEADERS += src/mainwindow.h \
 	src/columndialog.h \
 	src/magnifydialog.h \

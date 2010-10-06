@@ -23,7 +23,7 @@
 
 #include "modelmanager.h"
 
-TableModel::TableModel(PModelManager mm, const QString& name)
+TableModel::TableModel(PModelManager mm, const QString& name) : QObject(mm)
 {
     m_mm = mm;
     if (name.isEmpty())
@@ -46,11 +46,7 @@ void TableModel::setName(const QString& name)
 
 PColumnModel TableModel::column(const QString& columnName) const
 {
-    if (m_columns.contains(columnName))
-    {
-        return m_columns.value(columnName).data();
-    }
-    return 0;
+    return m_columns.getColumnByName(columnName);
 }
 
 void TableModel::setColumns(const ColumnList& newColumns)
@@ -117,4 +113,18 @@ void TableModel::addConstraint(PConstraint constraint)
     {
         m_constraints.addConstraint(constraint);
     }
+}
+
+void TableModel::swapColumns(int row1, int row2)
+{
+    if (row1 == row2)
+        return;
+
+    if (row1 < 0 || row2 < 0)
+        return;
+
+    if (row1 >= m_columns.count() || row2 >= m_columns.count())
+            return;
+
+    m_columns.swap(row1, row2);
 }

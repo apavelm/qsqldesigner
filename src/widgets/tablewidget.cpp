@@ -107,7 +107,7 @@ void TableWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
 
         // printing "column"
         painter->setFont(smallFont);
-        painter->drawText(columnTitleRect, Qt::AlignVCenter | Qt::TextSingleLine | Qt::TextDontClip ,"  " + tr("«column»"));
+        painter->drawText(columnTitleRect, Qt::AlignVCenter | Qt::TextSingleLine | Qt::TextDontClip ,"  " + tr("columns"));
 
         fCurrentYPos += fSmallLineHeight + 2 * PenWidth + fLineOffset; // set fCurrentYPos to new value
         painter->setPen(QPen(SM->columnFontColor()));
@@ -163,7 +163,7 @@ void TableWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
             painter->drawRect(columnTitleRect);
             // printing "FK"
             painter->setFont(smallFont);
-            painter->drawText(columnTitleRect, Qt::AlignVCenter | Qt::TextSingleLine | Qt::TextDontClip ,"  " + tr("«FK»"));
+            painter->drawText(columnTitleRect, Qt::AlignVCenter | Qt::TextSingleLine | Qt::TextDontClip , "  " + tr("FK"));
             fCurrentYPos += fSmallLineHeight + 2 * PenWidth + fLineOffset; // set fCurrentYPos to new value
 
             QList<PColumnModel> lstForeignKeys;
@@ -194,7 +194,7 @@ void TableWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
             painter->drawRect(columnTitleRect);
             // printing "PK"
             painter->setFont(smallFont);
-            painter->drawText(columnTitleRect, Qt::AlignVCenter | Qt::TextSingleLine | Qt::TextDontClip ,"  " + tr("«PK»"));
+            painter->drawText(columnTitleRect, Qt::AlignVCenter | Qt::TextSingleLine | Qt::TextDontClip ,"  " + tr("PK"));
             fCurrentYPos += fSmallLineHeight + 2 * PenWidth + fLineOffset; // set fCurrentYPos to new value
 
             QList<PColumnModel> lstPrimaryKeys;
@@ -227,7 +227,7 @@ void TableWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
             painter->drawRect(columnTitleRect);
             // printing "unique"
             painter->setFont(smallFont);
-            painter->drawText(columnTitleRect, Qt::AlignVCenter | Qt::TextSingleLine | Qt::TextDontClip ,"  " + tr("«unique»"));
+            painter->drawText(columnTitleRect, Qt::AlignVCenter | Qt::TextSingleLine | Qt::TextDontClip ,"  " + tr("unique"));
             fCurrentYPos += fSmallLineHeight + 2 * PenWidth + fLineOffset; // set fCurrentYPos to new value
 
             QList<PColumnModel> lstUnique;

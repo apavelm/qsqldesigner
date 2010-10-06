@@ -22,7 +22,7 @@
 #ifndef TABLE_H
 #define TABLE_H
 
-#include <QtGui/QApplication>
+#include <QtCore/QObject>
 #include <QtCore/QSharedPointer>
 #include <QtCore/QString>
 #include <QtCore/QStringList>
@@ -32,9 +32,9 @@
 class ModelManager;
 typedef ModelManager * PModelManager;
 
-class TableModel
+class TableModel : public QObject
 {
-    Q_DECLARE_TR_FUNCTIONS(TableModel)
+    Q_OBJECT
 public:
     TableModel(PModelManager mm = 0, const QString& name = QString());
     inline PModelManager modelManager() const {return m_mm;}
@@ -43,6 +43,7 @@ public:
     void setName(const QString& name);
 
     inline const ColumnList& columns() const {return m_columns;}
+    void swapColumns(int row1, int row2);
     PColumnModel column(const QString& columnName) const;
     void setColumns(const ColumnList& newColumns);
     void addColumn(PColumnModel c);
@@ -59,6 +60,9 @@ private:
     Constraints m_constraints;
 
     const QString defaultTableName() const;
+signals:
+    void addedSimpleForeignKey(const QString& columnName);
+    void addedForeignKey(QString); // for tableConstraints
 };
 
 typedef TableModel * PTableModel;
