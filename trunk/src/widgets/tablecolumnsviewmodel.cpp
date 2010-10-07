@@ -100,7 +100,11 @@ bool TableColumnsViewModel::swapRows(int row1, int row2)
 
 void TableColumnsViewModel::updateRow(int row, PColumnModel column)
 {
-
+    item(row, 0)->setText((column->isConstraintType(Constraint::CT_PrimaryKey) ? "PK" : "" )); // PK
+    item(row, 1)->setText(column->name()); // Name
+    item(row, 2)->setText(column->dataType()->fullTypeName(column->dataTypeParameters())); // Type
+    item(row, 3)->setText((column->isConstraintType(Constraint::CT_NotNull) ? "Yes" : "No" )); // Not Null
+    item(row, 4)->setText((column->isConstraintType(Constraint::CT_Unique) ? "Yes" : "No" )); // Unique
 }
 
 bool TableColumnsViewModel::removeRow(int row)
