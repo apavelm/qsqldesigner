@@ -6,6 +6,9 @@ QT += sql \
 	svg
 TARGET = bin/qsqldesigner
 DESTDIR = out
+INCLUDEPATH += src \
+    src\models \
+    src\widgets
 TEMPLATE = app
 SOURCES += src/main.cpp \
     src/mainwindow.cpp \
@@ -34,7 +37,9 @@ SOURCES += src/main.cpp \
     src/sqldesignerprojectsettings.cpp \
     src/widgets/objecteditor.cpp \
     src/widgets/widgetviewmodel.cpp \
-    src/models/datatypes.cpp
+    src/models/datatypes.cpp \
+    src/widgets/tablecolumnsview.cpp \
+    src/widgets/tablecolumnsviewmodel.cpp
 HEADERS += src/mainwindow.h \
 	src/columndialog.h \
 	src/magnifydialog.h \
@@ -63,7 +68,9 @@ HEADERS += src/mainwindow.h \
     src/aboutdialog.h \
     src/sqldesignerprojectsettings.h \
     src/widgets/objecteditor.h \
-    src/widgets/widgetviewmodel.h
+    src/widgets/widgetviewmodel.h \
+    src/widgets/tablecolumnsview.h \
+    src/widgets/tablecolumnsviewmodel.h
 FORMS += src/ui/mainwindow.ui \
     src/ui/columndialog.ui \
     src/ui/magnifydialog.ui \

@@ -88,6 +88,7 @@ public:
     void getColumnsForConstraintType(const Constraint::ConstraintType type, QList<PColumnModel>& result) const;
     bool contains(const QString & columnName) const;
     void remove(const QString& columnName);
+    void remove(int index);
     QStringList keys() const {return m_columnNames.toList();}
 private:
     int m_constraintCounters[Constraint::CT_Last];

@@ -52,21 +52,9 @@ void WidgetViewModel::updateModel()
             foreach (const QString& columnName, lstColumns)
             {
                 PColumnModel pColumn = m_project->modelManager()->getColumnByName(tableName, columnName);
-                PDataType pDataType = pColumn->dataType();
-                QString typeName = pDataType->typeName();
-                QPair<int, int> params = pColumn->dataTypeParameters();
-                if (pDataType->parametersAmount() > 0)
-                {
-                    typeName += "(" + QString::number(params.first);
-                    if (pDataType->parametersAmount() > 1)
-                    {
-                        typeName += "," + QString::number(params.second);
-                    }
-                    typeName += ")";
-                }
                 QList<QStandardItem*> rowLst;
                 rowLst << new QStandardItem(QIcon(":/column24"), columnName);
-                rowLst << new QStandardItem(typeName);
+                rowLst << new QStandardItem(pColumn->dataType()->fullTypeName(pColumn->dataTypeParameters()));
                 // the appendRow function appends the column as new row
                 table->appendRow(rowLst);
             }

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>575</width>
-    <height>398</height>
+    <width>566</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -51,14 +51,14 @@
          <item row="0" column="0">
           <layout class="QHBoxLayout" name="horizontalLayout">
            <item>
-            <widget class="QTableWidget" name="columnsTable">
+            <widget class="TableColumnsView" name="columnsTable">
              <property name="editTriggers">
               <set>QAbstractItemView::NoEditTriggers</set>
              </property>
-             <property name="tabKeyNavigation">
+             <property name="showDropIndicator" stdset="0">
               <bool>false</bool>
              </property>
-             <property name="showDropIndicator" stdset="0">
+             <property name="dragDropOverwriteMode">
               <bool>false</bool>
              </property>
              <property name="selectionMode">
@@ -79,31 +79,6 @@
              <attribute name="verticalHeaderDefaultSectionSize">
               <number>17</number>
              </attribute>
-             <column>
-              <property name="text">
-               <string notr="true">1</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string notr="true">2</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string notr="true">3</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string notr="true">4</string>
-              </property>
-             </column>
-             <column>
-              <property name="text">
-               <string notr="true">5</string>
-              </property>
-             </column>
             </widget>
            </item>
            <item>
@@ -117,6 +92,9 @@
              </item>
              <item>
               <widget class="QPushButton" name="columnEditButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="text">
                 <string>Edit</string>
                </property>
@@ -124,6 +102,9 @@
              </item>
              <item>
               <widget class="QPushButton" name="columnDeleteButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="text">
                 <string>Delete</string>
                </property>
@@ -147,6 +128,9 @@
              </item>
              <item>
               <widget class="QPushButton" name="columnUpButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="text">
                 <string>Up</string>
                </property>
@@ -154,6 +138,9 @@
              </item>
              <item>
               <widget class="QPushButton" name="columnDownButton">
+               <property name="enabled">
+                <bool>false</bool>
+               </property>
                <property name="text">
                 <string>Down</string>
                </property>
@@ -204,6 +191,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>TableColumnsView</class>
+   <extends>QTableView</extends>
+   <header>../widgets/tablecolumnsview.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

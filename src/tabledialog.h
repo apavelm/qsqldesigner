@@ -45,18 +45,13 @@ protected:
 private:
     Ui::TableDialog *ui;
     PTableModel m_model;
-
-    void clearColumnsTable();
-    void applyColumnToTableUI(int row, PColumnModel column);
-    void swapRowsInTableWidget(int row1, int row2);
-
 private slots:
-    void on_columnsTable_itemSelectionChanged();
     void on_columnDownButton_clicked();
     void on_columnUpButton_clicked();
     void on_columnDeleteButton_clicked();
     void on_columnEditButton_clicked();
     void on_columnAddButton_clicked();
+    void on_columnsTable_selectedRowSignal(int row);
 };
 
 #endif // TABLEDIALOG_H

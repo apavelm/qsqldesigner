@@ -31,7 +31,7 @@ CommonDBMSPlugin::CommonDBMSPlugin() : QObject(0)
     m_dataTypeList << SharedDataType(new DataType("SHORTINT", 0));
     m_dataTypeList << SharedDataType(new DataType("INT", 0, "SHORTINT"));
     m_dataTypeList << SharedDataType(new DataType("BIGINT", 0, "INT;SHORTINT"));
-    m_dataTypeList << SharedDataType(new DataType("CHAR", 0, "VARCHAR"));
+    m_dataTypeList << SharedDataType(new DataType("CHAR", 1, "VARCHAR"));
     m_dataTypeList << SharedDataType(new DataType("VARCHAR", 1, "CHAR"));
     m_dataTypeList << SharedDataType(new DataType("DATETIME"));
     m_dataTypeList << SharedDataType(new DataType("FLOAT", 2));
@@ -66,12 +66,11 @@ QString CommonDBMSPlugin::generateDDL_Table(PTableModel pTable) const
     {
         rslt += QString("CREATE TABLE %1 (\n").arg(pTable->name());
         // columns...
-        const ColumnList& lstColumns = pTable->columns();
-        int i = 0;
-        int columnsCount = lstColumns.count();
-        foreach (const SharedColumnModel& column, lstColumns)
+        int columnsCount = pTable->columns().count();
+        for (int i = 0; i < columnsCount; i++)
         {
-            rslt += generateDDL_Column(column.data());
+            PColumnModel column = pTable->columns().at(i).data();
+            rslt += generateDDL_Column(column);
             i++;
             if ( (i < columnsCount) || (pTable->tableConstraints().count() > 0) )
             {
@@ -79,7 +78,7 @@ QString CommonDBMSPlugin::generateDDL_Table(PTableModel pTable) const
             }
 
             // comment
-            QString comment = column.data()->comment().trimmed();
+            QString comment = column->comment().trimmed();
             if (!comment.isEmpty())
             {
                 rslt += QString("  -- %1").arg(comment);

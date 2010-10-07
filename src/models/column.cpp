@@ -208,6 +208,16 @@ void ColumnList::remove(const QString& columnName)
         {
             erase(i);
             m_columnNames.remove(columnName);
+            if (i == this->end())
+                break;
         }
     }
+}
+
+void ColumnList::remove(int index)
+{
+    if (index < 0 || index >= count())
+        return;
+    QString name = at(index)->name();
+    remove(name);
 }

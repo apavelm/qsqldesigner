@@ -31,8 +31,10 @@ TableDialog::TableDialog(PTableModel table, QWidget * parent) :
             m_model(table)
 {
     ui->setupUi(this);
-    clearColumnsTable();
     ui->edtTableName->setText(m_model->name());
+
+    ui->columnsTable->updateColumnListModel(m_model->columns());
+
     // TODO: insert change UI according to TableModel
 }
 
@@ -61,27 +63,8 @@ void TableDialog::on_columnAddButton_clicked()
     ColumnDialog dlg(column, this);
     if (dlg.exec() == QDialog::Accepted)
     {
-        int row = ui->columnsTable->rowCount();
-        ui->columnsTable->insertRow(row);
-        QTableWidgetItem * item1 = new QTableWidgetItem((column->isConstraintType(Constraint::CT_PrimaryKey) ? "PK" : "" )); // PK
-        item1->setTextAlignment(Qt::AlignHCenter);
-        QTableWidgetItem * item2 = new QTableWidgetItem(column->name()); // Name
-        item2->setTextAlignment(Qt::AlignLeft);
-        QTableWidgetItem * item3 = new QTableWidgetItem(column->dataType()->fullTypeName(column->dataTypeParameters())); // Type
-        item3->setTextAlignment(Qt::AlignHCenter);
-        QTableWidgetItem * item4 = new QTableWidgetItem((column->isConstraintType(Constraint::CT_NotNull) ? "Yes" : "No" )); // Not Null
-        item4->setTextAlignment(Qt::AlignHCenter);
-        QTableWidgetItem * item5 = new QTableWidgetItem((column->isConstraintType(Constraint::CT_Unique) ? "Yes" : "No" )); // Unique
-        item5->setTextAlignment(Qt::AlignHCenter);
-
-        ui->columnsTable->setItem(row, 0, item1);
-        ui->columnsTable->setItem(row, 1, item2);
-        ui->columnsTable->setItem(row, 2, item3);
-        ui->columnsTable->setItem(row, 3, item4);
-        ui->columnsTable->setItem(row, 4, item5);
-        ui->columnsTable->setCurrentItem(0);
-
         m_model->addColumn(column);
+        ui->columnsTable->appendRow(column);
     }
     else
     {
@@ -99,81 +82,80 @@ void TableDialog::accept()
 void TableDialog::on_columnEditButton_clicked()
 {
     m_model->setName(ui->edtTableName->text());
-    int selRow = ui->columnsTable->currentRow();
-    QTableWidgetItem * item = ui->columnsTable->item(selRow, 1);
-
-    if (item)
+    int row = ui->columnsTable->currentIndex().row();
+    PColumnModel column = m_model->column(row);
+    if (column)
     {
-        PColumnModel column = m_model->column(item->text());
         ColumnDialog dlg(column, this);
         if (dlg.exec() == QDialog::Accepted)
         {
-            applyColumnToTableUI(selRow, column);
+            ui->columnsTable->updateRow(row, column);
         }
     }
 }
 
 void TableDialog::on_columnDeleteButton_clicked()
 {
-    int selRow = ui->columnsTable->currentRow();
-    ui->columnsTable->removeRow(selRow);
-    ui->columnsTable->setCurrentItem(0);
+    int row = ui->columnsTable->currentIndex().row();
+    if (ui->columnsTable->removeRow(row))
+    {
+        m_model->removeColumn(row);
+        ui->columnsTable->setCurrentIndex(QModelIndex());
+    }
 }
 
 void TableDialog::on_columnUpButton_clicked()
 {
-    int selRow = ui->columnsTable->currentRow();
-    m_model->swapColumns(selRow, selRow - 1);
-    swapRowsInTableWidget(selRow, selRow - 1);
+    int selRow = ui->columnsTable->currentIndex().row();
+    if (ui->columnsTable->swapRows(selRow, selRow - 1))
+    {
+        m_model->swapColumns(selRow, selRow - 1);
+    }
 }
 
 void TableDialog::on_columnDownButton_clicked()
 {
-    int selRow = ui->columnsTable->currentRow();
-    m_model->swapColumns(selRow, selRow + 1);
-    swapRowsInTableWidget(selRow, selRow + 1);
-}
-
-void TableDialog::clearColumnsTable()
-{
-    ui->columnsTable->clear();
-    for (int i = ui->columnsTable->rowCount() - 1; i >= 0; --i)
+    int selRow = ui->columnsTable->currentIndex().row();
+    if (ui->columnsTable->swapRows(selRow, selRow + 1))
     {
-        ui->columnsTable->removeRow(i);
+        m_model->swapColumns(selRow, selRow + 1);
     }
-    QStringList labelsHeader;
-    labelsHeader << tr("PK") << tr("Name") << tr("Type") << tr("Not null") << tr("Unique");
-    ui->columnsTable->setHorizontalHeaderLabels(labelsHeader);
-    ui->columnsTable->horizontalHeader()->setHighlightSections(false);
-    ui->columnsTable->horizontalHeader()->setClickable(false);
-    ui->columnsTable->horizontalHeader()->resizeSection(0, 35);
-    ui->columnsTable->horizontalHeader()->resizeSection(1, 200);
-    ui->columnsTable->horizontalHeader()->resizeSection(2, 100);
-    ui->columnsTable->horizontalHeader()->resizeSection(3, 50);
-    ui->columnsTable->horizontalHeader()->resizeSection(4, 50);
 }
 
-void TableDialog::applyColumnToTableUI(int row, PColumnModel column)
+void TableDialog::on_columnsTable_selectedRowSignal(int row)
 {
-    if (!column)
-        return;
-
-    ui->columnsTable->item(row, 0)->setText((column->isConstraintType(Constraint::CT_PrimaryKey) ? "PK" : "" )); // PK
-    ui->columnsTable->item(row, 1)->setText(column->name());
-    ui->columnsTable->item(row, 2)->setText(column->dataType()->fullTypeName(column->dataTypeParameters()));
-    ui->columnsTable->item(row, 3)->setText((column->isConstraintType(Constraint::CT_NotNull) ? "Yes" : "No" )); // Not Null
-    ui->columnsTable->item(row, 4)->setText((column->isConstraintType(Constraint::CT_Unique) ? "Yes" : "No" )); // Unique
-}
-
-void TableDialog::on_columnsTable_itemSelectionChanged()
-{
-    int selRow = ui->columnsTable->currentRow();
-    ui->columnDownButton->setEnabled(selRow != ui->columnsTable->rowCount() - 1);
-    ui->columnUpButton->setEnabled(selRow != 0);
-}
-
-void TableDialog::swapRowsInTableWidget(int row1, int row2)
-{
-    if (row1 == row2)
-        return;
+    if (row == -1)
+    {
+        // disable all except "add"
+        ui->columnDeleteButton->setEnabled(false);
+        ui->columnEditButton->setEnabled(false);
+        ui->columnDownButton->setEnabled(false);
+        ui->columnUpButton->setEnabled(false);
+    }
+    else
+        if (row == 0)
+        {
+            // enable all except "up"
+            ui->columnDeleteButton->setEnabled(true);
+            ui->columnEditButton->setEnabled(true);
+            ui->columnDownButton->setEnabled(true);
+            ui->columnUpButton->setEnabled(false);
+        }
+        else
+            if (row == m_model->columns().count() - 1)
+            {
+                // enable all except "down"
+                ui->columnDeleteButton->setEnabled(true);
+                ui->columnEditButton->setEnabled(true);
+                ui->columnDownButton->setEnabled(false);
+                ui->columnUpButton->setEnabled(true);
+            }
+            else
+                {
+                    // enable all
+                    ui->columnDeleteButton->setEnabled(true);
+                    ui->columnEditButton->setEnabled(true);
+                    ui->columnDownButton->setEnabled(true);
+                    ui->columnUpButton->setEnabled(true);
+                }
 }
