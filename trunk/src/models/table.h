@@ -45,14 +45,15 @@ public:
     inline const ColumnList& columns() const {return m_columns;}
     void swapColumns(int row1, int row2);
     PColumnModel column(const QString& columnName) const;
+    PColumnModel column(int index) const;
     void setColumns(const ColumnList& newColumns);
     void addColumn(PColumnModel c);
     void removeColumn(const QString& columnName);
+    bool removeColumn(int index);
 
     const QStringList constraintsNames() const;
     inline const Constraints& tableConstraints() const {return m_constraints;}
     void addConstraint(PConstraint constraint);
-    //inline void deleteConstraint(int index) {m_constraints.deleteConstraint(index);}
 private:
     PModelManager m_mm;
     ColumnList m_columns;

@@ -49,6 +49,13 @@ PColumnModel TableModel::column(const QString& columnName) const
     return m_columns.getColumnByName(columnName);
 }
 
+PColumnModel TableModel::column(int index) const
+{
+    if (index < 0 || index >= m_columns.count())
+        return 0;
+    return m_columns.at(index).data();
+}
+
 void TableModel::setColumns(const ColumnList& newColumns)
 {
     m_columns = newColumns;
@@ -62,6 +69,13 @@ void TableModel::addColumn(PColumnModel c)
 void TableModel::removeColumn(const QString& columnName)
 {
     m_columns.remove(columnName);
+}
+
+bool TableModel::removeColumn(int index)
+{
+    if (index < 0 || index >= m_columns.count())
+        return false;
+    m_columns.remove(index);
 }
 
 const QStringList TableModel::constraintsNames() const
