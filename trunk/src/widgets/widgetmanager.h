@@ -48,10 +48,13 @@ private:
     QList<SharedArrowForeignKey> m_arrowsFK;
 
     void removeArrowBeforeTable(const QString& tableName);
-    //PArrowForeignKey getArrowFrom(const QString& tableName, const QString& columnName) const;
-    //PArrowForeignKey getArrowTo(const QString& tableName, const QString& columnName) const;
     ListArrowForeignKey getArrowsFromTable(const QString& tableName) const;
     ListArrowForeignKey getArrowsToTable(const QString& tableName) const;
+private slots:
+    void addedSimpleForeignKey(QString tableName, QString columnName);
+    void removedSimpleForeignKey(QString tableName, QString columnName);
+    void addedForeignKey(QString tableName, QString constraintName);
+    void removedForeignKey(QString tableName, QString constraintName);
 public slots:
     void addTable(PTableModel table);
     void removeTable(const QString& tableName);

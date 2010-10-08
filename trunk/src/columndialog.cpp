@@ -323,6 +323,6 @@ void ColumnDialog::clearFKtable()
     ui->viewForeignKeys->horizontalHeader()->setClickable(false);
     ui->viewForeignKeys->horizontalHeader()->resizeSection(0, 100);
     ui->viewForeignKeys->horizontalHeader()->resizeSection(1, 200);
-    ui->viewForeignKeys->horizontalHeader()->resizeSection(2, 100);
+    ui->viewForeignKeys->horizontalHeader()->resizeSection(2, 87);
     setUIbuttonFKEnabled(false);
 }

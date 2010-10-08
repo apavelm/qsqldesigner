@@ -94,7 +94,6 @@ public:
     enum ConstraintType {CT_Unknown = 0, CT_PrimaryKey = 0x1, CT_NotNull = 0x2, CT_Unique = 0x4, CT_Default = 0x8, CT_Check = 0x10, CT_ForeignKey = 0x20, CT_Last = 0x40};
     Q_DECLARE_FLAGS(ConstraintTypes, ConstraintType)
     Constraint(PColumnModel column, const ConstraintType type = CT_Unknown, const QVariant& data = QVariant());
-    Constraint(const Constraint& old);
     ~Constraint();
 
     inline ConstraintType type() const {return m_type;}

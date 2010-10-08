@@ -1,4 +1,4 @@
-﻿/***************************************************************************
+/***************************************************************************
  *   Copyright (C) 2010 by Pavel Andreev                                   *
  *   Mail: apavelm on gmail point com (apavelm@gmail.com)                  *
  *                                                                         *
@@ -46,12 +46,10 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
     QPainterPath shape() const;
 
-    inline const QString& name() const {return m_name;}
+    inline const QString& name() const {return m_model->name();}
     QSizeF recalcMinimumSize() const;
 
     void setModel(PTableModel model);
-public slots:
-    void setName(const QString& name);
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);
     void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
@@ -59,12 +57,13 @@ protected:
 private:
     Q_DISABLE_COPY ( TableWidget )
     PTableModel m_model;
-    QString m_name;
 
     void paintSelectionOutline(QPainter *painter);
     qreal longestStringWidth(const QFontMetrics& metrics) const;
 signals:
     void deleteWidget(QString name);
+    void editWidget(QString name);
+    void updateWidget(QString name);
 };
 
 typedef TableWidget * PTableWidget;

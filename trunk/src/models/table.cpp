@@ -56,26 +56,44 @@ PColumnModel TableModel::column(int index) const
     return m_columns.at(index).data();
 }
 
-void TableModel::setColumns(const ColumnList& newColumns)
-{
-    m_columns = newColumns;
-}
-
 void TableModel::addColumn(PColumnModel c)
 {
     m_columns.addColumn(c);
+    if (c->isConstraintType(Constraint::CT_ForeignKey))
+    {
+        emit addedSimpleForeignKey(m_name, c->name());
+    }
 }
 
 void TableModel::removeColumn(const QString& columnName)
 {
-    m_columns.remove(columnName);
+    PColumnModel col = m_columns.getColumnByName(columnName);
+    if (col)
+    {
+        if (col->isConstraintType(Constraint::CT_ForeignKey))
+        {
+            emit removedSimpleForeignKey(m_name, columnName);
+        }
+        m_columns.remove(columnName);
+    }
 }
 
 bool TableModel::removeColumn(int index)
 {
     if (index < 0 || index >= m_columns.count())
         return false;
-    m_columns.remove(index);
+
+    PColumnModel col = m_columns.at(index).data();
+    if (col)
+    {
+        if (col->isConstraintType(Constraint::CT_ForeignKey))
+        {
+            emit removedSimpleForeignKey(m_name, col->name());
+        }
+        m_columns.remove(index);
+        return true;
+    }
+    return false;
 }
 
 const QStringList TableModel::constraintsNames() const
@@ -141,4 +159,45 @@ void TableModel::swapColumns(int row1, int row2)
             return;
 
     m_columns.swap(row1, row2);
+}
+
+bool TableModel::hasForeignKeys() const
+{
+    foreach(const SharedConstraint& cn, m_constraints)
+    {
+        if (cn->type() == Constraint::CT_ForeignKey)
+        {
+            return true;
+        }
+    }
+    foreach(const SharedColumnModel& c, m_columns)
+    {
+        if (c->isConstraintType(Constraint::CT_ForeignKey))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+QList<PConstraint> TableModel::foreignKeys() const
+{
+    QList<PConstraint> rslt;
+
+    foreach(const SharedConstraint& cn, m_constraints)
+    {
+        if (cn->type() == Constraint::CT_ForeignKey)
+        {
+            rslt << cn.data();
+        }
+    }
+    foreach(const SharedColumnModel& c, m_columns)
+    {
+        if (c->isConstraintType(Constraint::CT_ForeignKey))
+        {
+            rslt << c->constraint(Constraint::CT_ForeignKey);
+        }
+    }
+
+    return rslt;
 }

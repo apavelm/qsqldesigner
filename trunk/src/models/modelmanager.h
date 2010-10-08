@@ -55,7 +55,7 @@ private:
 signals:
     void tableAdded(PTableModel table);
     void tableRemoved(const QString& tableName);
-    void tableUpdate(const QString& tableName, PTableModel tablePtr = 0);
+    void tableUpdated(const QString& tableName, PTableModel tablePtr = 0);
 public slots:
     void addTable(PTableModel table);
     void removeTable(const QString& tableName);

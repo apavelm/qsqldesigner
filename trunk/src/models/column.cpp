@@ -174,7 +174,7 @@ PColumnModel ColumnList::getColumnByName(const QString& columnName) const
     {
         if (QString::compare( (*i)->name(), columnName, Qt::CaseInsensitive) == 0)
         {
-           return (*i).data();
+           return i->data();
         }
     }
     return 0;

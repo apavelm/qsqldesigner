@@ -46,7 +46,6 @@ public:
     void swapColumns(int row1, int row2);
     PColumnModel column(const QString& columnName) const;
     PColumnModel column(int index) const;
-    void setColumns(const ColumnList& newColumns);
     void addColumn(PColumnModel c);
     void removeColumn(const QString& columnName);
     bool removeColumn(int index);
@@ -54,6 +53,8 @@ public:
     const QStringList constraintsNames() const;
     inline const Constraints& tableConstraints() const {return m_constraints;}
     void addConstraint(PConstraint constraint);
+    bool hasForeignKeys() const;
+    QList<PConstraint> foreignKeys() const;
 private:
     PModelManager m_mm;
     ColumnList m_columns;
@@ -62,8 +63,10 @@ private:
 
     const QString defaultTableName() const;
 signals:
-    void addedSimpleForeignKey(const QString& columnName);
-    void addedForeignKey(QString); // for tableConstraints
+    void addedSimpleForeignKey(QString tableName, QString columnName);
+    void removedSimpleForeignKey(QString tableName, QString columnName);
+    void addedForeignKey(QString tableName, QString constraintName); // for tableConstraints
+    void removedForeignKey(QString tableName, QString constraintName); // for tableConstraints
 };
 
 typedef TableModel * PTableModel;

@@ -31,20 +31,6 @@ Constraint::Constraint(PColumnModel column, const ConstraintType type, const QVa
     m_name = defaultName(type, data);
 }
 
-Constraint::Constraint(const Constraint& old)
-{
-    m_name = old.name();
-    m_type = old.type();
-    if (m_data.isValid())
-    {
-        m_data = old.data();
-    }
-    else
-    {
-        m_data = QVariant();
-    }
-}
-
 Constraint::~Constraint()
 {
     m_data.clear();

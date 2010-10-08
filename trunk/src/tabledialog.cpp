@@ -131,31 +131,11 @@ void TableDialog::on_columnsTable_selectedRowSignal(int row)
         ui->columnEditButton->setEnabled(false);
         ui->columnDownButton->setEnabled(false);
         ui->columnUpButton->setEnabled(false);
+        return;
     }
-    else
-        if (row == 0)
-        {
-            // enable all except "up"
-            ui->columnDeleteButton->setEnabled(true);
-            ui->columnEditButton->setEnabled(true);
-            ui->columnDownButton->setEnabled(true);
-            ui->columnUpButton->setEnabled(false);
-        }
-        else
-            if (row == m_model->columns().count() - 1)
-            {
-                // enable all except "down"
-                ui->columnDeleteButton->setEnabled(true);
-                ui->columnEditButton->setEnabled(true);
-                ui->columnDownButton->setEnabled(false);
-                ui->columnUpButton->setEnabled(true);
-            }
-            else
-                {
-                    // enable all
-                    ui->columnDeleteButton->setEnabled(true);
-                    ui->columnEditButton->setEnabled(true);
-                    ui->columnDownButton->setEnabled(true);
-                    ui->columnUpButton->setEnabled(true);
-                }
+    // enable all except "up" and/or "down"
+    ui->columnDeleteButton->setEnabled(true);
+    ui->columnEditButton->setEnabled(true);
+    ui->columnDownButton->setEnabled(row != m_model->columns().count() - 1);
+    ui->columnUpButton->setEnabled(row != 0);
 }

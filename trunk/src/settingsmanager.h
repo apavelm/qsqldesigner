@@ -42,6 +42,7 @@ public:
     inline int  smallFontPointSize() const {return m_smallPointSize;}
     inline qreal  penWidth() const {return m_penWidth;}
     inline qreal  gridSize() const {return m_gridSize;}
+    inline int  arrowSize() const {return m_arrowSize;}
     inline bool showGrid() const {return m_showGrid;}
     inline bool antialiasing() const {return m_antialiasing;}
     inline bool textAntialiasing() const {return m_textAntialiasing;}
@@ -61,6 +62,7 @@ public slots:
     inline void setSmallFontPointSize(int newSize) {m_smallPointSize = newSize;}
     inline void setPenWidth(qreal newWidth) {m_penWidth = newWidth;}
     inline void setGridSize(qreal newGridSize) {m_gridSize = newGridSize;}
+    inline void setArowSize(int newArrowSize) {m_arrowSize = newArrowSize;}
     void setShowGrid(bool showGrid);
     inline void setAntialiasing(bool antialiasing) {m_antialiasing = antialiasing;}
     inline void setTextAntialiasing(bool textAntialiasing) {m_textAntialiasing = textAntialiasing;}
@@ -85,6 +87,7 @@ private:
     int    m_smallPointSize;
     qreal  m_penWidth;
     qreal  m_gridSize;
+    int    m_arrowSize;
     bool   m_showGrid;
     bool   m_antialiasing;
     bool   m_textAntialiasing;
