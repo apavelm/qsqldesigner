@@ -290,14 +290,22 @@ void MainWindow::slotViewCustomZoom()
     }
 }
 
+bool MainWindow::openTableDialog(PTableModel table)
+{
+    if(table)
+    {
+        TableDialog dlg(table, this);
+        return dlg.exec() == QDialog::Accepted;
+    }
+    return false;
+}
+
 void MainWindow::slotProjectAddTable()
 {
     if (CURRENTPROJECT)
     {
         PTableModel table = new TableModel(CURRENTPROJECT->modelManager());
-
-        TableDialog dlg(table, this);
-        if (dlg.exec() == QDialog::Accepted)
+        if (openTableDialog(table))
         {
             CURRENTPROJECT->modelManager()->addTable(table);
         }
@@ -306,6 +314,13 @@ void MainWindow::slotProjectAddTable()
             delete table;
         }
     }
+}
+
+void MainWindow::slotProjectEditTable(const QString& tableName)
+{
+    // TODO: this variant save table even user CANCEL operation.
+    //PTableModel table = CURRENTPROJECT->modelManager()->getTableByName(tableName);
+    //openTableDialog(table);
 }
 
 void MainWindow::slotAboutAbout()
@@ -322,6 +337,7 @@ void MainWindow::slotCurrentProjectChange(const QString& projectName)
         m_mainView->setScene(CURRENTPROJECT->scene());
         m_objEditor->setProject(CURRENTPROJECT);
         connect(CURRENTPROJECT, SIGNAL(modelChanged()), m_objEditor, SLOT(updateModel()));
+        connect(CURRENTPROJECT, SIGNAL(editTable(QString)), this, SLOT(slotProjectEditTable(QString)));
     }
     else
     {

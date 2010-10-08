@@ -24,78 +24,80 @@
 #include "../models/column.h"
 #include "../models/modelmanager.h"
 #include "../models/table.h"
+#include "../settingsmanager.h"
 
-ArrowForeignKey::ArrowForeignKey(PWidgetManager manager, PConstraint constraint) : QGraphicsPathItem(), m_wm(manager), m_initiated(false), m_sourceTable(0), m_refTable(0)
+#include <math.h>
+
+ArrowForeignKey::ArrowForeignKey(PWidgetManager manager, PConstraint constraint) : QObject(manager), QGraphicsPathItem(), m_wm(manager), m_sourceTable(0), m_refTable(0)
 {
     if (constraint)
     {
-        m_constraint = constraint;
-        if (constraint->type() == Constraint::CT_ForeignKey)
+        m_sourceTable = m_wm->getTableWidgetByName(constraint->column()->table()->name());
+        QVariant var = constraint->data();
+        if (var.canConvert<ConstraintForeignKey>())
         {
-            m_sourceTable = m_wm->getTableWidgetByName(constraint->column()->table()->name());
-            QVariant var = m_constraint->data();
-            if (var.canConvert<ConstraintForeignKey>())
-            {
-                m_fk = var.value<ConstraintForeignKey>();
-                m_refTable = m_wm->getTableWidgetByName(m_fk.referenceTable());
-            }
-            setFlag(QGraphicsItem::ItemIsSelectable, true);
-            setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-
-            if (m_refTable && m_sourceTable)
-            {
-                m_initiated = true;
-            }
+            m_fk = var.value<ConstraintForeignKey>();
+            m_refTable = m_wm->getTableWidgetByName(m_fk.referenceTable());
         }
+        setPen(QPen(Qt::black, SM->penWidth(), Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        //setFlag(QGraphicsItem::ItemIsSelectable, true);
+        connect(m_refTable, SIGNAL(xChanged()), this, SLOT(updatePosition()));
+        connect(m_refTable, SIGNAL(yChanged()), this, SLOT(updatePosition()));
+        connect(m_sourceTable, SIGNAL(xChanged()), this, SLOT(updatePosition()));
+        connect(m_sourceTable, SIGNAL(yChanged()), this, SLOT(updatePosition()));
+        updatePosition();
     }
 }
 
 ArrowForeignKey::~ArrowForeignKey()
 {
-    //m_constraint->column()->deleteConstraint(m_constraint);
 }
 
 QRectF ArrowForeignKey::boundingRect() const
 {
-    if (m_initiated)
-    {
-        return path().boundingRect();
-    }
-    else
-        return QRectF();
-}
-
-QPainterPath ArrowForeignKey::shape() const
-{
-    if (m_initiated)
-    {
-        QPainterPath path = QGraphicsPathItem::shape();
-        //path.addPolygon(m_arrowHead);
-        return path;
-    }
-    else
-        return QPainterPath();
+    qreal extra = SM->penWidth() / 2 + (qreal)SM->arrowSize();
+    return path().boundingRect().normalized().adjusted(-extra, -extra, extra, extra);
 }
 
 void ArrowForeignKey::updatePosition()
 {
-    if (m_initiated)
+    m_startPos = mapFromItem(m_sourceTable, QPointF(0, 0));
+    m_stopPos = mapFromItem(m_refTable, QPointF(0, 0));
+    // TODO: calc closest points table1 and table2
+
+    QPainterPath path;
+    path.moveTo(m_startPos);
+    path.lineTo(m_stopPos);
+
+    QLineF line(m_stopPos, m_startPos);
+    double angle = acos(line.dx() / line.length());
+    double Pi = 3.1415;
+    int arrowSize = SM->arrowSize();
+    if (line.dy() >= 0)
     {
-        QLineF line(mapFromItem(m_sourceTable, 0, 0), mapFromItem(m_refTable, 0, 0));
-        QPainterPath path;
-        path.moveTo(line.p1());
-        path.lineTo(line.p2());
-        setPath(path);
+        angle = 2 * Pi  - angle;
     }
+    m_arrowHead1 = m_stopPos + QPointF(sin(angle + Pi / 3) * arrowSize, cos(angle + Pi / 3) * arrowSize);
+    m_arrowHead2 = m_stopPos + QPointF(sin(angle + Pi - Pi / 3) * arrowSize, cos(angle + Pi - Pi / 3) * arrowSize);
+
+    setPath(path);
+}
+
+QPainterPath ArrowForeignKey::shape() const
+{
+    QPainterPath path = QGraphicsPathItem::shape();
+    QPolygonF arrow;
+    arrow << m_stopPos << m_arrowHead1 << m_arrowHead2 << m_stopPos;
+    path.addPolygon(arrow);
+    return path;
 }
 
 void ArrowForeignKey::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
-    if (m_initiated)
-    {
-        painter->save();
-        painter->setPen(QPen(Qt::black, 1, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-        painter->drawPath(path());
-        painter->restore();
-    }
+    painter->save();
+    painter->setPen(QPen(Qt::black, SM->penWidth(), Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    painter->drawPath(path());
+    painter->drawLine(m_stopPos, m_arrowHead1);
+    painter->drawLine(m_stopPos, m_arrowHead2);
+    painter->restore();
 }

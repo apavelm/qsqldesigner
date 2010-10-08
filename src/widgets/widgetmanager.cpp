@@ -46,13 +46,22 @@ void WidgetManager::addTable(PTableModel table)
         PTableWidget widget = new TableWidget(m_scene, 0, table);
         widget->setZValue(TABLE_Z_ORDER);
         connect(widget, SIGNAL(deleteWidget(QString)), m_project->modelManager(), SLOT(removeTable(QString)));
+        connect(widget, SIGNAL(editWidget(QString)), m_project, SIGNAL(editTable(QString)));
+        connect(table, SIGNAL(addedSimpleForeignKey(QString, QString)), SIGNAL(addedSimpleForeignKey(QString, QString)));
+        connect(table, SIGNAL(removedSimpleForeignKey(QString, QString)), SIGNAL(removedSimpleForeignKey(QString, QString)));
+        connect(table, SIGNAL(addedForeignKey(QString, QString)), SIGNAL(addedForeignKey(QString, QString)));
+        connect(table, SIGNAL(removedForeignKey(QString, QString)), SIGNAL(removedForeignKey(QString, QString)));
         m_tablesWidgets.insert(table->name(), SharedTableWidget(widget));
 
         // check for FK constraints
-        //if (table->isConstraintType(Constraint::CT_ForeignKey))
-        //{
-            // for each FK adding ArrowForeignKeyWidget
-        //}
+        if (table->hasForeignKeys())
+        {
+            foreach (PConstraint cn, table->foreignKeys())
+            {
+                //add graphics arrow
+                addArrowFK(cn);
+            }
+        }
     }
 }
 
@@ -120,50 +129,15 @@ PTableWidget WidgetManager::getTableWidgetByName(const QString& tableName) const
         return 0;
     }
 }
-/*
-PArrowForeignKey WidgetManager::getArrowFrom(const QString& tableName, const QString& columnName) const
-{
-    foreach (const SharedArrowForeignKey& arrow, m_arrowsFK)
-    {
-        if (arrow->isValid())
-        {
-            if (QString::compare(arrow->sourceTable()->name(), tableName, Qt::CaseInsensitive) == 0 &&
-                QString::compare(arrow->sourceColumn()->name(), columnName, Qt::CaseInsensitive) == 0)
-            {
-                return arrow.data();
-            }
-        }
-    }
-    return 0;
-}
 
-PArrowForeignKey WidgetManager::getArrowTo(const QString& tableName, const QString& columnName) const
-{
-    foreach (const SharedArrowForeignKey& arrow, m_arrowsFK)
-    {
-        if (arrow->isValid())
-        {
-            if (QString::compare(arrow->refTable()->name(), tableName, Qt::CaseInsensitive) == 0 &&
-                QString::compare(arrow->refColumn()->name(), columnName, Qt::CaseInsensitive) == 0)
-            {
-                return arrow.data();
-            }
-        }
-    }
-    return 0;
-}
-*/
 ListArrowForeignKey WidgetManager::getArrowsFromTable(const QString& tableName) const
 {
     ListArrowForeignKey lst;
     foreach (const SharedArrowForeignKey& arrow, m_arrowsFK)
     {
-        if (arrow->isValid())
+        if (QString::compare(arrow->sourceTable()->name(), tableName, Qt::CaseInsensitive) == 0)
         {
-            if (QString::compare(arrow->sourceTable()->name(), tableName, Qt::CaseInsensitive) == 0)
-            {
-                lst << arrow.data();
-            }
+            lst << arrow.data();
         }
     }
     return lst;
@@ -174,12 +148,9 @@ ListArrowForeignKey WidgetManager::getArrowsToTable(const QString& tableName) co
     ListArrowForeignKey lst;
     foreach (const SharedArrowForeignKey& arrow, m_arrowsFK)
     {
-        if (arrow->isValid())
+        if (QString::compare(arrow->refTable()->name(), tableName, Qt::CaseInsensitive) == 0)
         {
-            if (QString::compare(arrow->refTable()->name(), tableName, Qt::CaseInsensitive) == 0)
-            {
-                lst << arrow.data();
-            }
+            lst << arrow.data();
         }
     }
     return lst;
@@ -221,3 +192,23 @@ void WidgetManager::removeArrowFK(PConstraint constraint)
     }
 }
 */
+
+void WidgetManager::addedSimpleForeignKey(QString tableName, QString columnName)
+{
+
+}
+
+void WidgetManager::removedSimpleForeignKey(QString tableName, QString columnName)
+{
+
+}
+
+void WidgetManager::addedForeignKey(QString tableName, QString constraintName)
+{
+
+}
+
+void WidgetManager::removedForeignKey(QString tableName, QString constraintName)
+{
+
+}

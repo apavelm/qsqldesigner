@@ -63,6 +63,7 @@ private:
     bool m_showGrid;
     ObjectEditor * m_objEditor;
 
+    bool openTableDialog(PTableModel table);
 private slots:
     void on_actionGenerate_DDL_triggered();
     void slotNewProject();
@@ -81,6 +82,7 @@ private slots:
     void slotViewCustomZoom();
 
     void slotProjectAddTable();
+    void slotProjectEditTable(const QString& tableName);
 
     void slotAboutAbout();
 

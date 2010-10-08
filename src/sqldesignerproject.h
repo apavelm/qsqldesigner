@@ -60,6 +60,7 @@ private:
     QScopedPointer<QUndoStack> m_undoStack;
 signals:
     void modelChanged();
+    void editTable(QString);
 };
 
 typedef SqlDesignerProjectSettings * PSqlDesignerProjectSettings;

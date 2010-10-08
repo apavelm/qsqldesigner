@@ -34,13 +34,14 @@
 class WidgetManager;
 typedef WidgetManager * PWidgetManager;
 
-class ArrowForeignKey : public QGraphicsPathItem
+class ArrowForeignKey : public QObject, public QGraphicsPathItem
 {
+    Q_OBJECT
 public:
     enum { Type = UserType + 2 };
     inline int type() const {return Type;}
 
-    ArrowForeignKey(PWidgetManager manager, PConstraint constraint);
+    ArrowForeignKey(PWidgetManager manager = 0, PConstraint constraint = 0);
     ~ArrowForeignKey();
 
     QRectF boundingRect() const;
@@ -50,21 +51,18 @@ public:
     inline QList<QString> sourceColumns() const {return m_fk.sourceColumns();}
     inline PTableWidget refTable() const { return m_refTable; }
     inline QList<QString> refColumns() const {return m_fk.referenceColumns();}
-    inline bool isValid() const {return m_initiated;}
 public slots:
     void updatePosition();
-
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
 
 private:
-    PConstraint  m_constraint;
     ConstraintForeignKey m_fk;
     PWidgetManager m_wm;
-    bool         m_initiated;
     PTableWidget m_sourceTable;
     PTableWidget m_refTable;
-    QPolygonF    m_arrowHead;
+    QPointF m_startPos, m_stopPos;
+    QPointF m_arrowHead1, m_arrowHead2;
 };
 
 typedef ArrowForeignKey * PArrowForeignKey;

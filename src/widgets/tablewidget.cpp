@@ -22,7 +22,7 @@
 #include "tablewidget.h"
 #include "../settingsmanager.h"
 
-TableWidget::TableWidget(QGraphicsScene *scene, QGraphicsItem  *parent, TableModel * model) : QGraphicsObject(parent), m_model(model), m_name(model->name())
+TableWidget::TableWidget(QGraphicsScene *scene, QGraphicsItem  *parent, TableModel * model) : QGraphicsObject(parent), m_model(model)
 {
     setFlags(QGraphicsItem::ItemIsSelectable | QGraphicsItem::ItemSendsGeometryChanges | QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsFocusable);
 
@@ -274,11 +274,6 @@ QPainterPath TableWidget::shape() const
     return path;
 }
 
-void TableWidget::setName(const QString& name)
-{
-    m_model->setName(name);
-}
-
 QSizeF TableWidget::recalcMinimumSize() const
 {
     qreal m_minWidth = 50.0;
@@ -373,18 +368,31 @@ void TableWidget::contextMenuEvent(QGraphicsSceneContextMenuEvent *event)
 
 void TableWidget::keyPressEvent(QKeyEvent *event)
 {
-    if (event->key() == Qt::Key_Delete)
+    switch (event->key())
     {
-        // delete widget
-        emit deleteWidget(m_name);
+    case Qt::Key_Delete:
+        {
+            // delete widget
+            emit deleteWidget(m_model->name());
+            break;
+        }
+    case Qt::Key_F2:
+        {
+            // edit widget
+            emit editWidget(m_model->name());
+            break;
+        }
+    default: break;
     }
 }
 
 void TableWidget::setModel(PTableModel model)
 {
+    hide();
     m_model = model;
     recalcMinimumSize(); // TODO: optimisation remove this line from here or from boundingRect() function
     update(boundingRect());
+    show();
 }
 
 qreal TableWidget::longestStringWidth(const QFontMetrics& metrics) const
