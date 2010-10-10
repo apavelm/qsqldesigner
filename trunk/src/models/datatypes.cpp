@@ -80,7 +80,7 @@ QStringList DataTypes::toStringList() const
     return rslt;
 }
 
-const PDataType DataTypes::typeByName(const QString& typeName)
+PDataType DataTypes::typeByName(const QString& typeName)
 {
     foreach (const SharedDataType& dt, *this)
     {
