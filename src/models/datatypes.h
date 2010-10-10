@@ -57,7 +57,7 @@ public:
     ~DataTypes() {}
 
     QStringList toStringList() const;
-    const PDataType typeByName(const QString& typeName);
+    PDataType typeByName(const QString& typeName);
 };
 
 typedef QMap<QString, DataTypes> AllDatabaseDataTypes;
