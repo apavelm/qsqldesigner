@@ -19,27 +19,38 @@
  *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
  ***************************************************************************/
 
-#ifndef SQLDESIGNERPROJECTSETTINGS_H
-#define SQLDESIGNERPROJECTSETTINGS_H
+#ifndef XMLHELPER_H
+#define XMLHELPER_H
+
+#include "singleton.h"
 
 #include <QtCore/QString>
+#include <QtCore/QIODevice>
+#include <QtXml/QDomElement>
 
-class SqlDesignerProjectSettings
+class SqlDesignerProject;
+typedef SqlDesignerProject * PSqlDesignerProject;
+class SqlDesignerProjectSettings;
+typedef SqlDesignerProjectSettings * PSqlDesignerProjectSettings;
+class ModelManager;
+typedef ModelManager * PModelManager;
+class WidgetManager;
+typedef WidgetManager * PWidgetManager;
+
+class XmlHelper
 {
 public:
-    explicit SqlDesignerProjectSettings(const QString& projectName, const QString& dbmsType);
-    ~SqlDesignerProjectSettings() {}
+    static bool read(QIODevice * device);
+    static bool save(QIODevice * device, PSqlDesignerProject project);
 
-    inline const QString& name() const {return m_projectName;}
-    inline const QString& projectFilename() const {return m_projectFileName;}
-    inline const QString& dbmsType() const {return m_dbmsType;}
-
-    void rename(const QString& newName);
-    inline void setFileName(const QString& filename) {m_projectFileName = filename;}
 private:
-    QString m_projectName;
-    QString m_dbmsType;
-    QString m_projectFileName;
+    static const int IdentSize = 4;
+    XmlHelper();
+    ~XmlHelper();
+
+    static QDomNode elementFromPrjectSettings(QDomDocument& doc, PSqlDesignerProjectSettings settings);
+    static QDomNode elementFromModelManager(QDomDocument& doc, PModelManager mm);
+    static QDomNode elementFromWidgetManager(QDomDocument& doc, PWidgetManager wm);
 };
 
-#endif // SQLDESIGNERPROJECTSETTINGS_H
+#endif // XMLHELPER_H

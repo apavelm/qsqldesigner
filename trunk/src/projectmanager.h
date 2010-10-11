@@ -43,6 +43,7 @@ private:
 
 public slots:
     void newProject(const QString& projectName, const QString& dbmsType);
+    void openProject(const QString& fileName);
     void closeProject();
     void closeProject(const QString& projectName);
     void closeAllProjects();

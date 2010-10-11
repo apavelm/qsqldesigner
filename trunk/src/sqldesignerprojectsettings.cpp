@@ -25,6 +25,7 @@ SqlDesignerProjectSettings::SqlDesignerProjectSettings(const QString& projectNam
 {
     m_projectName = projectName;
     m_dbmsType = dbmsType;
+    m_projectFileName = QString();
 }
 
 void SqlDesignerProjectSettings::rename(const QString& newName)

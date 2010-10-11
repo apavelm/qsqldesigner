@@ -21,6 +21,11 @@
 
 #include "sqldesignerproject.h"
 
+#include <QtGui/QMessageBox>
+#include <QtXml>
+
+#include "xmlhelper.h"
+
 SqlDesignerProject::SqlDesignerProject(const QString& projectName, const QString& dbmsType) :
             QObject(0),
             m_settings(new SqlDesignerProjectSettings(projectName, dbmsType)),
@@ -41,4 +46,40 @@ SqlDesignerProject::SqlDesignerProject(const QString& projectName, const QString
 
 SqlDesignerProject::~SqlDesignerProject()
 {
+}
+
+void SqlDesignerProject::saveProject(const QString fileName)
+{
+    QFile file(fileName);
+    if (!file.open(QFile::WriteOnly | QFile::Text))
+    {
+        QMessageBox::warning(0, qApp->applicationName(), tr("Cannot write file %1:\n%2.").arg(fileName).arg(file.errorString()));
+        return;
+    }
+
+    bool isOK = XmlHelper::save(&file, this);
+
+    file.close();
+    m_settings->setFileName(fileName);
+}
+
+PSqlDesignerProject SqlDesignerProject::loadProject(const QString fileName)
+{
+    PSqlDesignerProject rslt = 0;
+
+    if (fileName.isEmpty())
+             return 0;
+
+    QFile file(fileName);
+    if (!file.open(QFile::ReadOnly | QFile::Text))
+    {
+        QMessageBox::warning(0, qApp->applicationName(), tr("Cannot read file %1:\n%2.").arg(fileName).arg(file.errorString()));
+        return 0;
+    }
+
+    bool isOK = XmlHelper::read(&file);
+
+    file.close();
+    //m_settings->setFileName(fileName);
+    return rslt;
 }

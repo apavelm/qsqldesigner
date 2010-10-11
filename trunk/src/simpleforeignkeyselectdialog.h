@@ -46,6 +46,10 @@ private:
     QScopedPointer<SimpleForeignKeySelectionViewModel> m_model;
     PColumnModel m_column;
     PConstraint m_constraint;
+
+    bool selectItem(const QModelIndex& index);
+private slots:
+    void on_columnView_doubleClicked(QModelIndex index);
 };
 
 #endif // FOREIGNKEYSELECTDIALOG_H
