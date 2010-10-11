@@ -25,11 +25,14 @@
 #include "projectmanager.h"
 #include "settingsmanager.h"
 
+#include <QFileDialog>
+
 #include "aboutdialog.h"
 #include "tabledialog.h"
 #include "newprojectdialog.h"
 
 #include "ui_mainwindow.h"
+
 
 MainWindow::MainWindow(QWidget *parent) :
             QMainWindow(parent),
@@ -177,17 +180,40 @@ void MainWindow::slotNewProject()
 
 void MainWindow::slotOpenProject()
 {
-
+    QString openFolder, sFilter;
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open project"), openFolder, sFilter);
+    if (!fileName.isEmpty())
+    {
+        PROJECTMANAGER->openProject(fileName);
+    }
 }
 
 void MainWindow::slotSave()
 {
-
+    if (CURRENTPROJECT)
+    {
+        if (!CURRENTPROJECT->projectFileName().isEmpty())
+        {
+            CURRENTPROJECT->saveProject(CURRENTPROJECT->projectFileName());
+        }
+        else
+        {
+            slotSaveAs();
+        }
+    }
 }
 
 void MainWindow::slotSaveAs()
 {
-
+    QString saveFolder, sFilter;
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save project"), saveFolder, sFilter);
+    if (!fileName.isEmpty())
+    {
+        if (CURRENTPROJECT)
+        {
+            CURRENTPROJECT->saveProject(fileName);
+        }
+    }
 }
 
 void MainWindow::slotPrint()

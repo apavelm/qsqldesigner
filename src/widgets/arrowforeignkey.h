@@ -55,6 +55,8 @@ public slots:
     void updatePosition();
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
+private:
+    QPair<QPointF, QPointF> closestRectPoints() const;
 
 private:
     ConstraintForeignKey m_fk;
@@ -62,7 +64,9 @@ private:
     PTableWidget m_sourceTable;
     PTableWidget m_refTable;
     QPointF m_startPos, m_stopPos;
+    QPointF m_locStartPos, m_locStopPos;
     QPointF m_arrowHead1, m_arrowHead2;
+    QList<QPointF> m_waypoints;
 };
 
 typedef ArrowForeignKey * PArrowForeignKey;

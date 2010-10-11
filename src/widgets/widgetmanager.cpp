@@ -47,10 +47,6 @@ void WidgetManager::addTable(PTableModel table)
         widget->setZValue(TABLE_Z_ORDER);
         connect(widget, SIGNAL(deleteWidget(QString)), m_project->modelManager(), SLOT(removeTable(QString)));
         connect(widget, SIGNAL(editWidget(QString)), m_project, SIGNAL(editTable(QString)));
-        connect(table, SIGNAL(addedSimpleForeignKey(QString, QString)), SIGNAL(addedSimpleForeignKey(QString, QString)));
-        connect(table, SIGNAL(removedSimpleForeignKey(QString, QString)), SIGNAL(removedSimpleForeignKey(QString, QString)));
-        connect(table, SIGNAL(addedForeignKey(QString, QString)), SIGNAL(addedForeignKey(QString, QString)));
-        connect(table, SIGNAL(removedForeignKey(QString, QString)), SIGNAL(removedForeignKey(QString, QString)));
         m_tablesWidgets.insert(table->name(), SharedTableWidget(widget));
 
         // check for FK constraints

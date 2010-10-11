@@ -37,12 +37,14 @@
 #include "widgets/widgetmanager.h"
 
 #include "sqldesignerprojectsettings.h"
+#include "xmlhelper.h"
 
 class SqlDesignerProject : public QObject
 {
     Q_OBJECT
 public:
     explicit SqlDesignerProject(const QString& projectName, const QString& dbmsType);
+    explicit SqlDesignerProject(const QString& fileName);
     ~SqlDesignerProject();
 
     inline const QString& name() const {return m_settings->name();}
@@ -51,6 +53,10 @@ public:
     inline PModelManager modelManager() {return m_modelManager.data();}
     inline PWidgetManager widgetManager() {return m_widgetManager.data();}
     inline QGraphicsScene * scene() {return m_scene.data();}
+    void saveProject(const QString fileName);
+    static PSqlDesignerProject loadProject(const QString fileName);
+    inline QString projectFileName() const {return m_settings->projectFilename();}
+    inline PSqlDesignerProjectSettings settings() const {return m_settings.data();}
 private:
     QScopedPointer<SqlDesignerProjectSettings> m_settings;
     QScopedPointer<ModelManager> m_modelManager;

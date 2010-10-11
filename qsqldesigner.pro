@@ -39,7 +39,8 @@ SOURCES += src/main.cpp \
     src/widgets/widgetviewmodel.cpp \
     src/models/datatypes.cpp \
     src/widgets/tablecolumnsview.cpp \
-    src/widgets/tablecolumnsviewmodel.cpp
+    src/widgets/tablecolumnsviewmodel.cpp \
+    src/xmlhelper.cpp
 HEADERS += src/mainwindow.h \
 	src/columndialog.h \
 	src/magnifydialog.h \
@@ -70,7 +71,8 @@ HEADERS += src/mainwindow.h \
     src/widgets/objecteditor.h \
     src/widgets/widgetviewmodel.h \
     src/widgets/tablecolumnsview.h \
-    src/widgets/tablecolumnsviewmodel.h
+    src/widgets/tablecolumnsviewmodel.h \
+    src/xmlhelper.h
 FORMS += src/ui/mainwindow.ui \
     src/ui/columndialog.ui \
     src/ui/magnifydialog.ui \
