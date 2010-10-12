@@ -22,11 +22,11 @@
 #ifndef XMLHELPER_H
 #define XMLHELPER_H
 
-#include "singleton.h"
-
+#include <QtCore/QMap>
 #include <QtCore/QString>
 #include <QtCore/QIODevice>
-#include <QtXml/QDomElement>
+#include <QtXml/QDomDocument>
+#include <QtXml/QDomNode>
 
 class SqlDesignerProject;
 typedef SqlDesignerProject * PSqlDesignerProject;
@@ -36,6 +36,8 @@ class ModelManager;
 typedef ModelManager * PModelManager;
 class WidgetManager;
 typedef WidgetManager * PWidgetManager;
+class TableWidget;
+typedef TableWidget * PTableWidget;
 
 class XmlHelper
 {
@@ -48,9 +50,11 @@ private:
     XmlHelper();
     ~XmlHelper();
 
-    static QDomNode elementFromPrjectSettings(QDomDocument& doc, PSqlDesignerProjectSettings settings);
-    static QDomNode elementFromModelManager(QDomDocument& doc, PModelManager mm);
-    static QDomNode elementFromWidgetManager(QDomDocument& doc, PWidgetManager wm);
+    static QDomNode nodeFromPrjectSettings(QDomDocument& doc, PSqlDesignerProjectSettings settings);
+    static QDomNode nodeFromGraphicsModel(QDomDocument& doc, PWidgetManager wm);
+    static QDomNode nodeFromGraphicsTableWidget(QDomDocument& doc, PTableWidget table, int linkNo, const QMap<QString, int>& dict);
+
+    static bool isAllRefInList(const QStringList& list, const QStringList& dict);
 };
 
 #endif // XMLHELPER_H

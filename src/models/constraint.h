@@ -124,7 +124,6 @@ public:
     Constraints();
 
     void addConstraint(PConstraint constraint);
-    //void deleteConstraint(PConstraint constraint);
     void deleteConstraint(Constraint::ConstraintType type);
 
     inline const Constraint::ConstraintTypes types() const {return m_types;}
