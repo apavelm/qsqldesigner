@@ -49,6 +49,7 @@ public:
     inline const QString& name() const {return m_model->name();}
     QSizeF recalcMinimumSize() const;
 
+    inline PTableModel model() const {return m_model;}
     void setModel(PTableModel model);
 protected:
     QVariant itemChange(GraphicsItemChange change, const QVariant &value);

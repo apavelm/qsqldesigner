@@ -40,6 +40,7 @@ public:
     ~WidgetManager();
 
     PTableWidget getTableWidgetByName(const QString& tableName) const;
+    QMap<QString, SharedTableWidget> tablesWidgets() const {return m_tablesWidgets;}
 
 private:
     PSqlDesignerProject m_project;

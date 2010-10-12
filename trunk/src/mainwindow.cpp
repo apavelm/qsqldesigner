@@ -25,6 +25,7 @@
 #include "projectmanager.h"
 #include "settingsmanager.h"
 
+#include <QDir>
 #include <QFileDialog>
 
 #include "aboutdialog.h"
@@ -180,7 +181,8 @@ void MainWindow::slotNewProject()
 
 void MainWindow::slotOpenProject()
 {
-    QString openFolder, sFilter;
+    QString openFolder = QDir::homePath();
+    QString sFilter = tr("SQL Designer projects (*.sdp);;All files (*.*)");
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open project"), openFolder, sFilter);
     if (!fileName.isEmpty())
     {
@@ -205,7 +207,8 @@ void MainWindow::slotSave()
 
 void MainWindow::slotSaveAs()
 {
-    QString saveFolder, sFilter;
+    QString saveFolder = QDir::homePath();
+    QString sFilter = tr("SQL Designer projects (*.sdp);;All files (*.*)");
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save project"), saveFolder, sFilter);
     if (!fileName.isEmpty())
     {

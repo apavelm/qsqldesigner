@@ -194,16 +194,6 @@ void Constraints::deleteConstraint(Constraint::ConstraintType type)
     }
 }
 
-/*
-void Constraints::deleteConstraint(PConstraint constraint)
-{
-    for (int i = 0; i < count(); i++)
-    {
-        if (at(i).data() == constraint)
-            deleteConstraint(i);
-    }
-}
-*/
 PConstraint Constraints::constraint(const Constraint::ConstraintType type) const
 {
     if (m_types.testFlag(type))

@@ -201,3 +201,36 @@ QList<PConstraint> TableModel::foreignKeys() const
 
     return rslt;
 }
+
+QStringList TableModel::refTables() const
+{
+    QStringList rslt;
+
+    foreach(const SharedConstraint& cn, m_constraints)
+    {
+        if (cn->type() == Constraint::CT_ForeignKey)
+        {
+            QVariant var = cn->data();
+            if (var.canConvert<ConstraintForeignKey>())
+            {
+                ConstraintForeignKey fk = var.value<ConstraintForeignKey>();
+                rslt << fk.referenceTable();
+            }
+        }
+    }
+    foreach(const SharedColumnModel& c, m_columns)
+    {
+        if (c->isConstraintType(Constraint::CT_ForeignKey))
+        {
+            QVariant var = c->constraint(Constraint::CT_ForeignKey)->data();
+            if (var.canConvert<ConstraintForeignKey>())
+            {
+                ConstraintForeignKey fk = var.value<ConstraintForeignKey>();
+                rslt << fk.referenceTable();
+            }
+        }
+    }
+
+    rslt.removeDuplicates();
+    return rslt;
+}

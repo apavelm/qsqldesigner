@@ -55,6 +55,7 @@ public:
     void addConstraint(PConstraint constraint);
     bool hasForeignKeys() const;
     QList<PConstraint> foreignKeys() const;
+    QStringList refTables() const;
 private:
     PModelManager m_mm;
     ColumnList m_columns;
