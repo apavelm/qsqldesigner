@@ -53,10 +53,10 @@ public:
     inline PModelManager modelManager() {return m_modelManager.data();}
     inline PWidgetManager widgetManager() {return m_widgetManager.data();}
     inline QGraphicsScene * scene() {return m_scene.data();}
-    void saveProject(const QString fileName);
+    bool saveProject(const QString fileName);
     static PSqlDesignerProject loadProject(const QString fileName);
     inline QString projectFileName() const {return m_settings->projectFilename();}
-    inline PSqlDesignerProjectSettings settings() const {return m_settings.data();}
+    inline PSqlDesignerProjectSettings settings() {return m_settings.data();}
 private:
     QScopedPointer<SqlDesignerProjectSettings> m_settings;
     QScopedPointer<ModelManager> m_modelManager;

@@ -140,10 +140,10 @@ void ProjectManager::setCurrentProject(const QString& projectName)
 
 void ProjectManager::openProject(const QString& fileName)
 {
-    SharedSqlDesignerProject sharedProject(SqlDesignerProject::loadProject(fileName));
-    if (!sharedProject.isNull())
+    PSqlDesignerProject project = SqlDesignerProject::loadProject(fileName);
+    if (project)
     {
-        m_projectList.insert(sharedProject->name(), sharedProject);
-        setCurrentProject(sharedProject->name());
+        m_projectList.insert(project->name(), SharedSqlDesignerProject(project));
+        setCurrentProject(project->name());
     }
 }
