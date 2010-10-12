@@ -27,6 +27,7 @@
 #include <QtCore/QIODevice>
 #include <QtXml/QDomDocument>
 #include <QtXml/QDomNode>
+#include <QtXml/QXmlStreamReader>
 
 class SqlDesignerProject;
 typedef SqlDesignerProject * PSqlDesignerProject;
@@ -42,17 +43,19 @@ typedef TableWidget * PTableWidget;
 class XmlHelper
 {
 public:
-    static bool read(QIODevice * device);
-    static bool save(QIODevice * device, PSqlDesignerProject project);
+    static PSqlDesignerProject read(const QString& fileName);
+    static bool save(const QString& fileName, PSqlDesignerProject project);
 
 private:
     static const int IdentSize = 4;
     XmlHelper();
     ~XmlHelper();
 
+    static PSqlDesignerProjectSettings readSettings(QXmlStreamReader * reader);
+
     static QDomNode nodeFromPrjectSettings(QDomDocument& doc, PSqlDesignerProjectSettings settings);
-    static QDomNode nodeFromGraphicsModel(QDomDocument& doc, PWidgetManager wm);
-    static QDomNode nodeFromGraphicsTableWidget(QDomDocument& doc, PTableWidget table, int linkNo, const QMap<QString, int>& dict);
+    static QDomNode nodeFromModel(QDomDocument& doc, PWidgetManager wm);
+    static QDomNode nodeFromTableWidget(QDomDocument& doc, PTableWidget table, int linkNo, const QMap<QString, int>& dict);
 
     static bool isAllRefInList(const QStringList& list, const QStringList& dict);
 };

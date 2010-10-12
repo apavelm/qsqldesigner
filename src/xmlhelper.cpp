@@ -21,6 +21,7 @@
 
 #include "xmlhelper.h"
 
+#include <QtCore/QFile>
 #include <QtCore/QTextStream>
 #include <QtCore/QVariant>
 
@@ -40,38 +41,78 @@ XmlHelper::~XmlHelper()
 {
 }
 
-bool XmlHelper::read(QIODevice * device)
+PSqlDesignerProject XmlHelper::read(const QString& fileName)
 {
-    QDomDocument doc;
-    QString sError;
-    int nErrorLine, nErrorColumn;
-    if (!doc.setContent(device, true, &sError, &nErrorLine, &nErrorColumn))
-        return false;
+    if (fileName.isEmpty())
+    {
+        return 0;
+    }
 
-    QDomElement root = doc.documentElement();
-    if ( root.tagName() != "sqldesigner_project")
-        return false;
+    QFile file(fileName);
+    if (!file.open(QFile::ReadOnly | QFile::Text))
+    {
+        return 0;
+    }
 
-    // parse xml
+    QXmlStreamReader reader(&file);
+    PSqlDesignerProject rslt = 0;
+    PSqlDesignerProjectSettings settings = 0;
 
-    return true;
+    if (reader.readNextStartElement())
+    {
+        Q_ASSERT(reader.isStartElement() && reader.name() == "sqldesigner_project");
+
+        if (reader.name() == "sqldesigner_project" /* && reader.attributes().value("version") == "1.0"*/)
+        {
+            while (reader.readNextStartElement())
+            {
+                if (reader.name() == "settings")
+                {
+                    settings = readSettings(&reader);
+                    settings->setFileName(fileName);
+                }
+                /*else if (reader.name() == "bookmark")
+                    readBookmark(0);
+                else if (reader.name() == "separator")
+                    readSeparator(0);*/
+                else
+                    reader.skipCurrentElement();
+            }
+        }
+        else
+        {
+            reader.raiseError(QObject::tr("The file is not an SQL Designer project version 1.0 file."));
+        }
+    }
+
+
+    reader.clear();
+    return rslt;
 }
 
-bool XmlHelper::save(QIODevice * device, PSqlDesignerProject project)
+bool XmlHelper::save(const QString& fileName, PSqlDesignerProject project)
 {
     if (project)
     {
-        QTextStream out(device);
+        QFile file(fileName);
+        if (!file.open(QFile::WriteOnly | QFile::Text))
+        {
+            return false;
+        }
+
+        QTextStream out(&file);
         out.setCodec("UTF-8");
         QDomDocument doc(project->name());
         QDomNode mainScope = doc.createElement("sqldesigner_project");
         QDomNode settingsNode = nodeFromPrjectSettings(doc, project->settings());
-        QDomNode graphicsNode = nodeFromGraphicsModel(doc, project->widgetManager());
+        QDomNode diagramNode = nodeFromModel(doc, project->widgetManager());
 
         mainScope.appendChild(settingsNode);
-        mainScope.appendChild(graphicsNode);
+        mainScope.appendChild(diagramNode);
         doc.appendChild(mainScope);
         doc.save(out, IdentSize, QDomNode::EncodingFromTextStream);
+        file.close();
+        project->settings()->setFileName(fileName);
         return true;
     }
     return false;
@@ -91,9 +132,9 @@ QDomNode XmlHelper::nodeFromPrjectSettings(QDomDocument& doc, PSqlDesignerProjec
     return settingsNode;
 }
 
-QDomNode XmlHelper::nodeFromGraphicsModel(QDomDocument& doc, PWidgetManager wm)
+QDomNode XmlHelper::nodeFromModel(QDomDocument& doc, PWidgetManager wm)
 {
-    QDomNode graphicsNode = doc.createElement("graphics");
+    QDomNode diagramNode = doc.createElement("diagram");
     QMap<QString, SharedTableWidget> tablesWidgets = wm->tablesWidgets();
     QMap<QString, SharedTableWidget>::iterator i = tablesWidgets.begin();
     QMap<QString, int> links;
@@ -104,8 +145,8 @@ QDomNode XmlHelper::nodeFromGraphicsModel(QDomDocument& doc, PWidgetManager wm)
         if (!(*i)->model()->hasForeignKeys())
         {
             links.insert(i.key(), linkNo);
-            QDomNode table = nodeFromGraphicsTableWidget(doc, i->data(), linkNo++, links);
-            graphicsNode.appendChild(table);
+            QDomNode table = nodeFromTableWidget(doc, i->data(), linkNo++, links);
+            diagramNode.appendChild(table);
             i = tablesWidgets.erase(i);
         }
         else
@@ -122,8 +163,8 @@ QDomNode XmlHelper::nodeFromGraphicsModel(QDomDocument& doc, PWidgetManager wm)
         if (isAllRefInList((*i)->model()->refTables(), links.keys()))
         {
             links.insert(i.key(), linkNo);
-            QDomNode table = nodeFromGraphicsTableWidget(doc, i->data(), linkNo++, links);
-            graphicsNode.appendChild(table);
+            QDomNode table = nodeFromTableWidget(doc, i->data(), linkNo++, links);
+            diagramNode.appendChild(table);
             i = tablesWidgets.erase(i);
         }
         else
@@ -136,10 +177,10 @@ QDomNode XmlHelper::nodeFromGraphicsModel(QDomDocument& doc, PWidgetManager wm)
         }
     }
 
-    return graphicsNode;
+    return diagramNode;
 }
 
-QDomNode XmlHelper::nodeFromGraphicsTableWidget(QDomDocument& doc, PTableWidget table, int linkNo, const QMap<QString, int>& dict)
+QDomNode XmlHelper::nodeFromTableWidget(QDomDocument& doc, PTableWidget table, int linkNo, const QMap<QString, int>& dict)
 {
     QDomNode tableNode = doc.createElement("table");
     QDomElement tableElem = doc.createElement("properties");
@@ -246,4 +287,44 @@ bool XmlHelper::isAllRefInList(const QStringList& list, const QStringList& dict)
             return false;
     }
     return true;
+}
+
+#include <QtDebug>
+PSqlDesignerProjectSettings XmlHelper::readSettings(QXmlStreamReader * reader)
+{
+    PSqlDesignerProjectSettings rslt = 0;
+    QString projName;
+    QString projDBMS;
+    while (reader->readNextStartElement())
+    {
+        qDebug() << reader->name();
+        if (reader->name() == "project_name")
+        {
+            projName = reader->attributes().value("value").toString();
+            reader->readNext();
+        }
+        else if (reader->name() == "project_dbmstype")
+        {
+            projDBMS = reader->attributes().value("value").toString();
+            reader->readNext();
+        }
+        else
+        {
+            reader->skipCurrentElement();
+        }
+    }
+
+    try
+    {
+        rslt = new SqlDesignerProjectSettings(projName, projDBMS);
+    }
+    catch (...)
+    {
+        if (rslt)
+        {
+            delete rslt;
+            return 0;
+        }
+    }
+    return rslt;
 }
