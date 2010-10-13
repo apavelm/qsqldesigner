@@ -128,17 +128,7 @@ const QString ColumnModel::getUMLColumnPrefix() const
 
 const QString ColumnModel::getUMLColumnDescription() const
 {
-    QString rslt = m_columnName + ": " + m_dataType->typeName();
-    if (m_dataType->parametersAmount() > 0)
-    {
-        rslt += "(" + QString::number(m_dataTypeParameters.first);
-        if (m_dataType->parametersAmount() > 1)
-        {
-            rslt += "," + QString::number(m_dataTypeParameters.second);
-        }
-        rslt += ")";
-    }
-    return rslt;
+    return m_columnName + ": " + m_dataType->fullTypeName(m_dataTypeParameters);
 }
 
 // Column List

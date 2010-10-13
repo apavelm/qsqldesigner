@@ -21,6 +21,7 @@
 
 #include "xmlhelper.h"
 
+#include <QtCore/QCoreApplication>
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>
 #include <QtCore/QVariant>
@@ -32,6 +33,8 @@
 #include "widgets/tablewidget.h"
 #include "models/column.h"
 #include "models/table.h"
+
+#include "pluginmanager.h"
 
 XmlHelper::XmlHelper()
 {
@@ -60,9 +63,9 @@ PSqlDesignerProject XmlHelper::read(const QString& fileName)
 
     if (reader.readNextStartElement())
     {
-        Q_ASSERT(reader.isStartElement() && reader.name() == "sqldesigner_project");
-
-        if (reader.name() == "sqldesigner_project" /* && reader.attributes().value("version") == "1.0"*/)
+        QString r_name = reader.name().toString();
+        QString r_version = reader.attributes().value("version").toString();
+        if (r_name == "sqldesigner_project" && isVersionAcceptable(r_version))
         {
             while (reader.readNextStartElement())
             {
@@ -71,20 +74,28 @@ PSqlDesignerProject XmlHelper::read(const QString& fileName)
                     settings = readSettings(&reader);
                     settings->setFileName(fileName);
                 }
-                /*else if (reader.name() == "bookmark")
-                    readBookmark(0);
-                else if (reader.name() == "separator")
-                    readSeparator(0);*/
+                else
+                if (reader.name() == "diagram")
+                {
+                    rslt = readDiagram(&reader, settings);
+                }
                 else
                     reader.skipCurrentElement();
             }
         }
         else
         {
-            reader.raiseError(QObject::tr("The file is not an SQL Designer project version 1.0 file."));
+            reader.raiseError(QObject::tr("The file is not an %1 project version %2 file.").arg(qApp->applicationName()).arg(qApp->applicationVersion()));
         }
     }
 
+    if (!rslt)
+    {
+        if (settings)
+        {
+            delete settings;
+        }
+    }
 
     reader.clear();
     return rslt;
@@ -104,9 +115,9 @@ bool XmlHelper::save(const QString& fileName, PSqlDesignerProject project)
         out.setCodec("UTF-8");
         QDomDocument doc(project->name());
         QDomNode mainScope = doc.createElement("sqldesigner_project");
+        mainScope.toElement().setAttribute("version", qApp->applicationVersion());
         QDomNode settingsNode = nodeFromPrjectSettings(doc, project->settings());
         QDomNode diagramNode = nodeFromModel(doc, project->widgetManager());
-
         mainScope.appendChild(settingsNode);
         mainScope.appendChild(diagramNode);
         doc.appendChild(mainScope);
@@ -279,17 +290,6 @@ QDomNode XmlHelper::nodeFromTableWidget(QDomDocument& doc, PTableWidget table, i
     return tableNode;
 }
 
-bool XmlHelper::isAllRefInList(const QStringList& list, const QStringList& dict)
-{
-    foreach (const QString& s, list)
-    {
-        if (!dict.contains(s, Qt::CaseInsensitive))
-            return false;
-    }
-    return true;
-}
-
-#include <QtDebug>
 PSqlDesignerProjectSettings XmlHelper::readSettings(QXmlStreamReader * reader)
 {
     PSqlDesignerProjectSettings rslt = 0;
@@ -297,7 +297,6 @@ PSqlDesignerProjectSettings XmlHelper::readSettings(QXmlStreamReader * reader)
     QString projDBMS;
     while (reader->readNextStartElement())
     {
-        qDebug() << reader->name();
         if (reader->name() == "project_name")
         {
             projName = reader->attributes().value("value").toString();
@@ -314,17 +313,288 @@ PSqlDesignerProjectSettings XmlHelper::readSettings(QXmlStreamReader * reader)
         }
     }
 
-    try
+    if (!projName.isEmpty() && !projDBMS.isEmpty())
     {
         rslt = new SqlDesignerProjectSettings(projName, projDBMS);
     }
-    catch (...)
+    return rslt;
+}
+
+PSqlDesignerProject XmlHelper::readDiagram(QXmlStreamReader * reader, PSqlDesignerProjectSettings settings)
+{
+    PSqlDesignerProject rslt = 0;
+    PModelManager mm = new ModelManager(0, settings);
+    QList<QPair<QString, QPointF> >coords;
+    while (reader->readNextStartElement())
     {
-        if (rslt)
+        if (reader->name() == "table")
         {
-            delete rslt;
-            return 0;
+            PTableModel table = new TableModel(mm);
+            // for table
+            qreal x = 0;
+            qreal y = 0;
+            QString tableName;
+            int tableID = 0;
+            while (reader->readNextStartElement())
+            {
+                if (reader->name() == "properties")
+                {
+                    x = reader->attributes().value("x").toString().toFloat();
+                    y = reader->attributes().value("y").toString().toFloat();
+                    tableName = reader->attributes().value("name").toString();
+                    tableID = reader->attributes().value("id").toString().toInt();
+                    coords << qMakePair(tableName, QPointF(x, y));
+                    reader->readNext();
+                }
+                else
+                if (reader->name() == "columns")
+                {
+                    QString columnDatatype;
+                    QString columnName;
+                    QString columnComment;
+                    int l = 0, p = 0;
+                    while (reader->readNextStartElement())
+                    {
+                        if (reader->name() == "column")
+                        {
+                            PColumnModel column = new ColumnModel(table);
+                            columnDatatype = reader->attributes().value("datatype").toString();
+                            columnName = reader->attributes().value("name").toString();
+
+                            while (reader->readNextStartElement())
+                            {
+                                if (reader->name() == "comment")
+                                {
+                                    columnComment = reader->readElementText();
+                                    reader->readNext();
+                                }
+                                else
+                                if (reader->name() == "datatype_parameters")
+                                {
+                                    l = reader->attributes().value("l").toString().toInt();
+                                    p = reader->attributes().value("p").toString().toInt();
+                                    reader->readNext();
+                                }
+                                else
+                                if (reader->name() == "constraints")
+                                {
+                                    while (reader->readNextStartElement())
+                                    {
+                                        if (reader->name() == "constraint")
+                                        {
+                                            QString constraintName = reader->attributes().value("name").toString();
+                                            Constraint::ConstraintType constraintType = (Constraint::ConstraintType)(reader->attributes().value("type").toString().toInt());
+                                            QVariant varColumnConstraintData = QVariant();
+                                            if (reader->readNextStartElement())
+                                            {
+                                                if (reader->name() == "constraint_data")
+                                                {
+                                                    if (constraintType == Constraint::CT_ForeignKey)
+                                                    {
+                                                        QString refTable;
+                                                        int refTableID = 0;
+                                                        QList<QString> sourceColumns;
+                                                        QList<QString> refColumns;
+                                                        while (reader->readNextStartElement())
+                                                        {
+                                                            if (reader->name() == "reference_table")
+                                                            {
+                                                                refTable = reader->attributes().value("value").toString();
+                                                                refTableID = reader->attributes().value("id").toString().toInt();
+                                                                reader->readNext();
+                                                            }
+                                                            else
+                                                                if (reader->name() == "source_column")
+                                                                {
+                                                                sourceColumns << reader->attributes().value("value").toString();
+                                                                reader->readNext();
+                                                            }
+                                                            else
+                                                                if (reader->name() == "reference_column")
+                                                                {
+                                                                refColumns << reader->attributes().value("value").toString();
+                                                                reader->readNext();
+                                                            }
+                                                            else
+                                                            {
+                                                                reader->skipCurrentElement();
+                                                            }
+                                                        }
+                                                        varColumnConstraintData.setValue(ConstraintForeignKey(refTable, sourceColumns, refColumns));
+                                                    }
+                                                    else
+                                                    {
+                                                        varColumnConstraintData.setValue(reader->readElementText());
+                                                    }
+                                                }
+                                                reader->readNext();
+                                            }
+                                            PConstraint columnConstraint = new Constraint(column, constraintType, varColumnConstraintData);
+                                            if (!constraintName.isEmpty())
+                                            {
+                                                columnConstraint->setName(constraintName);
+                                            }
+                                            column->addConstraint(columnConstraint);
+                                            reader->readNext();
+                                        }
+                                        else
+                                        {
+                                            reader->skipCurrentElement();
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    reader->skipCurrentElement();
+                                }
+
+                            }
+
+                            column->setName(columnName);
+                            column->setComment(columnComment);
+                            column->setDataType(PLUGINMANAGER->dataTypesForDatabase(settings->dbmsType()).typeByName(columnDatatype));
+                            column->setDataTypeParameters(qMakePair<int, int>(l, p));
+                            table->addColumn(column);
+                        }
+                        else
+                        {
+                            reader->skipCurrentElement();
+                        }
+                    }
+                }
+                else
+                if (reader->name() == "constraints")
+                {
+                    while (reader->readNextStartElement())
+                    {
+                        if (reader->name() == "constraint")
+                        {
+                            QString constraintName = reader->attributes().value("name").toString();
+                            Constraint::ConstraintType constraintType = (Constraint::ConstraintType)(reader->attributes().value("type").toString().toInt());
+                            QVariant varTableConstraintData;
+                            if (reader->readNextStartElement())
+                            {
+                                if (reader->name() == "constraint_data")
+                                {
+                                    if (constraintType == Constraint::CT_ForeignKey)
+                                    {
+                                        QString refTable;
+                                        QList<QString> sourceColumns;
+                                        QList<QString> refColumns;
+                                        while (reader->readNextStartElement())
+                                        {
+                                            if (reader->name() == "reference_table")
+                                            {
+                                                refTable = reader->attributes().value("value").toString();
+                                            }
+                                            else
+                                                if (reader->name() == "source_column")
+                                                {
+                                                sourceColumns << reader->attributes().value("value").toString();
+                                            }
+                                            else
+                                                if (reader->name() == "reference_column")
+                                                {
+                                                refColumns << reader->attributes().value("value").toString();
+                                            }
+                                            else
+                                            {
+                                                reader->skipCurrentElement();
+                                            }
+                                        }
+                                        varTableConstraintData.setValue(ConstraintForeignKey(refTable, sourceColumns, refColumns));
+                                    }
+                                    else
+                                    {
+                                        varTableConstraintData.setValue(reader->readElementText());
+                                    }
+                                }
+                                reader->readNext();
+                            }
+                            PConstraint tableConstraint = new Constraint(table, constraintType, varTableConstraintData);
+                            if (!constraintName.isEmpty())
+                            {
+                                tableConstraint->setName(constraintName);
+                            }
+                            table->addConstraint(tableConstraint);
+                            reader->readNext();
+                        }
+                        else
+                        {
+                            reader->skipCurrentElement();
+                        }
+                    }
+                }
+                else
+                {
+                    reader->skipCurrentElement();
+                }
+            }
+
+            table->setName(tableName);
+            mm->addTable(table);
+        }
+        else
+        {
+            reader->skipCurrentElement();
         }
     }
+    rslt = new SqlDesignerProject(settings, mm, coords);
+    mm->setParent(rslt);
     return rslt;
+}
+
+bool XmlHelper::isAllRefInList(const QStringList& list, const QStringList& dict)
+{
+    foreach (const QString& s, list)
+    {
+        if (!dict.contains(s, Qt::CaseInsensitive))
+            return false;
+    }
+    return true;
+}
+
+bool XmlHelper::isVersionAcceptable(const QString& version)
+{
+     QStringList sAppVersion = qApp->applicationVersion().split('.');
+     QStringList sRequired = version.split('.');
+     int countMax = qMax(sAppVersion.count(), sRequired.count());
+     while (sAppVersion.count() != sRequired.count())
+     {
+         if (sAppVersion.count() > sRequired.count())
+         {
+             sRequired.append("0");
+         }
+         else
+         {
+             sAppVersion.append("0");
+         }
+     }
+     for (int i = 0; i < countMax; i++)
+     {
+         int a = sAppVersion.at(i).toInt();
+         int b = sRequired.at(i).toInt();
+         if (b > a)
+         {
+             return false;
+         }
+     }
+     return true;
+}
+
+QByteArray XmlHelper::serializeTableWidget(PTableWidget table)
+{
+    if (table)
+    {
+        QDomDocument doc(table->name());
+        QByteArray rslt;
+        QMap<QString, int> dict;
+        dict.insert(table->name(), 0);
+        QDomNode node = nodeFromTableWidget(doc, table, 0, dict);
+        doc.appendChild(node);
+        QTextStream out(&rslt, QIODevice::WriteOnly);
+        doc.save(out, IdentSize);
+        return rslt;
+    }
+    return QByteArray();
 }

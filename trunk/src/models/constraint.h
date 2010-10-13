@@ -29,6 +29,8 @@
 #include <QtCore/QStringList>
 #include <QtCore/QVariant>
 
+class TableModel;
+typedef TableModel * PTableModel;
 class ColumnModel;
 typedef ColumnModel * PColumnModel;
 
@@ -94,22 +96,27 @@ public:
     enum ConstraintType {CT_Unknown = 0, CT_PrimaryKey = 0x1, CT_NotNull = 0x2, CT_Unique = 0x4, CT_Default = 0x8, CT_Check = 0x10, CT_ForeignKey = 0x20, CT_Last = 0x40};
     Q_DECLARE_FLAGS(ConstraintTypes, ConstraintType)
     Constraint(PColumnModel column, const ConstraintType type = CT_Unknown, const QVariant& data = QVariant());
+    Constraint(PTableModel table, const ConstraintType type = CT_Unknown, const QVariant& data = QVariant());
     ~Constraint();
 
     inline ConstraintType type() const {return m_type;}
-    inline PColumnModel column() const {return m_column;}
     void setType(const ConstraintType& newType);
     inline const QString& name() const {return m_name;}
     void setName(const QString& newName);
     inline const QVariant& data() const {return m_data;}
     void setData(const QVariant& newData);
+    inline const QString tableName() const {return m_tableName;}
+    inline const QString columnName() const {return m_columnName;}
 
     const QString getUMLConstraintString() const;
 private:
+    PTableModel m_table;
     PColumnModel m_column;
     ConstraintType m_type;
     QVariant m_data;
     QString m_name;
+    QString m_tableName;
+    QString m_columnName;
 
     QString defaultName(const ConstraintType type, const QVariant& var = QVariant());
 };

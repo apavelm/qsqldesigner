@@ -22,6 +22,7 @@
 #include "widgetmanager.h"
 #include "../sqldesignerproject.h"
 #include "../models/modelmanager.h"
+#include "../models/table.h"
 
 const qreal TABLE_Z_ORDER = 30.0;
 
@@ -39,11 +40,22 @@ WidgetManager::~WidgetManager()
     m_tablesWidgets.clear();
 }
 
-void WidgetManager::addTable(PTableModel table)
+void WidgetManager::getWidgetsFromModelManager(PModelManager mm, const QList<QPair<QString, QPointF> >& coords)
+{
+    QList<QPair<QString, QPointF> >::const_iterator i;
+    for (i = coords.constBegin(); i != coords.constEnd(); ++i)
+    {
+        PTableModel table = mm->getTableByName(i->first);
+        addTable(table, i->second);
+    }
+}
+
+void WidgetManager::addTable(PTableModel table, QPointF pos)
 {
     if (table)
     {
         PTableWidget widget = new TableWidget(m_scene, 0, table);
+        widget->setPos(pos);
         widget->setZValue(TABLE_Z_ORDER);
         connect(widget, SIGNAL(deleteWidget(QString)), m_project->modelManager(), SLOT(removeTable(QString)));
         connect(widget, SIGNAL(editWidget(QString)), m_project, SIGNAL(editTable(QString)));
@@ -158,9 +170,24 @@ void WidgetManager::addArrowFK(PConstraint constraint)
     {
         if (constraint->type() == Constraint::CT_ForeignKey)
         {
-            PArrowForeignKey arrow = new ArrowForeignKey(this, constraint);
-            m_arrowsFK.append(SharedArrowForeignKey(arrow));
-            m_scene->addItem(arrow);
+            QVariant var = constraint->data();
+            ConstraintForeignKey fk;
+            if (var.canConvert<ConstraintForeignKey>())
+            {
+                fk = var.value<ConstraintForeignKey>();
+            }
+            // if table widgets list contains refTable
+            if (m_tablesWidgets.contains(fk.referenceTable()))
+            {
+                PArrowForeignKey arrow = new ArrowForeignKey(this, constraint);
+                m_arrowsFK.append(SharedArrowForeignKey(arrow));
+                m_scene->addItem(arrow);
+            }
+            else
+            {
+                // TODO
+                // delete this constraint
+            }
         }
     }
 }

@@ -173,11 +173,10 @@ void TableWidget::paint(QPainter *painter, const QStyleOptionGraphicsItem *optio
                 PConstraint cn = c->constraints().constraint(Constraint::CT_ForeignKey);
                 if (cn->type() != Constraint::CT_Unknown)
                 {
-                    QString sConstraintName = cn->getUMLConstraintString();
                     painter->setFont(fontNormal);
                     painter->setPen(penBlack);
                     painter->drawText(QRect(innerBoundingRect.left() + PenWidth, fCurrentYPos, fColumnPrefixWidth, fLineHeight), Qt::AlignVCenter, "+");
-                    painter->drawText(QRect(innerBoundingRect.left() + fColumnPrefixWidth, fCurrentYPos, innerBoundingRect.width() - fColumnPrefixWidth, fLineHeight), Qt::AlignVCenter | Qt::TextSingleLine | Qt::TextDontClip, sConstraintName);
+                    painter->drawText(QRect(innerBoundingRect.left() + fColumnPrefixWidth, fCurrentYPos, innerBoundingRect.width() - fColumnPrefixWidth, fLineHeight), Qt::AlignVCenter | Qt::TextSingleLine | Qt::TextDontClip, cn->getUMLConstraintString());
                     fCurrentYPos += fLineHeight; // set fCurrentYPos to new value
                 }
             }
