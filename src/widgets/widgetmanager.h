@@ -31,6 +31,8 @@
 
 class SqlDesignerProject;
 typedef SqlDesignerProject * PSqlDesignerProject;
+class ModelManager;
+typedef ModelManager * PModelManager;
 
 class WidgetManager : public QObject
 {
@@ -42,6 +44,7 @@ public:
     PTableWidget getTableWidgetByName(const QString& tableName) const;
     QMap<QString, SharedTableWidget> tablesWidgets() const {return m_tablesWidgets;}
 
+    void getWidgetsFromModelManager(PModelManager mm, const QList<QPair<QString, QPointF> >& coords);
 private:
     PSqlDesignerProject m_project;
     QGraphicsScene * m_scene;
@@ -57,7 +60,7 @@ private slots:
     void addedForeignKey(QString tableName, QString constraintName);
     void removedForeignKey(QString tableName, QString constraintName);
 public slots:
-    void addTable(PTableModel table);
+    void addTable(PTableModel table, QPointF pos = QPointF());
     void removeTable(const QString& tableName);
     void updateTable(const QString& tableName, PTableModel table = 0);
     void addArrowFK(PConstraint constraint);

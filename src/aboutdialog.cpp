@@ -6,6 +6,7 @@ AboutDialog::AboutDialog(QWidget *parent) :
     ui(new Ui::AboutDialog)
 {
     ui->setupUi(this);
+    ui->lblProgramName->setText(QString("%1\t\t%2").arg(qApp->applicationName()).arg(qApp->applicationVersion()) );
 }
 
 AboutDialog::~AboutDialog()

@@ -39,7 +39,7 @@ ArrowForeignKey::ArrowForeignKey(PWidgetManager manager, PConstraint constraint)
 {
     if (constraint)
     {
-        m_sourceTable = m_wm->getTableWidgetByName(constraint->column()->table()->name());
+        m_sourceTable = m_wm->getTableWidgetByName(constraint->tableName());
         QVariant var = constraint->data();
         if (var.canConvert<ConstraintForeignKey>())
         {

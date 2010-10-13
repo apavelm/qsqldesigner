@@ -44,7 +44,7 @@ class SqlDesignerProject : public QObject
     Q_OBJECT
 public:
     explicit SqlDesignerProject(const QString& projectName, const QString& dbmsType);
-    explicit SqlDesignerProject(const QString& fileName);
+    explicit SqlDesignerProject(PSqlDesignerProjectSettings settings, PModelManager mm, const QList<QPair<QString, QPointF> >& coords);
     ~SqlDesignerProject();
 
     inline const QString& name() const {return m_settings->name();}
@@ -64,6 +64,8 @@ private:
     QScopedPointer<WidgetManager> m_widgetManager;
     QScopedPointer<QPrinter> m_printer;
     QScopedPointer<QUndoStack> m_undoStack;
+
+    void createConnections();
 signals:
     void modelChanged();
     void editTable(QString);

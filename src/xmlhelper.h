@@ -22,9 +22,9 @@
 #ifndef XMLHELPER_H
 #define XMLHELPER_H
 
+#include <QtCore/QByteArray>
 #include <QtCore/QMap>
 #include <QtCore/QString>
-#include <QtCore/QIODevice>
 #include <QtXml/QDomDocument>
 #include <QtXml/QDomNode>
 #include <QtXml/QXmlStreamReader>
@@ -46,18 +46,21 @@ public:
     static PSqlDesignerProject read(const QString& fileName);
     static bool save(const QString& fileName, PSqlDesignerProject project);
 
+    static QByteArray serializeTableWidget(PTableWidget table);
 private:
     static const int IdentSize = 4;
     XmlHelper();
     ~XmlHelper();
 
     static PSqlDesignerProjectSettings readSettings(QXmlStreamReader * reader);
+    static PSqlDesignerProject readDiagram(QXmlStreamReader * reader, PSqlDesignerProjectSettings settings);
 
     static QDomNode nodeFromPrjectSettings(QDomDocument& doc, PSqlDesignerProjectSettings settings);
     static QDomNode nodeFromModel(QDomDocument& doc, PWidgetManager wm);
-    static QDomNode nodeFromTableWidget(QDomDocument& doc, PTableWidget table, int linkNo, const QMap<QString, int>& dict);
+    static QDomNode nodeFromTableWidget(QDomDocument& doc, PTableWidget table, int linkNo, const QMap<QString, int>& dict = QMap<QString, int>());
 
     static bool isAllRefInList(const QStringList& list, const QStringList& dict);
+    static bool isVersionAcceptable(const QString& version);
 };
 
 #endif // XMLHELPER_H

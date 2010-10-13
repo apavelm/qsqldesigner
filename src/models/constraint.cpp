@@ -25,11 +25,22 @@
 #include "table.h"
 
 // Constraint
-Constraint::Constraint(PColumnModel column, const ConstraintType type, const QVariant& data) : m_column(column), m_type(type)
+Constraint::Constraint(PColumnModel column, const ConstraintType type, const QVariant& data) : m_table(0), m_column(column), m_type(type)
 {
+    m_columnName = column->name();
+    m_tableName = column->table()->name();
     m_data = data;
     m_name = defaultName(type, data);
 }
+
+Constraint::Constraint(PTableModel table, const ConstraintType type, const QVariant& data) : m_table(table), m_column(0), m_type(type)
+{
+    m_columnName = "";
+    m_tableName = table->name();
+    m_data = data;
+    m_name = defaultName(type, data);
+}
+
 
 Constraint::~Constraint()
 {
@@ -39,7 +50,16 @@ Constraint::~Constraint()
 void Constraint::setName(const QString& newName)
 {
     // if necessary to clear name, do it w/o any checks
-    if (newName.isEmpty() || m_column->table()->modelManager()->isConstraintNameValid(newName))
+    bool isNameValid = false;
+    if (m_column)
+    {
+        isNameValid = m_column->table()->modelManager()->isConstraintNameValid(newName);
+    }
+    else
+    {
+        isNameValid = m_table->modelManager()->isConstraintNameValid(newName);
+    }
+    if (newName.isEmpty() || isNameValid)
     {
         m_name = newName;
         return;
@@ -61,22 +81,38 @@ void Constraint::setData(const QVariant& newData)
 
 QString Constraint::defaultName(const ConstraintType type, const QVariant& var)
 {
-    QString rslt = QString();
+    QString rslt;
     if (type == Constraint::CT_ForeignKey)
     {
         if (var.canConvert<ConstraintForeignKey>())
         {
             ConstraintForeignKey fk = var.value<ConstraintForeignKey>();
-            rslt = QString("FK_%1_%2_REF_%3_%4").arg(m_column->table()->name()).arg(m_column->name()).arg(fk.referenceTable()).arg(fk.referenceColumns().first());
+            if (m_column)
+            {
+                rslt = QString("FK_%1_%2_REF_%3_%4").arg(m_tableName).arg(m_columnName).arg(fk.referenceTable()).arg(fk.referenceColumns().first());
+            }
+            else
+            {
+                rslt = QString("FK_%1_REF_%2").arg(m_tableName).arg(fk.referenceTable());
+            }
         }
     }
     if (type == Constraint::CT_PrimaryKey)
     {
-        rslt = QString("PK_%1").arg(m_column->table()->name());
+        rslt = QString("PK_%1").arg(m_tableName);
     }
     if (type == Constraint::CT_Unique)
     {
-        rslt = QString("UQ_%1_%2").arg(m_column->table()->name()).arg(m_column->name());
+        if (m_column)
+        {
+            rslt = QString("UQ_%1_%2").arg(m_tableName).arg(m_columnName);
+        }
+        else
+        {
+            // TODO
+            // table constraint for multiple columns
+            // rslt =
+        }
     }
 
     //checking for duplicate
@@ -84,8 +120,20 @@ QString Constraint::defaultName(const ConstraintType type, const QVariant& var)
     {
         QString newName = rslt;
         int i = 1;
-        while (!m_column->table()->modelManager()->isConstraintNameValid(rslt))
+        bool isNameValid = false;
+        while (true)
         {
+            if (m_column)
+            {
+                isNameValid = m_column->table()->modelManager()->isConstraintNameValid(newName);
+            }
+            else
+            {
+                isNameValid = m_table->modelManager()->isConstraintNameValid(newName);
+            }
+            if (isNameValid)
+                break;
+
             newName = rslt + "_" + QString::number(i++);
         }
         return newName;
@@ -107,7 +155,14 @@ const QString Constraint::getUMLConstraintString() const
                 {
                     QString sTypeListString;
                     QList<PColumnModel> lstPrimaryKeys;
-                    m_column->table()->columns().getColumnsForConstraintType(Constraint::CT_PrimaryKey, lstPrimaryKeys);
+                    if (m_column)
+                    {
+                        m_column->table()->columns().getColumnsForConstraintType(Constraint::CT_PrimaryKey, lstPrimaryKeys);
+                    }
+                    else
+                    {
+                        m_table->columns().getColumnsForConstraintType(Constraint::CT_PrimaryKey, lstPrimaryKeys);
+                    }
                     foreach (const PColumnModel c, lstPrimaryKeys)
                     {
                         sTypeListString += ( sTypeListString.isEmpty() ? "(" : ", ");
@@ -121,7 +176,16 @@ const QString Constraint::getUMLConstraintString() const
         case CT_NotNull: break;
         case CT_Unique:
             {
-                rslt = QString("%1(%2)").arg(m_name).arg(m_column->dataType()->typeName());
+                if (m_column)
+                {
+                    rslt = QString("%1(%2)").arg(m_name).arg(m_column->dataType()->typeName());
+                }
+                else
+                {
+                    // TODO
+                    // table constraint for multiple columns
+                    //rslt =
+                }
             }
             break;
         case CT_ForeignKey:
@@ -133,20 +197,39 @@ const QString Constraint::getUMLConstraintString() const
                     if (var.canConvert<ConstraintForeignKey>())
                     {
                         ConstraintForeignKey fk = var.value<ConstraintForeignKey>();
-                        const QList<QString> cols = fk.sourceColumns();
+                        const QList<QString> cols = fk.referenceColumns();
+
                         foreach (const QString& c, cols)
                         {
-                            PColumnModel pColumn = m_column->table()->column(c);
-                            if (pColumn)
+                            PModelManager mm = 0;
+                            if (m_column)
                             {
-                                sTypes << pColumn->dataType()->typeName();
+                                mm = m_column->table()->modelManager();
+                            }
+                            else
+                            {
+                                mm = m_table->modelManager();
+                            }
+
+                            if (mm)
+                            {
+                                PTableModel table = mm->getTableByName(fk.referenceTable());
+                                if (table)
+                                {
+                                    PColumnModel pColumn = table->column(c);
+                                    if (pColumn)
+                                    {
+                                        sTypes << pColumn->dataType()->typeName();
+                                    }
+                                }
                             }
                         }
                     }
-                    if (sTypes.count() > 0)
-                        rslt = m_name + "(" + sTypes.join(", ") +")";
-                }
 
+                    rslt = m_name;
+                    if (sTypes.count() > 0)
+                        rslt += "(" + sTypes.join(", ") +")";
+                }
             }
             break;
         case CT_Default: break;

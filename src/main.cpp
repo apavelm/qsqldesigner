@@ -31,6 +31,7 @@
 int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
+    app.setApplicationVersion("0.0.1");
     app.setOrganizationName("Company name");
     app.setApplicationName("SQL Designer");
 

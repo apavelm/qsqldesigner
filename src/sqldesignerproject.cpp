@@ -31,6 +31,24 @@ SqlDesignerProject::SqlDesignerProject(const QString& projectName, const QString
             m_printer(new QPrinter(QPrinter::HighResolution)),
             m_undoStack(new QUndoStack(this))
 {
+    createConnections();
+}
+
+SqlDesignerProject::SqlDesignerProject(PSqlDesignerProjectSettings settings, PModelManager mm, const QList<QPair<QString, QPointF> >& coords) :
+            QObject(0),
+            m_settings(settings),
+            m_modelManager(mm),
+            m_scene(new QGraphicsScene(this)),
+            m_widgetManager(new WidgetManager(this, m_scene.data())),
+            m_printer(new QPrinter(QPrinter::HighResolution)),
+            m_undoStack(new QUndoStack(this))
+{
+    m_widgetManager->getWidgetsFromModelManager(mm, coords);
+    createConnections();
+}
+
+void SqlDesignerProject::createConnections()
+{
     connect(m_modelManager.data(), SIGNAL(tableAdded(PTableModel)), m_widgetManager.data(), SLOT(addTable(PTableModel)) );
     connect(m_modelManager.data(), SIGNAL(tableRemoved(QString)), m_widgetManager.data(), SLOT(removeTable(QString)) );
     connect(m_modelManager.data(), SIGNAL(tableUpdated(QString,PTableModel)), m_widgetManager.data(), SLOT(updateTable(QString,PTableModel)) );
