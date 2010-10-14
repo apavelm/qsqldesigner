@@ -76,6 +76,7 @@ private slots:
     void slotEditRedo();
     void slotEditCut();
     void slotEditCopy();
+    void setPasteActionEnabled();
     void slotEditPaste();
     void slotEditSelectAll();
 

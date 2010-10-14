@@ -173,3 +173,15 @@ void MainView::update()
     resetCachedContent();
     QGraphicsView::update();
 }
+
+void MainView::setScene(QGraphicsScene * newScene)
+{
+    scene()->disconnect();
+    connect(newScene, SIGNAL(selectionChanged()), this, SLOT(sceneSelectionChanged()));
+    QGraphicsView::setScene(newScene);
+}
+
+void MainView::sceneSelectionChanged()
+{
+    emit copyAvailable(scene()->selectedItems().count() != 0);
+}

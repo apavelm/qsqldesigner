@@ -47,6 +47,7 @@ public slots:
     void zoomOut();
     void setZoom(int);
     void update();
+    void setScene(QGraphicsScene * newScene);
 
 protected:
     void wheelEvent(QWheelEvent * event);
@@ -60,8 +61,12 @@ private:
     void drawBackground(QPainter *painter, const QRectF &rect);
     void scrollContentsBy(int dx, int dy);
 
+private slots:
+    void sceneSelectionChanged();
+
 signals:
     void cornerWidgetClicked();
+    void copyAvailable(bool);
 };
 
 #endif // MAINVIEW_H
