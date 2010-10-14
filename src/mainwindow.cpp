@@ -148,12 +148,9 @@ void MainWindow::createActions()
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(slotAboutAbout()));
     connect(ui->actionAbout_Qt, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 
-    /*cutAct->setEnabled(false);
-    copyAct->setEnabled(false);
-    connect(textEdit, SIGNAL(copyAvailable(bool)),
-            cutAct, SLOT(setEnabled(bool)));
-    connect(textEdit, SIGNAL(copyAvailable(bool)),
-            copyAct, SLOT(setEnabled(bool)));*/
+    connect(m_mainView, SIGNAL(copyAvailable(bool)), ui->actionCut, SLOT(setEnabled(bool)));
+    connect(m_mainView, SIGNAL(copyAvailable(bool)), ui->actionCopy, SLOT(setEnabled(bool)));
+    connect(QApplication::clipboard(), SIGNAL(dataChanged()), SLOT(setPasteActionEnabled()));
 
     connect(PROJECTMANAGER, SIGNAL(currentProjectChanged(QString)), this, SLOT(slotCurrentProjectChange(QString)));
 
@@ -242,34 +239,42 @@ void MainWindow::slotEditRedo()
 
 void MainWindow::slotEditCopy()
 {
- /*   QList<QGraphicsItem*> items = scene->selectedItems();
-    if (items.isEmpty())
-        return;
-    pasteOffset = OffsetIncrement;
-    copyItems(items);
-    updateUi();*/
+    QList<QGraphicsItem*> items = CURRENTPROJECT->scene()->selectedItems();
+    if (!items.isEmpty())
+    {
+        copyItems(items);
+    }
 }
 
 
 void MainWindow::copyItems(const QList<QGraphicsItem*> &items)
 {
-    /*QByteArray copiedItems;
+    QByteArray copiedItems;
     QDataStream out(&copiedItems, QIODevice::WriteOnly);
-    writeItems(out, items);
-    QMimeData * mimeData = new QMimeData;
-    mimeData->setData(MimeType, copiedItems);
+    foreach(QGraphicsItem* item, items)
+    {
+        if (item->type() == TableWidget::Type)
+        {
+            PTableWidget pTableWidget = qgraphicsitem_cast<PTableWidget>(item);
+            copiedItems += XmlHelper::serializeTableWidget(pTableWidget);
+        }
+    }
+    QMimeData * mimeData = new QMimeData();
+    mimeData->setData("application/x-qt-windows-mime;value=qsqldesigner-table", copiedItems);
     QClipboard * clipboard = QApplication::clipboard();
-    clipboard->setMimeData(mimeData);*/
+    clipboard->setMimeData(mimeData);
 }
 
 
 void MainWindow::slotEditCut()
 {
-  /*  QList<QGraphicsItem*> items = scene->selectedItems();
-    if (items.isEmpty())
-        return;
-    copyItems(items);
-    QListIterator<QGraphicsItem*> i(items);
+    QList<QGraphicsItem*> items = CURRENTPROJECT->scene()->selectedItems();
+    if (!items.isEmpty())
+    {
+        copyItems(items);
+    }
+    // TODO: remove items
+    /*QListIterator<QGraphicsItem*> i(items);
     while (i.hasNext())
     {
         QScopedPointer<QGraphicsItem> item(i.next());
@@ -277,6 +282,21 @@ void MainWindow::slotEditCut()
     }*/
 }
 
+void MainWindow::setPasteActionEnabled()
+{
+    QClipboard * clipboard = qApp->clipboard();
+    const QMimeData *mimeData = clipboard->mimeData();
+    if (CURRENTPROJECT)
+    {
+        if (mimeData->hasFormat("application/x-qt-windows-mime;value=qsqldesigner-table"))
+        {
+            ui->actionPaste->setEnabled(true);
+            return;
+        }
+    }
+
+    ui->actionPaste->setEnabled(false);
+}
 
 void MainWindow::slotEditPaste()
 {
@@ -285,13 +305,14 @@ void MainWindow::slotEditPaste()
     if (!mimeData)
         return;
 
-    /*if (mimeData->hasFormat(MimeType)) {
-        QByteArray copiedItems = mimeData->data(MimeType);
-        QDataStream in(&copiedItems, QIODevice::ReadOnly);
-        readItems(in, pasteOffset, true);
-        pasteOffset += OffsetIncrement;
+    if (mimeData->hasFormat("application/x-qt-windows-mime;value=qsqldesigner-table"))
+    {
+        QByteArray copiedItems = mimeData->data("application/x-qt-windows-mime;value=qsqldesigner-table");
+        QList<QPair<QString, QPointF> > coords;
+        PTableModel table = XmlHelper::deserealizeTableWidget(copiedItems, CURRENTPROJECT->modelManager(), CURRENTPROJECT->dbmsType(), coords);
+        CURRENTPROJECT->modelManager()->addTable(table);
     }
-    else if (mimeData->hasHtml() || mimeData->hasText()) {
+    /*else if (mimeData->hasHtml() || mimeData->hasText()) {
         TextItem *textItem = new TextItem(position(), scene);
         connectItem(textItem);
         if (mimeData->hasHtml())
@@ -367,6 +388,7 @@ void MainWindow::slotCurrentProjectChange(const QString& projectName)
         m_objEditor->setProject(CURRENTPROJECT);
         connect(CURRENTPROJECT, SIGNAL(modelChanged()), m_objEditor, SLOT(updateModel()));
         connect(CURRENTPROJECT, SIGNAL(editTable(QString)), this, SLOT(slotProjectEditTable(QString)));
+        setPasteActionEnabled();
     }
     else
     {

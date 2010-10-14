@@ -23,7 +23,10 @@
 #define XMLHELPER_H
 
 #include <QtCore/QByteArray>
+#include <QtCore/QList>
 #include <QtCore/QMap>
+#include <QtCore/QPair>
+#include <QtCore/QPointF>
 #include <QtCore/QString>
 #include <QtXml/QDomDocument>
 #include <QtXml/QDomNode>
@@ -33,6 +36,8 @@ class SqlDesignerProject;
 typedef SqlDesignerProject * PSqlDesignerProject;
 class SqlDesignerProjectSettings;
 typedef SqlDesignerProjectSettings * PSqlDesignerProjectSettings;
+class TableModel;
+typedef TableModel * PTableModel;
 class ModelManager;
 typedef ModelManager * PModelManager;
 class WidgetManager;
@@ -47,6 +52,7 @@ public:
     static bool save(const QString& fileName, PSqlDesignerProject project);
 
     static QByteArray serializeTableWidget(PTableWidget table);
+    static PTableModel deserealizeTableWidget(const QByteArray& ba, PModelManager mm, const QString& dbmsType, QList<QPair<QString, QPointF> >& coords);
 private:
     static const int IdentSize = 4;
     XmlHelper();
@@ -54,10 +60,11 @@ private:
 
     static PSqlDesignerProjectSettings readSettings(QXmlStreamReader * reader);
     static PSqlDesignerProject readDiagram(QXmlStreamReader * reader, PSqlDesignerProjectSettings settings);
+    static PTableModel readTable(QXmlStreamReader * reader, PModelManager mm, const QString& dbmsType, QList<QPair<QString, QPointF> >& coords);
 
     static QDomNode nodeFromPrjectSettings(QDomDocument& doc, PSqlDesignerProjectSettings settings);
     static QDomNode nodeFromModel(QDomDocument& doc, PWidgetManager wm);
-    static QDomNode nodeFromTableWidget(QDomDocument& doc, PTableWidget table, int linkNo, const QMap<QString, int>& dict = QMap<QString, int>());
+    static QDomNode nodeFromTableWidget(QDomDocument& doc, PTableWidget table, int linkNo = 0, const QMap<QString, int>& dict = QMap<QString, int>());
 
     static bool isAllRefInList(const QStringList& list, const QStringList& dict);
     static bool isVersionAcceptable(const QString& version);
