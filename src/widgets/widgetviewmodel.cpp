@@ -26,9 +26,13 @@ WidgetViewModel::WidgetViewModel(QObject *parent, PSqlDesignerProject project) :
     updateModel();
 }
 
+WidgetViewModel::~WidgetViewModel()
+{
+}
+
 void WidgetViewModel::updateModel()
 {
-    clear();
+    reset();
     if (!m_project)
     {
         return;
