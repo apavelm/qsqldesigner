@@ -93,6 +93,7 @@ void MainWindow::createActions()
     ui->actionOpen_Project->setShortcuts(QKeySequence::Open);
     connect(ui->actionOpen_Project, SIGNAL(triggered()), this, SLOT(slotOpenProject()));
     connect(ui->actionClose_Project, SIGNAL(triggered()), PROJECTMANAGER, SLOT(closeProject()));
+    connect(ui->actionClose_All, SIGNAL(triggered()), PROJECTMANAGER, SLOT(closeAllProjects()));
 
     ui->actionSave->setShortcuts(QKeySequence::Save);
     connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(slotSave()));
@@ -381,14 +382,17 @@ void MainWindow::slotAboutAbout()
 
 void MainWindow::slotCurrentProjectChange(const QString& projectName)
 {
-    if (CURRENTPROJECT)
+    if (!projectName.isEmpty())
     {
-        setWindowTitle(QString("%1 - %2").arg(tr("SQL Designer")).arg(projectName));
-        m_mainView->setScene(CURRENTPROJECT->scene());
-        m_objEditor->setProject(CURRENTPROJECT);
-        connect(CURRENTPROJECT, SIGNAL(modelChanged()), m_objEditor, SLOT(updateModel()));
-        connect(CURRENTPROJECT, SIGNAL(editTable(QString)), this, SLOT(slotProjectEditTable(QString)));
-        setPasteActionEnabled();
+        if (CURRENTPROJECT)
+        {
+            setWindowTitle(QString("%1 - %2").arg(tr("SQL Designer")).arg(projectName));
+            m_mainView->setScene(CURRENTPROJECT->scene());
+            m_objEditor->setProject(CURRENTPROJECT);
+            connect(CURRENTPROJECT, SIGNAL(modelChanged()), m_objEditor, SLOT(updateModel()));
+            connect(CURRENTPROJECT, SIGNAL(editTable(QString)), this, SLOT(slotProjectEditTable(QString)));
+            setPasteActionEnabled();
+        }
     }
     else
     {

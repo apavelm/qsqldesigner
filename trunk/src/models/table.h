@@ -62,7 +62,7 @@ private:
     QString m_name;
     Constraints m_constraints;
 
-    const QString defaultTableName() const;
+    const QString defaultTableName(const QString defaultName = tr("Table")) const;
 signals:
     void addedSimpleForeignKey(QString tableName, QString columnName);
     void removedSimpleForeignKey(QString tableName, QString columnName);

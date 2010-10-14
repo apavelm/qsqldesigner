@@ -81,6 +81,7 @@
     <addaction name="actionNew_Project"/>
     <addaction name="actionOpen_Project"/>
     <addaction name="actionClose_Project"/>
+    <addaction name="actionClose_All"/>
     <addaction name="separator"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_As"/>
@@ -408,6 +409,11 @@
   <action name="actionGenerate_DDL">
    <property name="text">
     <string>Generate DDL Script</string>
+   </property>
+  </action>
+  <action name="actionClose_All">
+   <property name="text">
+    <string>Close &amp;All</string>
    </property>
   </action>
  </widget>

@@ -22,7 +22,7 @@
 #ifndef PROJECTMANAGER_H
 #define PROJECTMANAGER_H
 
-#include <QtCore/QMap>
+#include <QtCore/QList>
 #include <QtCore/QObject>
 #include "singleton.h"
 #include "sqldesignerproject.h"
@@ -32,22 +32,23 @@ class ProjectManager: public QObject, public Singleton<ProjectManager>
     Q_OBJECT
 public:
     PSqlDesignerProject currentProject();
+    QList<QString> projectNames() const;
 
 private:
     friend class Singleton<ProjectManager>;
     ProjectManager();
     virtual ~ProjectManager();
 
-    QMap<QString, SharedSqlDesignerProject> m_projectList;
+    QList<SharedSqlDesignerProject> m_projectList;
     QString m_currentProjectName;
+
+    QString defaultProjectName(const QString projectName = tr("Untitled"));
 
 public slots:
     void newProject(const QString& projectName, const QString& dbmsType);
     void openProject(const QString& fileName);
-    void closeProject();
-    void closeProject(const QString& projectName);
+    void closeProject(const QString& projectName = QString());
     void closeAllProjects();
-    void renameProject(const QString& oldName, const QString& newName);
     void setCurrentProject(const QString& projectName);
 
 signals:

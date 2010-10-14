@@ -48,6 +48,7 @@ public:
     ~SqlDesignerProject();
 
     inline const QString& name() const {return m_settings->name();}
+    inline void setName(const QString& name) {m_settings->rename(name);}
     inline const QString& dbmsType() const {return m_settings->dbmsType();}
 
     inline PModelManager modelManager() {return m_modelManager.data();}

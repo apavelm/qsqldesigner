@@ -38,11 +38,8 @@ TableModel::TableModel(PModelManager mm, const QString& name) : QObject(mm)
 
 void TableModel::setName(const QString& name)
 {
-    if (m_mm->isTableNameValid(name))
-    {
-        m_name = name;
-    }
-};
+    m_name = defaultTableName(name);
+}
 
 PColumnModel TableModel::column(const QString& columnName) const
 {
@@ -125,13 +122,11 @@ const QStringList TableModel::constraintsNames() const
     return rsltLst;
 }
 
-const QString TableModel::defaultTableName() const
+const QString TableModel::defaultTableName(const QString defaultName) const
 {
-    QStringList strLst(m_mm->getTableList());
-    QString defaultName = tr("Table");
     QString newName = defaultName;
     int i = 1;
-    while (strLst.contains(newName, Qt::CaseInsensitive))
+    while (!m_mm->isTableNameValid(newName))
     {
         newName = defaultName + QString("_%1").arg(i++);
     }
