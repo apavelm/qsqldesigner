@@ -25,6 +25,7 @@
 ObjectEditor::ObjectEditor(QWidget *parent) : QWidget(parent), ui(new Ui::ObjectEditor)
 {
     ui->setupUi(this);
+    setProject(0);
 }
 
 ObjectEditor::~ObjectEditor()

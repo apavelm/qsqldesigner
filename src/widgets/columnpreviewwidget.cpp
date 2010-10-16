@@ -20,7 +20,7 @@
  ***************************************************************************/
 
 #include "columnpreviewwidget.h"
-#include "../Simpleforeignkeyselectionviewmodel.h"
+#include "../simpleforeignkeyselectionviewmodel.h"
 #include "../models/modelmanager.h"
 #include "../projectmanager.h"
 
