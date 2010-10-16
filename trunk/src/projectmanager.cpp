@@ -73,17 +73,18 @@ void ProjectManager::newProject(const QString& projectName, const QString& dbmsT
 
 void ProjectManager::closeProject(const QString& projectName)
 {
-    if (projectName.isEmpty())
+    QString projToClose = (projectName.isEmpty() ? m_currentProjectName : projectName);
+    if (projToClose.isEmpty())
         return;
 
     QStringList names(projectNames());
-    if (!names.contains(projectName, Qt::CaseInsensitive))
+    if (!names.contains(projToClose, Qt::CaseInsensitive))
         return;
 
     QList<SharedSqlDesignerProject>::iterator i;
     for (i = m_projectList.begin(); i != m_projectList.end(); ++i)
     {
-        if (QString::compare((*i)->name(), projectName, Qt::CaseInsensitive) == 0)
+        if (QString::compare((*i)->name(), projToClose, Qt::CaseInsensitive) == 0)
         {
             m_projectList.erase(i);
             break;
@@ -100,6 +101,7 @@ void ProjectManager::closeProject(const QString& projectName)
     else
     {
         m_currentProjectName = QString();
+        emit currentProjectChanged(QString());
     }
 }
 

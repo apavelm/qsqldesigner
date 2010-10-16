@@ -179,11 +179,16 @@ void MainWindow::slotNewProject()
 
 void MainWindow::slotOpenProject()
 {
-    QString openFolder = QDir::homePath();
-    QString sFilter = tr("SQL Designer projects (*.sdp);;All files (*.*)");
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open project"), openFolder, sFilter);
-    if (!fileName.isEmpty())
+    QFileDialog dlgOpen(this);
+    dlgOpen.setDirectory(QDir::home());
+    dlgOpen.setWindowTitle(tr("Open project..."));
+    dlgOpen.setNameFilter(tr("SQL Designer projects (*.sdp)"));
+    dlgOpen.setFileMode(QFileDialog::ExistingFile);
+    dlgOpen.setOption(QFileDialog::ReadOnly);
+    dlgOpen.setDefaultSuffix(tr("sdp"));
+    if (dlgOpen.exec() == QDialog::Accepted)
     {
+        QString fileName = dlgOpen.selectedFiles().at(0);
         PROJECTMANAGER->openProject(fileName);
     }
 }
@@ -205,11 +210,15 @@ void MainWindow::slotSave()
 
 void MainWindow::slotSaveAs()
 {
-    QString saveFolder = QDir::homePath();
-    QString sFilter = tr("SQL Designer projects (*.sdp);;All files (*.*)");
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Save project"), saveFolder, sFilter);
-    if (!fileName.isEmpty())
+    QFileDialog dlgSave(this);
+    dlgSave.setDirectory(QDir::home());
+    dlgSave.setWindowTitle(tr("Save project as..."));
+    dlgSave.setNameFilter(tr("SQL Designer projects (*.sdp)"));
+    dlgSave.setFileMode(QFileDialog::AnyFile);
+    dlgSave.setDefaultSuffix(tr("sdp"));
+    if (dlgSave.exec() == QDialog::Accepted)
     {
+        QString fileName = dlgSave.selectedFiles().at(0);
         if (CURRENTPROJECT)
         {
             CURRENTPROJECT->saveProject(fileName);

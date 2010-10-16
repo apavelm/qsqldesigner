@@ -33,14 +33,15 @@ WidgetViewModel::~WidgetViewModel()
 void WidgetViewModel::updateModel()
 {
     reset();
+    // header labels
+    QStringList lstHeaderLabels;
+    lstHeaderLabels << tr("Object") << tr("Class");
+    setHorizontalHeaderLabels(lstHeaderLabels);
+
     if (!m_project)
     {
         return;
     }
-
-    QStringList lstHeaderLabels;
-    lstHeaderLabels << tr("Object") << tr("Class");
-    setHorizontalHeaderLabels(lstHeaderLabels);
 
     QList<QString> lstTables = m_project->modelManager()->getTableList();
     foreach (const QString& tableName, lstTables)
