@@ -31,8 +31,8 @@ class WidgetViewModel : public QStandardItemModel
 {
     Q_OBJECT
 public:
-    WidgetViewModel(QObject * parent = 0, PSqlDesignerProject project = 0);
-    ~WidgetViewModel();
+    explicit WidgetViewModel(QObject * parent = 0, PSqlDesignerProject project = 0);
+    virtual ~WidgetViewModel();
 private:
     PSqlDesignerProject m_project;
 public slots:

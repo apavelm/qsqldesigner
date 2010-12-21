@@ -41,8 +41,8 @@ public:
     enum { Type = UserType + 2 };
     inline int type() const {return Type;}
 
-    ArrowForeignKey(PWidgetManager manager = 0, PConstraint constraint = 0);
-    ~ArrowForeignKey();
+    explicit ArrowForeignKey(PWidgetManager manager = 0, PConstraint constraint = 0);
+    virtual ~ArrowForeignKey();
 
     QRectF boundingRect() const;
     QPainterPath shape() const;
@@ -55,6 +55,7 @@ public slots:
     void updatePosition();
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 private:
     QPair<QPointF, QPointF> closestRectPoints() const;
 

@@ -31,7 +31,7 @@ class TableColumnsView : public QTableView
     Q_OBJECT
 public:
     explicit TableColumnsView(QWidget * parent = 0);
-    ~TableColumnsView();
+    virtual ~TableColumnsView();
 
     bool swapRows(int row1, int row2);
     void appendRow(PColumnModel column);

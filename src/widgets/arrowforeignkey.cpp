@@ -27,6 +27,7 @@
 #include "../settingsmanager.h"
 
 #include <math.h>
+#include <QGraphicsSceneMouseEvent>
 
 ArrowForeignKey::ArrowForeignKey(PWidgetManager manager, PConstraint constraint) :
                 QObject(manager),
@@ -440,6 +441,11 @@ void ArrowForeignKey::updatePosition()
     m_arrowHead2 = m_stopPos + QPointF(sin(angle + Pi - Pi / 3) * arrowSize, cos(angle + Pi - Pi / 3) * arrowSize);
 
     setPath(path);
+}
+
+void ArrowForeignKey::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
+{
+    //qDebug() << event->
 }
 
 QPainterPath ArrowForeignKey::shape() const

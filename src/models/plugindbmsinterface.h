@@ -31,7 +31,7 @@
 class PluginDBMSInterface
 {
 public:
-    virtual ~PluginDBMSInterface() {}
+    virtual ~PluginDBMSInterface() = 0;
 
     virtual const QString databaseName() const = 0;
     virtual int internalVersion() const = 0;

@@ -34,7 +34,7 @@ class NewProjectDialog : public QDialog
     Q_OBJECT
 public:
     explicit NewProjectDialog(QWidget *parent = 0);
-    ~NewProjectDialog();
+    virtual ~NewProjectDialog();
 
     const QString projectName() const;
     const QString typeDBMS() const;

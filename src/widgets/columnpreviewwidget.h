@@ -36,7 +36,7 @@ class ColumnPreviewWidget : public QWidget
     Q_OBJECT
 public:
     explicit ColumnPreviewWidget(QWidget * parent = 0, SimpleForeignKeySelectionViewModel *model = 0);
-    ~ColumnPreviewWidget();
+    virtual ~ColumnPreviewWidget();
 
     void clearContents();
 private:

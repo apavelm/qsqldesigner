@@ -40,7 +40,9 @@ class ColumnModel: public QObject
 {
     Q_OBJECT
 public:
-    ColumnModel(PTableModel table, const QString& name = QString());
+    explicit ColumnModel(PTableModel table, const QString& name = QString());
+    virtual ~ColumnModel() {}
+
     inline PTableModel table() const {return m_table;}
 
     inline const QString name() const {return m_columnName;}
@@ -81,6 +83,8 @@ class ColumnList: public QList<SharedColumnModel>
 {
 public:
     ColumnList();
+    virtual ~ColumnList() {}
+
     void addColumn(PColumnModel column);
 
     inline int getAmountForType(const Constraint::ConstraintType type) const {return m_constraintCounters[type];}

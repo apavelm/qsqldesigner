@@ -22,7 +22,7 @@
 #include "cornerzoomwidget.h"
 #include "mainview.h"
 
-CornerZoomWidget::CornerZoomWidget()
+CornerZoomWidget::CornerZoomWidget(QWidget * parent) : QWidget(parent)
 {
     m_pixmap = QPixmap();
     m_size = 32;

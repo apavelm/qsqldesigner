@@ -37,8 +37,8 @@ public:
     static const qreal minScale = 0.1;
     static const qreal maxScale = 5.0;
 
-    MainView(QWidget * parent = 0);
-    ~MainView();
+    explicit MainView(QWidget * parent = 0);
+    virtual ~MainView();
 
     inline qreal curScale() const {return transform().m11();}
     void setRenderHintsAccordingSettings();

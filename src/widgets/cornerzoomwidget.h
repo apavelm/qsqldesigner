@@ -30,7 +30,9 @@ class CornerZoomWidget : public QWidget
 {
     Q_OBJECT
 public:
-    CornerZoomWidget();
+    explicit CornerZoomWidget(QWidget * parent = 0);
+    virtual ~CornerZoomWidget() {}
+
     void setPixmap(const QPixmap& pixmap);
     void setPixmapSize(int size);
 protected:

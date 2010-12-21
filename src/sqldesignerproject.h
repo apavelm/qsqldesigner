@@ -45,7 +45,7 @@ class SqlDesignerProject : public QObject
 public:
     explicit SqlDesignerProject(const QString& projectName, const QString& dbmsType);
     explicit SqlDesignerProject(PSqlDesignerProjectSettings settings, PModelManager mm, const QList<QPair<QString, QPointF> >& coords);
-    ~SqlDesignerProject();
+    virtual ~SqlDesignerProject();
 
     inline const QString& name() const {return m_settings->name();}
     inline void setName(const QString& name) {m_settings->rename(name);}
