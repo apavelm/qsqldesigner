@@ -23,9 +23,11 @@
 #define ARROWFOREIGNKEY_H
 
 #include <QtCore/QList>
+#include <QtCore/QScopedPointer>
 #include <QtCore/QSharedPointer>
 #include <QtGui/QGraphicsObject>
 #include <QtGui/QGraphicsPathItem>
+#include <QtGui/QMenu>
 
 #include "../models/constraint.h"
 #include "../models/column.h"
@@ -34,7 +36,13 @@
 class WidgetManager;
 typedef WidgetManager * PWidgetManager;
 
-class ArrowForeignKey : public QObject, public QGraphicsPathItem
+struct ArrowLinePoint
+{
+    qreal x, y;
+    bool isEdited;
+};
+
+class ArrowForeignKey : public QGraphicsObject
 {
     Q_OBJECT
 public:
@@ -55,9 +63,10 @@ public slots:
     void updatePosition();
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget = 0);
-    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
-private:
-    QPair<QPointF, QPointF> closestRectPoints() const;
+    void hoverMoveEvent(QGraphicsSceneHoverEvent *event);
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+    //void contextMenuEvent(QGraphicsSceneContextMenuEvent *event);
 
 private:
     ConstraintForeignKey m_fk;
@@ -67,7 +76,11 @@ private:
     QPointF m_startPos, m_stopPos;
     QPointF m_locStartPos, m_locStopPos;
     QPointF m_arrowHead1, m_arrowHead2;
-    QList<QPointF> m_waypoints;
+    QList<ArrowLinePoint> m_waypoints;
+    QPainterPath m_path;
+
+    QScopedPointer<QMenu> m_contextMenu;
+    mutable bool hasCursor;
 };
 
 typedef ArrowForeignKey * PArrowForeignKey;
