@@ -37,7 +37,7 @@ class ObjectEditor : public QWidget
     Q_OBJECT
 public:
     explicit ObjectEditor(QWidget *parent = 0);
-    ~ObjectEditor();
+    virtual ~ObjectEditor();
 
     void setProject(PSqlDesignerProject project);
 

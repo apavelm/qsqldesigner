@@ -34,8 +34,8 @@ class MagnifyDialog : public QDialog
 {
     Q_OBJECT
 public:
-    MagnifyDialog(QWidget *parent = 0);
-    ~MagnifyDialog();
+    explicit MagnifyDialog(QWidget *parent = 0);
+    virtual ~MagnifyDialog();
 
     inline int value() const { return ui->spinBox->value(); }
     void setValue(int);

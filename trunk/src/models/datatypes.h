@@ -31,8 +31,8 @@
 class DataType
 {
 public:
-    DataType(const QString name = QString(), int parametersCount = 0, const QString relatives = QString());
-    DataType(const DataType& other);
+    explicit DataType(const QString name = QString(), int parametersCount = 0, const QString relatives = QString());
+    explicit DataType(const DataType& other);
     virtual ~DataType() {}
 
     inline const QString& typeName() const {return m_typeName;}
@@ -53,8 +53,8 @@ typedef QSharedPointer<DataType> SharedDataType;
 class DataTypes : public QList<SharedDataType>
 {
 public:
-    DataTypes();
-    ~DataTypes() {}
+    explicit DataTypes();
+    virtual ~DataTypes() {}
 
     QStringList toStringList() const;
     PDataType typeByName(const QString& typeName);

@@ -39,7 +39,7 @@ class WidgetManager : public QObject
     Q_OBJECT
 public:
     explicit WidgetManager(QObject * parent = 0, QGraphicsScene * scene = 0);
-    ~WidgetManager();
+    virtual ~WidgetManager();
 
     PTableWidget getTableWidgetByName(const QString& tableName) const;
     QMap<QString, SharedTableWidget> tablesWidgets() const {return m_tablesWidgets;}

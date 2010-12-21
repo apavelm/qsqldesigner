@@ -35,8 +35,8 @@ class TableDialog : public QDialog
 {
     Q_OBJECT
 public:
-    TableDialog(PTableModel table, QWidget * parent = 0);
-    ~TableDialog();
+    explicit TableDialog(PTableModel table, QWidget * parent = 0);
+    virtual ~TableDialog();
 
     void accept();
 protected:

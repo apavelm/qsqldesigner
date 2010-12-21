@@ -34,8 +34,8 @@ class ColumnDialog : public QDialog
 {
     Q_OBJECT
 public:
-    ColumnDialog(PColumnModel column, QWidget * parent = 0);
-    ~ColumnDialog();
+    explicit ColumnDialog(PColumnModel column, QWidget * parent = 0);
+    virtual ~ColumnDialog();
 
     void accept();
 protected:

@@ -32,7 +32,7 @@ class TableColumnsViewModel : public QStandardItemModel
     Q_OBJECT
 public:
     explicit TableColumnsViewModel(QObject * parent);
-    ~TableColumnsViewModel();
+    virtual ~TableColumnsViewModel();
 
     bool swapRows(int row1, int row2);
     void addColumnModel(PColumnModel column);

@@ -39,7 +39,7 @@ class ModelManager : public QObject
     Q_OBJECT
 public:
     explicit ModelManager(QObject * parent = 0, PSqlDesignerProjectSettings settings = 0);
-    ~ModelManager();
+    virtual ~ModelManager();
     inline PSqlDesignerProjectSettings projectSettings() const {return m_projectSettings;}
 
     PTableModel getTableByName(const QString& tableName) const;

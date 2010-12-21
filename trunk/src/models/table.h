@@ -36,7 +36,9 @@ class TableModel : public QObject
 {
     Q_OBJECT
 public:
-    TableModel(PModelManager mm = 0, const QString& name = QString());
+    explicit TableModel(PModelManager mm = 0, const QString& name = QString());
+    virtual ~TableModel() {}
+
     inline PModelManager modelManager() const {return m_mm;}
 
     inline const QString& name() const {return m_name;}

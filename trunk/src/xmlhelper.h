@@ -56,7 +56,7 @@ public:
 private:
     static const int IdentSize = 4;
     XmlHelper();
-    ~XmlHelper();
+    virtual ~XmlHelper();
 
     static PSqlDesignerProjectSettings readSettings(QXmlStreamReader * reader);
     static PSqlDesignerProject readDiagram(QXmlStreamReader * reader, PSqlDesignerProjectSettings settings);

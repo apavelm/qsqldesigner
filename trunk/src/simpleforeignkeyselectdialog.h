@@ -36,8 +36,8 @@ class SimpleForeignKeySelectDialog : public QDialog
 {
     Q_OBJECT
 public:
-    SimpleForeignKeySelectDialog(PColumnModel column, QWidget * parent = 0);
-    ~SimpleForeignKeySelectDialog();
+    explicit SimpleForeignKeySelectDialog(PColumnModel column, QWidget * parent = 0);
+    virtual ~SimpleForeignKeySelectDialog();
 
     void accept();
     inline PConstraint constraint() const {return m_constraint;}

@@ -41,6 +41,7 @@ public:
     inline int type() const {return Type;}
 
     explicit TableWidget(QGraphicsScene *scene, QGraphicsItem  * parent = 0, PTableModel model = 0);
+    virtual ~TableWidget() {}
 
     QRectF boundingRect() const;
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);

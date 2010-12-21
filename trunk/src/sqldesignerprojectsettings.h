@@ -28,7 +28,7 @@ class SqlDesignerProjectSettings
 {
 public:
     explicit SqlDesignerProjectSettings(const QString& projectName, const QString& dbmsType);
-    ~SqlDesignerProjectSettings() {}
+    virtual ~SqlDesignerProjectSettings() {}
 
     inline const QString& name() const {return m_projectName;}
     inline const QString& projectFilename() const {return m_projectFileName;}
